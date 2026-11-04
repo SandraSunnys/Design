@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bazar-Auslagen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap">
+<style>
+/* Weihnachtsbazar Auslagen – A4 quer, kompakt, modern */
+:root {
+  --weiss: #ffffff; --tinte: #1d1b1a; --tinte-2: #5c5652;
+  --rot: #c8102e; --tanne: #0f5b45;
+  --font-display: "Bricolage Grotesque", "Arial Black", Arial, sans-serif;
+  --font-sans: "DM Sans", "Segoe UI", Arial, sans-serif;
+  --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px; --space-5: 44px;
+  --radius-sm: 10px; --radius-lg: 28px; --radius-rund: 999px;
+}
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #e7e4e0; }
+body { font-family: var(--font-sans); color: var(--tinte); }
+@media print { html, body { background: #fff; } .blatt { margin: 0 !important; } }
+
+.blatt {
+  width: 297mm; height: 210mm; margin: 24px auto; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 34px var(--space-5) 22px;
+  background: var(--weiss);
+  break-after: page; page-break-after: always;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.blatt:last-child { break-after: auto; page-break-after: auto; }
+
+/* ---------- Kopf ---------- */
+.kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+.kopf-text { min-width: 0; }
+.dach { margin: 0 0 6px; font: 700 13px/18px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--rot); }
+.dach--kraeuter { color: var(--tanne); }
+.titel { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 58px; line-height: .95;
+  letter-spacing: -.035em; font-variation-settings: "opsz" 96; }
+.titel .funkeln { display: inline-block; width: 30px; height: 30px; margin-left: 10px; vertical-align: 26px; }
+.titel .funkeln--klein { width: 18px; height: 18px; margin-left: 2px; vertical-align: 46px; }
+.funkeln path { fill: var(--rot); }
+.funkeln--gruen path { fill: var(--tanne); }
+.info { margin: 8px 0 0; font-size: 15px; line-height: 21px; color: var(--tinte-2); }
+
+/* runder Aufkleber */
+.sticker { flex: 0 0 auto; width: 124px; height: 124px; margin: -6px 6px 0 0; border-radius: var(--radius-rund);
+  background: var(--rot); color: var(--weiss); display: grid; place-content: center; text-align: center;
+  transform: rotate(-9deg); }
+.sticker b { display: block; font: 800 30px/1 var(--font-display); letter-spacing: -.03em; }
+.sticker span { display: block; margin-top: 4px; font: 600 15px/1.1 var(--font-sans); }
+.sticker--gruen { background: var(--tanne); }
+
+/* ---------- Raster ---------- */
+.raster { flex: 1; display: grid; gap: 14px; margin-top: 18px; min-height: 0; }
+.raster--3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; }
+.raster--4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; }
+.raster--4x2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 12px; }
+
+/* ---------- Karte ---------- */
+.karte { position: relative; display: flex; flex-direction: column; padding: 16px 20px 18px;
+  border-radius: var(--radius-lg); background: var(--c); overflow: hidden; }
+.foto { flex: 0 0 auto; width: 100px; height: 100px; border-radius: var(--radius-rund); background: var(--weiss);
+  display: grid; place-items: center; overflow: hidden; }
+.foto img { width: 88%; height: 88%; object-fit: contain; }
+.foto--bild img { width: 100%; height: 100%; object-fit: cover; }
+.name { margin: 10px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.02;
+  letter-spacing: -.025em; font-variation-settings: "opsz" 48; }
+.pille { display: inline-block; font: 700 11.5px/16px var(--font-sans); letter-spacing: .07em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: var(--radius-rund); white-space: nowrap; }
+.pille--alk { background: var(--tinte); color: var(--weiss); }
+.pille--ohne { background: var(--weiss); color: var(--tinte); }
+.karte > .pille { position: absolute; top: 18px; right: 18px; }
+.allergene { margin: 7px 0 0; font-size: 13px; line-height: 18px; }
+.allergene b, .zutaten b { font-weight: 700; }
+.zutaten { margin: 6px 0 0; font-size: 14px; line-height: 19px; }
+
+/* 4er-Reihe: große Fotos */
+.raster--4 .karte { padding: 22px; }
+.raster--4 .foto { width: 184px; height: 184px; margin: 34px auto 0; }
+.raster--4 .name { margin-top: 28px; font-size: 23px; }
+.raster--4 .allergene { font-size: 14px; margin-top: 10px; }
+.raster--4 .zutaten { font-size: 16px; line-height: 22px; margin-top: 8px; }
+
+/* Einzelprodukt */
+.karte--gross { flex: 1; margin-top: 18px; flex-direction: row; align-items: center; gap: 36px; padding: 28px 56px 28px 28px; }
+.karte--gross .tafel { flex: 0 0 auto; width: 55%; max-height: 100%; object-fit: contain; }
+.karte--gross .name { margin: 0; font-size: 50px; line-height: .98; }
+.karte--gross .pille { margin-top: 18px; font-size: 13px; padding: 5px 12px; }
+.karte--gross .allergene { font-size: 16px; line-height: 23px; margin-top: 14px; }
+.karte--gross .zutaten { font-size: 20px; line-height: 29px; margin-top: 10px; }
+
+/* Kräuter (4 × 2) */
+.karte--kraut { padding: 14px 16px 16px; }
+.kraut-kopf { display: flex; align-items: center; gap: 12px; }
+.kraut-kopf .foto { width: 84px; height: 84px; }
+.karte--kraut .name { margin: 10px 0 0; font-size: 20px; }
+.latein { margin: 5px 0 0; font-size: 12.5px; line-height: 16px; font-style: italic; }
+.gewicht { display: inline-block; font: 700 12px/16px var(--font-sans); padding: 2px 9px;
+  border-radius: var(--radius-rund); background: var(--weiss); }
+.karte--kraut .zutaten { margin-top: 6px; font-size: 13.5px; line-height: 18.5px; }
+
+/* ---------- Fuß ---------- */
+.fuss { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: 14px;
+  font-size: 13px; line-height: 18px; color: var(--tinte-2); }
+.fuss b { color: var(--tinte); }
+.fuss .gruss { font: 800 15px/1 var(--font-display); letter-spacing: -.01em; color: var(--rot); display: inline-flex; align-items: center; gap: 6px; }
+.fuss .gruss svg { width: 14px; height: 14px; }
+.fuss .credit { font-size: 10.5px; }
+
+</style>
+</head>
+<body>
+<section class="blatt">
+  <header class="kopf">
+    <div class="kopf-text">
+      <p class="dach">Handgemacht</p>
+      <h1 class="titel">Selbstgemachte Pralinen<svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg><svg class="funkeln funkeln--klein" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg></h1>
+      <p class="info">Mit belgischer Callebaut-Schokolade hergestellt. Ohne Konservierungsstoffe – gekühlt haltbar bis Jahresende.</p>
+    </div>
+    <div class="sticker" aria-hidden="true"><b>8 Stück</b><span>≈ 100 g</span></div>
+  </header>
+  <div class="raster raster--3">
+    <article class="karte" style="--c:#ff8fa0">
+      <span class="pille pille--alk">mit Alkohol</span>
+      <div class="foto"><img src="fotos/kirsch.png" alt=""></div>
+      <h2 class="name">Kirschpralinen</h2>
+      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Luz-Träsch, Kirschlikör, Zartbitterschokolade</p>
+    </article>
+    <article class="karte" style="--c:#ffd75e">
+      <span class="pille pille--alk">mit Alkohol</span>
+      <div class="foto"><img src="fotos/eierlikoer.png" alt=""></div>
+      <h2 class="name">Eierlikörpralinen</h2>
+      <p class="allergene"><b>Allergene:</b> Ei, Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Sahne, Eierlikör, Vanille, Zartbitterschokolade</p>
+    </article>
+    <article class="karte" style="--c:#e8b994">
+      <span class="pille pille--alk">mit Alkohol</span>
+      <div class="foto"><img src="fotos/baileys.png" alt=""></div>
+      <h2 class="name">Baileys-Trüffel</h2>
+      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Baileys</p>
+    </article>
+    <article class="karte" style="--c:#d8c3b4">
+      <span class="pille pille--alk">mit Alkohol</span>
+      <div class="foto"><img src="fotos/cointreau.png" alt=""></div>
+      <h2 class="name">Cointreau-Trüffel</h2>
+      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Cointreau, Zartbitterschokolade, Kakaopulver, Kristallzucker</p>
+    </article>
+    <article class="karte" style="--c:#e6ee6e">
+      <span class="pille pille--alk">mit Alkohol</span>
+      <div class="foto"><img src="fotos/limoncello.png" alt=""></div>
+      <h2 class="name">Limoncello-Trüffel</h2>
+      <p class="allergene"><b>Allergene:</b> Ei, Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Zucker, Sahne, Eigelbpulver, Limoncello, Butter, Kakaobutter, Fruchtpulver Limette, Kristallzucker</p>
+    </article>
+    <article class="karte" style="--c:#ff9b6a">
+      <span class="pille pille--alk">mit Alkohol</span>
+      <div class="foto"><img src="fotos/aperol.png" alt=""></div>
+      <h2 class="name">Aperolpralinen</h2>
+      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Sahne, Aperol, Orangensaft, Puderzucker, Orangenöl, Kristallzucker, Orangenfruchtpulver</p>
+    </article>
+  </div>
+  <footer class="fuss"><span><b>Angelika Ruppel</b> · Talerweg 21 · 81825 München</span><span class="gruss"><svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg>Frohe Weihnachten!</span></footer>
+</section>
+<section class="blatt">
+  <header class="kopf">
+    <div class="kopf-text">
+      <p class="dach">Handgemacht · ohne Alkohol</p>
+      <h1 class="titel">Selbstgemachte Pralinen<svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg><svg class="funkeln funkeln--klein" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg></h1>
+      <p class="info">Mit belgischer Callebaut-Schokolade hergestellt. Ohne Konservierungsstoffe – gekühlt haltbar bis Jahresende.</p>
+    </div>
+    <div class="sticker" aria-hidden="true"><b>8 Stück</b><span>≈ 100 g</span></div>
+  </header>
+  <div class="raster raster--4">
+    <article class="karte" style="--c:#f7bb5c">
+      <span class="pille pille--ohne">ohne Alkohol</span>
+      <div class="foto"><img src="fotos/karamell.png" alt=""></div>
+      <h2 class="name">Karamell-Trüffel</h2>
+      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Zucker, Honig</p>
+    </article>
+    <article class="karte" style="--c:#ff86b0">
+      <span class="pille pille--ohne">ohne Alkohol</span>
+      <div class="foto"><img src="fotos/himbeer.png" alt=""></div>
+      <h2 class="name">Himbeerpralinen</h2>
+      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Himbeeren, Zitrone, Sahne, Zucker, Zartbitterschokolade, Fruchtpulver Himbeere, Kristallzucker</p>
+    </article>
+    <article class="karte" style="--c:#d1a585">
+      <span class="pille pille--ohne">ohne Alkohol</span>
+      <div class="foto"><img src="fotos/nougat.png" alt=""></div>
+      <h2 class="name">Nougatpralinen</h2>
+      <p class="allergene"><b>Allergene:</b> Haselnüsse, Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Nougat, Sahne, Vollmilchschokolade, Zartbitterschokolade</p>
+    </article>
+    <article class="karte" style="--c:#e7b97c">
+      <span class="pille pille--ohne">ohne Alkohol</span>
+      <div class="foto"><img src="fotos/haselnuss.png" alt=""></div>
+      <h2 class="name">Haselnusspralinen</h2>
+      <p class="allergene"><b>Allergene:</b> Haselnüsse, Milch, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Zartbitterschokolade, Haselnusskrokant, Nussöl</p>
+    </article>
+  </div>
+  <footer class="fuss"><span><b>Angelika Ruppel</b> · Talerweg 21 · 81825 München</span><span class="gruss"><svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg>Frohe Weihnachten!</span></footer>
+</section>
+<section class="blatt">
+  <header class="kopf">
+    <div class="kopf-text">
+      <p class="dach">Handgemacht</p>
+      <h1 class="titel">Schokolade im Dubai-Style<svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg><svg class="funkeln funkeln--klein" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg></h1>
+      <p class="info">Mit belgischer Callebaut-Schokolade hergestellt. Ohne Konservierungsstoffe – gekühlt haltbar bis Jahresende.</p>
+    </div>
+    <div class="sticker" aria-hidden="true"><b>ca.</b><span>70 g</span></div>
+  </header>
+  <article class="karte karte--gross" style="--c:#bfdc80">
+    <img class="tafel" src="fotos/dubai.png" alt="">
+    <div>
+      <h2 class="name">Schokoladentafel Dubai-Style</h2>
+      <span class="pille pille--ohne">ohne Alkohol</span>
+      <p class="allergene"><b>Allergene:</b> Gluten (Weizen), Milch, Pistazien, Sesam, Soja</p>
+      <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Kadayif, Pistaziencreme, Tahini, Butter, Rosenwasser</p>
+    </div>
+  </article>
+  <footer class="fuss"><span><b>Angelika Ruppel</b> · Talerweg 21 · 81825 München</span><span class="gruss"><svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg>Frohe Weihnachten!</span></footer>
+</section>
+<section class="blatt">
+  <header class="kopf">
+    <div class="kopf-text">
+      <p class="dach dach--kraeuter">Für Küche &amp; Tee</p>
+      <h1 class="titel">Unsere Kräuter<svg class="funkeln funkeln--gruen" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg><svg class="funkeln funkeln--klein funkeln--gruen" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg></h1>
+      
+    </div>
+    
+  </header>
+  <div class="raster raster--4x2">
+    <article class="karte karte--kraut" style="--c:#f3ea7a">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/zitronenverbene.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">6 g</span>
+          <p class="latein">Aloysia citrodora</p>
+        </div>
+      </div>
+      <h2 class="name">Zitronenverbene</h2>
+      <p class="zutaten"><b>Verwendung:</b> Als Tee oder Erfrischungsgetränk, für Gebäck oder Süßspeisen, als Gewürzkraut für herzhafte Speisen. Das zitronenartige Aroma verleiht den Speisen eine besondere Note.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#93e4c2">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/minze.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">12 g</span>
+          <p class="latein">Mentha spicata</p>
+        </div>
+      </div>
+      <h2 class="name">Marokkanische Minze</h2>
+      <p class="zutaten"><b>Verwendung:</b> Als Tee oder Erfrischungsgetränk, für Marinaden, Salate oder Soßen, für Taboulé und orientalische Gerichte.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#cbb8f2">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/bergbohnenkraut.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">20 g</span>
+          <p class="latein">Satureja montana</p>
+        </div>
+      </div>
+      <h2 class="name">Bergbohnenkraut</h2>
+      <p class="zutaten"><b>Verwendung:</b> Passt sehr gut zu Hülsenfrüchten wie Bohnen, Linsen oder Erbsen, auch gut zu Lamm- und Wildgerichten.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#a6db88">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/oregano.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">15 g</span>
+          <p class="latein">Origanum vulgare</p>
+        </div>
+      </div>
+      <h2 class="name">Oregano</h2>
+      <p class="zutaten"><b>Verwendung:</b> Beliebtes Gewürz der mediterranen Küche: für Pizza, Tomatensoße, Antipasti, Schmorgerichte, Aufläufe und Suppen.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#cfe9a6">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/estragon.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">17 g</span>
+          <p class="latein">Artemisia dracunculus</p>
+        </div>
+      </div>
+      <h2 class="name">Estragon</h2>
+      <p class="zutaten"><b>Verwendung:</b> Für klassische Soßen, Fisch und Geflügel, Gemüse und Pilze. Estragon schmeckt leicht anisartig und pfeffrig-herb.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#b5d1ad">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/thymian-franz.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">20 g</span>
+          <p class="latein">Thymus „Fragrance d’été“</p>
+        </div>
+      </div>
+      <h2 class="name">Französischer Thymian</h2>
+      <p class="zutaten"><b>Verwendung:</b> Für mediterrane Speisen, Suppen, Schmorgerichte, Eintöpfe, Lamm, Wild, Geflügel und Kartoffelgratin. Würzig-herb, leicht pfeffrig und harzig.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#e3f28f">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/limonenthymian.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">18 g</span>
+          <p class="latein">Thymus species</p>
+        </div>
+      </div>
+      <h2 class="name">Limonenthymian</h2>
+      <p class="zutaten"><b>Verwendung:</b> Für mediterrane Speisen, Suppen, Schmorgerichte, Lamm, Fisch und Eintöpfe. Verbindet die herbe Würze des echten Thymians mit frischem Zitronenaroma.</p>
+    </article>
+    <article class="karte karte--kraut" style="--c:#f4d27e">
+      <div class="kraut-kopf">
+        <div class="foto foto--bild"><img src="fotos/goldsalbei.jpg" alt=""></div>
+        <div>
+          <span class="gewicht">10 g · ganze Blätter</span>
+          <p class="latein">Salvia officinalis</p>
+        </div>
+      </div>
+      <h2 class="name">Goldsalbei</h2>
+      <p class="zutaten"><b>Verwendung:</b> Für Kalb, Hähnchen, Lamm, Fisch oder frittiert zu Pasta. Als Tee traditionell in der Erkältungszeit getrunken.</p>
+    </article>
+  </div>
+  <footer class="fuss"><span><b>Angelika Ruppel</b> · Talerweg 21 · 81825 München</span><span class="credit">Fotos Estragon (CC BY-NC-ND) und Französischer Thymian (CC BY-SA): unbekannter Autor</span><span class="gruss"><svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg>Frohe Weihnachten!</span></footer>
+</section>
+</body>
+</html>

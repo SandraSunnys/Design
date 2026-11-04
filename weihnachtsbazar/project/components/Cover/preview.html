@@ -4,67 +4,49 @@
 <head>
 <meta charset="utf-8">
 <title>Weihnachtsbazar Auslagen</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap">
 <style>
   html, body { margin:0; height:100%; }
-  body { background:var(--papier); color:var(--tinte); font-family:var(--font-sans); overflow:hidden; }
+  body { background:var(--weiss); color:var(--tinte); font-family:var(--font-sans); overflow:hidden; }
   .cover { position:relative; width:960px; height:288px; overflow:hidden; }
-  .band { position:absolute; top:0; left:0; width:960px; height:112px; }
-  .band svg { display:block; width:960px; height:112px; }
-  .tanne { fill:var(--tanne); }
-  .kakao { fill:var(--kakao); }
-  .cran  { fill:var(--cranberry); }
-  .gold  { fill:var(--gold); }
-  .kh    { fill:var(--kakao-hell); }
-  .goldh { fill:var(--gold-hell); }
-  .th    { fill:var(--tanne-hell); }
-  .blk   { rx:var(--radius-md); }
-  .words { position:absolute; left:var(--space-6); right:var(--space-6); bottom:var(--space-5); max-width:880px; }
-  .name { margin:0; font-family:var(--font-display); font-size:64px; line-height:.95; font-weight:600; letter-spacing:-.01em; color:var(--kakao); white-space:nowrap; }
-  .tag { margin:var(--space-2) 0 0 2px; font-size:14px; line-height:20px; color:var(--tinte-gedaempft); max-width:440px; }
+  .band { position:absolute; top:0; left:0; width:960px; height:136px; }
+  .band svg { display:block; width:960px; height:136px; }
+  .rot { fill:var(--rot); } .tanne { fill:var(--tanne); }
+  .kirsch { fill:var(--sorte-kirsch); } .eier { fill:var(--sorte-eierlikoer); } .minze { fill:var(--kraut-minze); }
+  .teller { fill:var(--weiss); }
+  .blk { rx:var(--radius-lg); }
+  .words { position:absolute; left:var(--space-5); right:var(--space-5); bottom:var(--space-4); }
+  .name { margin:0; font-family:var(--font-display); font-size:64px; line-height:.95; font-weight:800; letter-spacing:-.035em; white-space:nowrap; }
+  .tag { margin:var(--space-1) 0 0 2px; font-size:14px; line-height:20px; color:var(--tinte-2); max-width:520px; }
 </style>
 </head>
 <body>
 <div class="cover">
 <div class="band" aria-hidden="true">
-<svg viewBox="0 0 960 112" width="960" height="112">
+<svg viewBox="0 0 960 136" width="960" height="136">
 <!--
-  blocks      tanne 368×128 (Kräuter, größter Block) · kakao 288×128 (Pralinen) · cranberry 112×128 (Preis/Akzent) · kakao-hell 144 bleeding right (Entlastung) · gold nur als Punkte — ≈ 38 % von 960×288
-  arrangement Streifen ungleicher Bänder oben, alle von oben angeschnitten (top-band, weil der Name zu breit für die 440-px-Zone ist), Fugen space-2
-  pattern     Scheiben (Pralinen) und Blätter (Kräuter) aus radius-rund — „Pralinen = Punkte, Kräuter = Blätter“ wie im Kopfband jedes Schildes; 21 Einheiten
-  scales      Seiten in space-2-Vielfachen; Fugen space-2; Raster space-4 (32 px); Ecken radius-md, Scheiben/Blätter radius-rund
+  blocks      sorte-kirsch 232×152 · sorte-eierlikoer 168×152 · rot 136×152 (Weihnachtsakzent) · kraut-minze 200×152 · tanne bleeding right — ≈ 44 % von 960×288, alle von oben angeschnitten
+  arrangement Streifen ungleicher Bänder (top-band, Name zu breit für die 440-px-Zone), Fugen space-2 (16 px) wie zwischen den Karten
+  pattern     „Foto auf weißem Teller“ — weiße Scheiben (radius-rund) auf den Sortenblöcken, dazu zwei Funkeln (der Weihnachtsstern der Titel) auf rot und tanne; 7 Einheiten
+  scales      Ecken radius-lg (28), Scheiben radius-rund, Fugen space-2, Abstand zum Namen space-3
 -->
-<rect class="tanne blk" x="0"   y="-16" width="368" height="128" rx="14"/>
-<rect class="cran blk"  x="384" y="-16" width="112" height="128" rx="14"/>
-<rect class="kakao blk" x="512" y="-16" width="288" height="128" rx="14"/>
-<rect class="kh blk"    x="816" y="-16" width="160" height="128" rx="14"/>
-<!-- Blätter auf Tanne -->
-<path class="goldh" d="M40 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<path class="th"    d="M88 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<path class="goldh" d="M136 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<path class="th"    d="M184 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<path class="goldh" d="M232 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<path class="th"    d="M280 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<path class="goldh" d="M328 72 q0 -16 16 -16 q0 16 -16 16z"/>
-<!-- Pralinen-Scheiben auf Kakao -->
-<circle class="goldh" cx="552" cy="64" r="12"/>
-<circle class="kh"    cx="600" cy="64" r="8"/>
-<circle class="goldh" cx="648" cy="64" r="12"/>
-<circle class="kh"    cx="696" cy="64" r="8"/>
-<circle class="goldh" cx="744" cy="64" r="12"/>
-<!-- Scheiben auf Kakao-hell, eine aus dem Block gelöst -->
-<circle class="kakao" cx="856" cy="64" r="12"/>
-<circle class="gold"  cx="904" cy="64" r="8"/>
-<circle class="cran"  cx="944" cy="64" r="12"/>
-<!-- Akzent: drei Goldpunkte auf Cranberry -->
-<circle class="goldh" cx="416" cy="64" r="6"/>
-<circle class="goldh" cx="440" cy="64" r="6"/>
-<circle class="goldh" cx="464" cy="64" r="6"/>
+<rect class="kirsch blk" x="-28" y="-16" width="232" height="152" rx="28"/>
+<rect class="eier blk"   x="220" y="-16" width="168" height="152" rx="28"/>
+<rect class="rot blk"    x="404" y="-16" width="136" height="152" rx="28"/>
+<rect class="minze blk"  x="556" y="-16" width="200" height="152" rx="28"/>
+<rect class="tanne blk"  x="772" y="-16" width="216" height="152" rx="28"/>
+<circle class="teller" cx="120" cy="68" r="40"/>
+<circle class="teller" cx="304" cy="68" r="28"/>
+<circle class="teller" cx="656" cy="68" r="34"/>
+<circle class="teller" cx="860" cy="68" r="22"/>
+<path class="teller" transform="translate(448 36) scale(2)" d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/>
+<path class="teller" transform="translate(500 84) scale(.9)" d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/>
+<path class="eier" transform="translate(912 48) scale(1.2)" d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/>
 </svg>
 </div>
 <div class="words">
   <h1 class="name">Weihnachtsbazar Auslagen</h1>
-  <p class="tag">A4-Schilder für Pralinen und Kräuter – lesbar aus der Ferne.</p>
+  <p class="tag">Pralinen und Kräuter kompakt auf einer Seite – bunt, klar, weihnachtlich.</p>
 </div>
 </div>
 </body>

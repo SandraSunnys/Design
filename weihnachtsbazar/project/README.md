@@ -1,82 +1,56 @@
 # Weihnachtsbazar Auslagen
 
-A4-Schilder für Pralinen und Kräuter – lesbar aus der Ferne. Jedes Schild beantwortet die drei Fragen, die am Stand immer gestellt werden: **Was ist das? Was ist drin (bzw. wofür nimmt man es)? Was kostet es?** Warm und weihnachtlich im Ton, aber klar und ehrlich bei Zutaten und Allergenen.
+Kompakte A4-Blätter im Querformat für unseren Pralinen- und Kräuterstand: **eine Seite pro Warengruppe**, jede Sorte als farbige Karte mit Foto, Allergenen und Zutaten bzw. Verwendung. Frisch und fröhlich statt altbacken: kräftige Farbflächen auf weißem Grund, eine moderne Grotesk-Schrift, runde Aufkleber und rote Funkelsterne als weihnachtlicher Akzent.
 
-## Aufbau eines Schildes
+## Die Blätter
 
-Jedes A4-Schild (Hochformat, 210 × 297 mm) folgt derselben Reihenfolge von oben nach unten:
+| Blatt | Wofür | Raster |
+| --- | --- | --- |
+| **PralinenBlatt** | bis zu 6 Sorten (z. B. alle mit Alkohol) | 3 × 2 Karten |
+| **PralinenReihe** | 4 Sorten mit großen Fotos (z. B. alle ohne Alkohol) | 4 × 1 Karten |
+| **EinzelBlatt** | ein besonderes Produkt (Dubai-Schokolade) | 1 große Karte |
+| **KraeuterBlatt** | bis zu 8 Kräuter | 4 × 2 Karten |
 
-1. **Kopfband** (56 px) in der Leitfarbe – `kakao` mit Punkten für Pralinen, `tanne` mit Blättern für Kräuter. So erkennt man die Kategorie schon aus mehreren Metern.
-2. **Dachzeile** (`dachzeile`) – „Handgemachte Pralinen“ bzw. „Aus dem Kräutergarten“.
-3. **Name** (`schild-titel`, 76 px) – eine Zeile. Bei Kräutern darunter der botanische Name (`schild-latein`).
-4. **Ein, zwei Sätze Geschmack** (`schild-lead`) – wie schmeckt es, wie duftet es?
-5. **Kästen** auf `kakao-hell` bzw. `tanne-hell`:
-   - Pralinen: *Zutaten* und *Allergene & Hinweise*
-   - Kräuter: *In der Küche*, *Als Tee* (oder *Im Haushalt*), *Unser Tipp*
-6. **Preis** (`schild-preis`, 88 px, `cranberry`) unten links, Preisstaffel rechts.
-7. **Fußzeile** (`klein`) – Haltbarkeit, Lagerung, Pflege, Herkunft.
+Jedes Blatt hat denselben Rahmen: **Kopf** (Dachzeile, Titel mit zwei Funkeln, eine Infozeile, rechts der runde Aufkleber mit der Menge), **Raster** der Karten, **Fuß** (Adresse links, „Frohe Weihnachten!“ rechts).
+
+## Karten
+
+- Jede Sorte hat **ihre eigene Farbe**, die zum Geschmack passt: Kirsche rosa, Eierlikör gelb, Limoncello limette, Aperol orange, Himbeere pink, Nougat und Haselnuss in Nusstönen, Dubai-Schokolade pistaziengrün. Bei den Kräutern Grüntöne, Zitronengelb für die Zitronen-Kräuter, Lavendel für das Bergbohnenkraut.
+- Das Foto sitzt auf einem **weißen runden Teller**. So verschwinden unsaubere Ränder beim Freistellen, und alle Fotos wirken gleich.
+- Oben rechts die Pille **„mit Alkohol“** (schwarz) oder **„ohne Alkohol“** (weiß). Eltern finden so auf einen Blick die Sorten für Kinder.
+- Darunter Name, **Allergene** und **Zutaten**. Auf den Farbkarten ist aller Text in `tinte` gesetzt, damit er auf jeder Farbe gut lesbar ist (mindestens 7,6 : 1).
 
 ## Inhalt & Ton
 
-- **Sprache:** freundlich, kurz, Sie-Form („Fragen Sie uns gern …“). Keine Ausrufezeichen-Flut, höchstens eines pro Schild.
-- **Namen:** so, wie man sie am Stand sagt: „Marzipan-Orange“, „Lebkuchen-Trüffel“, „Rosmarin“.
-- **Geschmackssatz:** konkret statt blumig. *„Saftiges Marzipan mit kandierter Orangenschale“*, nicht *„ein Gedicht aus Weihnachtsträumen“*.
-- **Preise** immer mit Komma und Leerzeichen vor dem Euro: `1,20 €`, `12,00 €`.
-
-### Pralinen: Zutaten und Allergene
-
-- Zutaten in **absteigender Menge** aufzählen, zusammengesetzte Zutaten in Klammern: *Zartbitterschokolade (Kakaomasse, Zucker, Kakaobutter, Emulgator: Sojalecithin)*.
-- Die **14 Hauptallergene** im Zutatentext **fett** hervorheben – das ist die übliche Pflicht-Hervorhebung – und zusätzlich als Marke im Kasten *Allergene & Hinweise* zeigen.
-- Spurenhinweis („Kann Spuren von … enthalten“) als eigene Zeile in `tinte-gedaempft`, die Allergene darin ebenfalls fett.
-- **Alkohol** immer als Warn-Marke (`cranberry`) kennzeichnen – wichtig für Kinder, Schwangere und Autofahrer.
-- Positive Hinweise (*vegan*, *glutenfrei*) nur, wenn sie sicher stimmen – als gestrichelte Marke in `tanne`.
-- Die Allergen-Kürzel A–R entsprechen den in der Gastronomie üblichen Buchstaben und werden auf dem Sortiment-Blatt erklärt.
-
-### Kräuter: Verwendung
-
-- Verwendung **praktisch** beschreiben: Gerichte, Teezubereitung mit Menge und Ziehzeit, ein Tipp zum Mitnehmen.
-- **Keine Heilversprechen.** Statt „hilft gegen Erkältung“ schreiben: *„Traditionell als wärmender Wintertee getrunken.“* Das ist ehrlich und rechtlich auf der sicheren Seite.
-- Bei Pflanzen im Topf eine **Pflegezeile** in die Fußzeile (Standort, Gießen, Überwintern); bei getrockneten Kräutern die Lagerung („trocken und dunkel“).
+- Kurz und konkret, Sie-Form. Etiketten „Allergene:“, „Zutaten:“, „Verwendung:“ immer fett.
+- **Allergene** aus der Zutatenliste ableiten und ehrlich angeben: Milch (Sahne, Butter, jede Schokolade außer rein dunkler), Ei (Eierlikör, Eigelb), Schalenfrüchte (Haselnuss, Nougat, Pistazie), Sesam (Tahini), Gluten (Kadayif ist Weizenteig), Soja (Sojalecithin in Callebaut-Schokolade, bitte auf der Packung prüfen).
+- **Kräuter: keine Heilversprechen.** „Als Tee traditionell in der Erkältungszeit getrunken“ statt „hilft bei Husten“. Heilaussagen sind für Lebensmittel nicht erlaubt.
+- Mengen mit Leerzeichen: `6 g`, `≈ 100 g`.
+- Fotos mit Lizenzpflicht (z. B. CC BY) werden klein im Fuß genannt.
 
 ## Farben
 
-| Token | Wofür |
-| --- | --- |
-| `papier` | Grund jedes Schildes |
-| `tinte` | aller Fließtext, Allergene fett |
-| `tinte-gedaempft` | lateinische Namen, Einheiten, Kleingedrucktes |
-| `kakao` / `kakao-hell` | Leitfarbe und Kastenfläche **Pralinen** |
-| `tanne` / `tanne-hell` | Leitfarbe und Kastenfläche **Kräuter** |
-| `cranberry` | Preise, Warnhinweise, Dachzeile der Pralinen |
-| `gold` / `gold-hell` | nur Zierde: Linien, Punkte, Blätter – **nie Text** |
-
-Alle Textfarben erreichen mindestens 4,5 : 1 Kontrast auf ihrem Grund (die meisten über 7 : 1), damit die Schilder auch im Halbdunkel einer Turnhalle oder unter Lichterketten lesbar bleiben.
+- `weiss` ist der Grund. Er spart Toner, und die Farbkarten leuchten darauf.
+- `tinte` für allen Text, `tinte-2` nur auf Weiß (Infozeile, Fuß).
+- `rot` ist der weihnachtliche Akzent der Pralinen (Dachzeile, Funkeln, Aufkleber), `tanne` der der Kräuter.
+- Die `sorte-…`- und `kraut-…`-Farben sind nur für Kartenflächen gedacht, nie für Text.
 
 ## Schrift
 
-- **Fraunces** (`--font-display`) – eine warme, leicht verspielte Serifenschrift für Namen, Geschmackssatz und Preise.
-- **Source Sans 3** (`--font-sans`) – sachlich und sehr gut lesbar für Zutaten, Verwendung und Kleingedrucktes.
+- **Bricolage Grotesque** (`--font-display`, 800) für Titel, Namen und Aufkleber: modern, mit etwas Charakter, eng gesetzt (−0,025 bis −0,035 em).
+- **DM Sans** (`--font-sans`) für alles Lesbare: Zutaten, Allergene, Infozeile.
 
-Beide sind frei bei Google Fonts erhältlich. Mindestgröße für Text, der am Stand gelesen werden soll: 21 px (`text`). Nur die Fußzeile ist kleiner.
+Beide gibt es kostenlos bei Google Fonts.
 
-## Formen & Muster
+## Formen
 
-- **Punkte = Pralinen, Blätter = Kräuter.** Diese zwei Formen tragen das Kopfband und das Cover. Sonst gibt es keine Bilder oder Icons – die Schilder bleiben ruhig, die Ware ist der Star.
-- Kästen mit `radius-md`, Marken mit `radius-rund`. Goldene Haarlinie (2 px, `gold`) trennt Kopf, Inhalt und Preis.
-- Keine Schatten, keine Verläufe – das druckt sich auf jedem Drucker sauber.
+- Große, weiche Ecken (`radius-lg`, 28 px) für Karten, alles andere rund (`radius-rund`).
+- **Funkeln**: ein vierzackiger Stern, zwei hinter jedem Titel und einer vor dem Gruß. Mehr Weihnachtsdeko braucht es nicht.
+- Der **Aufkleber** ist leicht gedreht (−9°), wie ein echtes Preisetikett.
+- Keine Schatten, keine Verläufe, keine Linien als Zierde.
 
-## Drucken & Aufstellen
+## Drucken
 
-- **A4 Hochformat, Skalierung 100 % („Tatsächliche Größe“)**, Ränder „Keine“; im Browser „Hintergrundgrafiken drucken“ einschalten, sonst fehlen Kopfband und Kästen.
-- Der Seitenrand (`space-6`, ≈ 15 mm) ist so bemessen, dass auch Drucker ohne Randlosdruck alles erfassen.
-- Ein etwas dickeres Papier (120–160 g/m²) oder eine Klarsichthülle schützt vor Schokoladenfingern; in einem A4-Acryl-Aufsteller wirkt es am edelsten.
-- **Sortiment-Blatt** gut sichtbar an die Rückwand oder den Kassenplatz, die Einzelschilder direkt vor die Ware.
-
-## Komponenten
-
-- **PralinenSchild** – ein A4-Schild pro Pralinensorte.
-- **KraeuterSchild** – ein A4-Schild pro Kraut.
-- **Sortiment** – das Übersichtsblatt mit allen Preisen und der Allergen-Legende.
-- **AllergenMarken** – die 14 Hauptallergene plus Warn- und Frei-Hinweis als Bausteine.
-
-Die Beispielinhalte (Marzipan-Orange, Rosmarin, Preise) sind Platzhalter und werden durch eure echten Sorten, Rezepturen und Preise ersetzt.
+- A4 **Querformat**, Skalierung **100 %**, Ränder „Keine“, **„Hintergrundgrafiken drucken“** einschalten.
+- Die Blätter sind aus `druck/bauen.py` erzeugt. Texte dort ändern und neu bauen, dann bleibt alles einheitlich.
+- Am Stand in A4-Acryl-Aufsteller oder in Klarsichthüllen. Die Farbflächen sind auch aus zwei Metern gut zu unterscheiden.

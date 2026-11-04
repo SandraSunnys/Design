@@ -1,112 +1,95 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap");
+/* Weihnachtsbazar Auslagen – A4 quer, kompakt, modern */
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #e7e4e0; }
+body { font-family: var(--font-sans); color: var(--tinte); }
+@media print { html, body { background: #fff; } .blatt { margin: 0 !important; } }
 
-/* ---------- Druck: A4 hochformat, randlos, Farben erzwingen ---------- */
-@page { size: A4 portrait; margin: 0; }
-@media print {
-  html, body { margin: 0; background: #fff; }
-  .bz-a4 { page-break-after: always; break-after: page; }
-}
-
-/* ---------- Das Blatt ---------- */
-.bz-a4 {
-  box-sizing: border-box;
-  width: 210mm; height: 297mm;
-  position: relative; overflow: hidden;
+.blatt {
+  width: 297mm; height: 210mm; margin: 24px auto; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  padding: 0 var(--space-6) var(--space-5);
-  background: var(--papier); color: var(--tinte);
-  font-family: var(--font-sans);
+  padding: 34px var(--space-5) 22px;
+  background: var(--weiss);
+  break-after: page; page-break-after: always;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
-.bz-a4 *, .bz-a4 *::before, .bz-a4 *::after { box-sizing: border-box; }
+.blatt:last-child { break-after: auto; page-break-after: auto; }
 
-/* Kopfband: Pralinen = Kakao mit Punkten, Kräuter = Tanne mit Blättern */
-.bz-band {
-  height: 56px; margin: 0 calc(-1 * var(--space-6));
-  padding: 0 var(--space-6);
-  display: flex; align-items: center; gap: var(--space-2);
-  background: var(--kakao);
-}
-.bz-band i { display: block; width: 14px; height: 14px; border-radius: var(--radius-rund); background: var(--gold-hell); }
-.bz-band i:nth-child(even) { background: var(--kakao-hell); width: 10px; height: 10px; }
-.bz-band--kraeuter { background: var(--tanne); }
-.bz-band--kraeuter i { width: 18px; height: 12px; border-radius: 0 var(--radius-rund) 0 var(--radius-rund); background: var(--gold-hell); }
-.bz-band--kraeuter i:nth-child(even) { background: var(--tanne-hell); width: 14px; height: 10px; }
+/* ---------- Kopf ---------- */
+.kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+.kopf-text { min-width: 0; }
+.dach { margin: 0 0 6px; font: 700 13px/18px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--rot); }
+.dach--kraeuter { color: var(--tanne); }
+.titel { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 58px; line-height: .95;
+  letter-spacing: -.035em; font-variation-settings: "opsz" 96; }
+.titel .funkeln { display: inline-block; width: 30px; height: 30px; margin-left: 10px; vertical-align: 26px; }
+.titel .funkeln--klein { width: 18px; height: 18px; margin-left: 2px; vertical-align: 46px; }
+.funkeln path { fill: var(--rot); }
+.funkeln--gruen path { fill: var(--tanne); }
+.info { margin: 8px 0 0; font-size: 15px; line-height: 21px; color: var(--tinte-2); }
 
-/* Kopf */
-.bz-dachzeile {
-  margin: var(--space-5) 0 0;
-  font: 600 15px/20px var(--font-sans); letter-spacing: .14em; text-transform: uppercase;
-  color: var(--cranberry);
-}
-.bz-kraeuter .bz-dachzeile { color: var(--tanne); }
-.bz-titel {
-  margin: var(--space-2) 0 0;
-  font-family: var(--font-display); font-weight: 600; font-size: 76px; line-height: .95; letter-spacing: -.01em;
-  color: var(--kakao);
-}
-.bz-kraeuter .bz-titel { color: var(--tanne); }
-.bz-latein { margin: var(--space-1) 0 0; font-family: var(--font-display); font-style: italic; font-size: 24px; line-height: 32px; color: var(--tinte-gedaempft); }
-.bz-lead { margin: var(--space-3) 0 0; max-width: 32ch; font-family: var(--font-display); font-size: 26px; line-height: 36px; }
+/* runder Aufkleber */
+.sticker { flex: 0 0 auto; width: 124px; height: 124px; margin: -6px 6px 0 0; border-radius: var(--radius-rund);
+  background: var(--rot); color: var(--weiss); display: grid; place-content: center; text-align: center;
+  transform: rotate(-9deg); }
+.sticker b { display: block; font: 800 30px/1 var(--font-display); letter-spacing: -.03em; }
+.sticker span { display: block; margin-top: 4px; font: 600 15px/1.1 var(--font-sans); }
+.sticker--gruen { background: var(--tanne); }
 
-.bz-regel { height: 2px; margin: var(--space-4) 0; border: 0; background: var(--gold); }
+/* ---------- Raster ---------- */
+.raster { flex: 1; display: grid; gap: 14px; margin-top: 18px; min-height: 0; }
+.raster--3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; }
+.raster--4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; }
+.raster--4x2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 12px; }
 
-/* Kästen */
-.bz-kasten { border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); background: var(--kakao-hell); }
-.bz-kasten + .bz-kasten { margin-top: var(--space-3); }
-.bz-kraeuter .bz-kasten { background: var(--tanne-hell); }
-.bz-label { margin: 0 0 var(--space-1); font: 700 15px/20px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--kakao); }
-.bz-kraeuter .bz-label { color: var(--tanne); }
-.bz-text { margin: 0; font-size: 21px; line-height: 30px; }
-.bz-text b, .bz-text strong { font-weight: 700; }
-.bz-text + .bz-text { margin-top: var(--space-1); }
-.bz-liste { margin: 0; padding: 0 0 0 1.1em; font-size: 21px; line-height: 30px; }
-.bz-liste li::marker { color: var(--gold); }
-.bz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-.bz-grid .bz-kasten + .bz-kasten { margin-top: 0; }
-.bz-grid .bz-breit { grid-column: 1 / -1; }
-/* immer Luft zwischen letztem Kasten und Preisbereich */
-.bz-a4 > .bz-grid, .bz-a4 > .bz-kasten:last-of-type { margin-bottom: var(--space-4); }
+/* ---------- Karte ---------- */
+.karte { position: relative; display: flex; flex-direction: column; padding: 16px 20px 18px;
+  border-radius: var(--radius-lg); background: var(--c); overflow: hidden; }
+.foto { flex: 0 0 auto; width: 100px; height: 100px; border-radius: var(--radius-rund); background: var(--weiss);
+  display: grid; place-items: center; overflow: hidden; }
+.foto img { width: 88%; height: 88%; object-fit: contain; }
+.foto--bild img { width: 100%; height: 100%; object-fit: cover; }
+.name { margin: 10px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.02;
+  letter-spacing: -.025em; font-variation-settings: "opsz" 48; }
+.pille { display: inline-block; font: 700 11.5px/16px var(--font-sans); letter-spacing: .07em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: var(--radius-rund); white-space: nowrap; }
+.pille--alk { background: var(--tinte); color: var(--weiss); }
+.pille--ohne { background: var(--weiss); color: var(--tinte); }
+.karte > .pille { position: absolute; top: 18px; right: 18px; }
+.allergene { margin: 7px 0 0; font-size: 13px; line-height: 18px; }
+.allergene b, .zutaten b { font-weight: 700; }
+.zutaten { margin: 6px 0 0; font-size: 14px; line-height: 19px; }
 
-/* Marken (Allergene & Hinweise) */
-.bz-chips { display: flex; flex-wrap: wrap; gap: var(--space-1); }
-.bz-chip {
-  display: inline-flex; align-items: center; gap: var(--space-1);
-  padding: 3px 14px 3px 3px; border: 2px solid var(--kakao); border-radius: var(--radius-rund);
-  font: 600 19px/26px var(--font-sans); color: var(--kakao); background: var(--papier);
-}
-.bz-chip b {
-  display: grid; place-items: center; width: 26px; height: 26px; border-radius: var(--radius-rund);
-  background: var(--kakao); color: var(--papier); font-size: 15px; line-height: 1; font-weight: 700;
-}
-.bz-chip--warn { border-color: var(--cranberry); color: var(--cranberry); }
-.bz-chip--warn b { background: var(--cranberry); }
-.bz-chip--frei { border-style: dashed; border-color: var(--tanne); color: var(--tanne); padding-left: 14px; }
-.bz-spuren { margin: var(--space-1) 0 0; font-size: 18px; line-height: 26px; color: var(--tinte-gedaempft); }
+/* 4er-Reihe: große Fotos */
+.raster--4 .karte { padding: 22px; }
+.raster--4 .foto { width: 184px; height: 184px; margin: 34px auto 0; }
+.raster--4 .name { margin-top: 28px; font-size: 23px; }
+.raster--4 .allergene { font-size: 14px; margin-top: 10px; }
+.raster--4 .zutaten { font-size: 16px; line-height: 22px; margin-top: 8px; }
 
-/* Preis & Fuß */
-.bz-preis {
-  margin-top: auto; padding-top: var(--space-3);
-  display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-3);
-  border-top: 2px solid var(--gold);
-}
-.bz-preis-gross { font-family: var(--font-display); font-weight: 700; font-size: 88px; line-height: 1; color: var(--cranberry); white-space: nowrap; }
-.bz-preis-gross small { display: block; margin-top: var(--space-1); font: 400 20px/26px var(--font-sans); color: var(--tinte-gedaempft); }
-.bz-staffel { margin: 0; text-align: right; font-size: 21px; line-height: 30px; }
-.bz-staffel b { color: var(--cranberry); }
-.bz-fuss { margin-top: var(--space-2); display: flex; justify-content: space-between; gap: var(--space-3); font-size: 14px; line-height: 20px; color: var(--tinte-gedaempft); }
+/* Einzelprodukt */
+.karte--gross { flex: 1; margin-top: 18px; flex-direction: row; align-items: center; gap: 36px; padding: 28px 56px 28px 28px; }
+.karte--gross .tafel { flex: 0 0 auto; width: 55%; max-height: 100%; object-fit: contain; }
+.karte--gross .name { margin: 0; font-size: 50px; line-height: .98; }
+.karte--gross .pille { margin-top: 18px; font-size: 13px; padding: 5px 12px; }
+.karte--gross .allergene { font-size: 16px; line-height: 23px; margin-top: 14px; }
+.karte--gross .zutaten { font-size: 20px; line-height: 29px; margin-top: 10px; }
 
-/* Sortiment (Übersicht) */
-.bz-spalten { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-4); }
-.bz-abschnitt { margin: 0 0 var(--space-2); font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 40px; color: var(--kakao); }
-.bz-abschnitt--kraeuter { color: var(--tanne); }
-.bz-zeilen { margin: 0; padding: 0; list-style: none; }
-.bz-zeilen li { display: flex; align-items: baseline; gap: var(--space-1); font-size: 20px; line-height: 28px; padding: 6px 0; }
-.bz-zeilen li::after { content: none; }
-.bz-zeilen .bz-name { flex: 0 1 auto; }
-.bz-zeilen .bz-name sup { margin-left: 4px; font-size: 13px; font-weight: 700; color: var(--tinte-gedaempft); letter-spacing: .04em; }
-.bz-zeilen .bz-punkte { flex: 1 1 auto; border-bottom: 2px dotted var(--gold); transform: translateY(-6px); min-width: 16px; }
-.bz-zeilen .bz-betrag { flex: 0 0 auto; font-weight: 700; color: var(--cranberry); }
-.bz-legende { margin-top: auto; padding-top: var(--space-3); border-top: 2px solid var(--gold); }
-.bz-legende ul { margin: var(--space-1) 0 0; padding: 0; list-style: none; columns: 3; column-gap: var(--space-3); font-size: 15px; line-height: 24px; }
-.bz-legende li b { display: inline-block; width: 20px; color: var(--kakao); }
+/* Kräuter (4 × 2) */
+.karte--kraut { padding: 14px 16px 16px; }
+.kraut-kopf { display: flex; align-items: center; gap: 12px; }
+.kraut-kopf .foto { width: 84px; height: 84px; }
+.karte--kraut .name { margin: 10px 0 0; font-size: 20px; }
+.latein { margin: 5px 0 0; font-size: 12.5px; line-height: 16px; font-style: italic; }
+.gewicht { display: inline-block; font: 700 12px/16px var(--font-sans); padding: 2px 9px;
+  border-radius: var(--radius-rund); background: var(--weiss); }
+.karte--kraut .zutaten { margin-top: 6px; font-size: 13.5px; line-height: 18.5px; }
+
+/* ---------- Fuß ---------- */
+.fuss { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: 14px;
+  font-size: 13px; line-height: 18px; color: var(--tinte-2); }
+.fuss b { color: var(--tinte); }
+.fuss .gruss { font: 800 15px/1 var(--font-display); letter-spacing: -.01em; color: var(--rot); display: inline-flex; align-items: center; gap: 6px; }
+.fuss .gruss svg { width: 14px; height: 14px; }
+.fuss .credit { font-size: 10.5px; }

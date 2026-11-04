@@ -1,14 +1,169 @@
 {
   "v": 3,
-  "layout": "files",
-  "createdOnFiles": { "v": 1, "at": "2026-11-04T19:05:00Z" },
-  "title": "Weihnachtsbazar Auslagen",
-  "namespace": "Bazar",
-  "libraries": [],
-  "sections": {},
-  "groups": [],
-  "assetGroups": {},
+  "assetGroups": {
+    "Produktfotos": {
+      "name": "Produktfotos",
+      "tile": "s",
+      "order": [
+        "kirsch.png",
+        "eierlikoer.png",
+        "baileys.png",
+        "cointreau.png",
+        "limoncello.png",
+        "aperol.png",
+        "karamell.png",
+        "himbeer.png",
+        "nougat.png",
+        "haselnuss.png",
+        "dubai.png",
+        "zitronenverbene.jpg",
+        "minze.jpg",
+        "bergbohnenkraut.jpg",
+        "oregano.jpg",
+        "estragon.jpg",
+        "thymian-franz.jpg",
+        "limonenthymian.jpg",
+        "goldsalbei.jpg"
+      ],
+      "files": {
+        "kirsch.png": {
+          "name": "kirsch.png",
+          "blob": "5d13805d6c1e09e2028fc57662e23e1a",
+          "size": 69783,
+          "type": "image/png"
+        },
+        "eierlikoer.png": {
+          "name": "eierlikoer.png",
+          "blob": "ebc9054c1cf4e86f4a1ad8d23da03598",
+          "size": 92019,
+          "type": "image/png"
+        },
+        "baileys.png": {
+          "name": "baileys.png",
+          "blob": "2761a15dfe00f19ca4a0774a7684c4bb",
+          "size": 97420,
+          "type": "image/png"
+        },
+        "cointreau.png": {
+          "name": "cointreau.png",
+          "blob": "288c3860cc9031e45ffaf3a71e38ba05",
+          "size": 138171,
+          "type": "image/png"
+        },
+        "limoncello.png": {
+          "name": "limoncello.png",
+          "blob": "a6d4fc4ae798c1fb6a457244ecfde705",
+          "size": 127463,
+          "type": "image/png"
+        },
+        "aperol.png": {
+          "name": "aperol.png",
+          "blob": "ea462d186abd6a231ee59b0d877820db",
+          "size": 254546,
+          "type": "image/png"
+        },
+        "karamell.png": {
+          "name": "karamell.png",
+          "blob": "87319e2561e7ce1247ae0416bc4bd181",
+          "size": 22294,
+          "type": "image/png"
+        },
+        "himbeer.png": {
+          "name": "himbeer.png",
+          "blob": "4ca9a5e5a1d8dc7eb5afa361fc859adc",
+          "size": 130895,
+          "type": "image/png"
+        },
+        "nougat.png": {
+          "name": "nougat.png",
+          "blob": "f829123dcb4850d1e962c0fbc0126208",
+          "size": 101739,
+          "type": "image/png"
+        },
+        "haselnuss.png": {
+          "name": "haselnuss.png",
+          "blob": "6a7e41650d382b4173686a1dd5903251",
+          "size": 135574,
+          "type": "image/png"
+        },
+        "dubai.png": {
+          "name": "dubai.png",
+          "blob": "a537a9cdd7c8d230bcb4bfe828aced4e",
+          "size": 797376,
+          "type": "image/png"
+        },
+        "zitronenverbene.jpg": {
+          "name": "zitronenverbene.jpg",
+          "blob": "0e0d43ed64af350b463a23b09aa538eb",
+          "size": 19236,
+          "type": "image/jpeg"
+        },
+        "minze.jpg": {
+          "name": "minze.jpg",
+          "blob": "6267e82abade43aaf2e4828f8976188a",
+          "size": 5993,
+          "type": "image/jpeg"
+        },
+        "bergbohnenkraut.jpg": {
+          "name": "bergbohnenkraut.jpg",
+          "blob": "e5d854008b2ca393372361d757579e48",
+          "size": 7889,
+          "type": "image/jpeg"
+        },
+        "oregano.jpg": {
+          "name": "oregano.jpg",
+          "blob": "bb0967a4001c96972fcf5ea04f26bfbb",
+          "size": 7050,
+          "type": "image/jpeg"
+        },
+        "estragon.jpg": {
+          "name": "estragon.jpg",
+          "blob": "acebcd48264c88426ac0e3f19c4a9406",
+          "size": 39235,
+          "type": "image/jpeg"
+        },
+        "thymian-franz.jpg": {
+          "name": "thymian-franz.jpg",
+          "blob": "2533cba4c394671582cdd3f6a191fcb1",
+          "size": 61366,
+          "type": "image/jpeg"
+        },
+        "limonenthymian.jpg": {
+          "name": "limonenthymian.jpg",
+          "blob": "9a69b76f788c72bc17a24b126088c39b",
+          "size": 74280,
+          "type": "image/jpeg"
+        },
+        "goldsalbei.jpg": {
+          "name": "goldsalbei.jpg",
+          "blob": "5e4962d88beb6e31377e445e44727d3f",
+          "size": 33800,
+          "type": "image/jpeg"
+        }
+      }
+    }
+  },
   "blobs": {},
-  "docs": { "readme": "project/README.md", "sections": [] },
-  "lastChange": { "by": "Claude", "at": "2026-11-04T19:05:00Z", "via": "Claude Code", "note": "Erste Fassung: Farben, Schriften, A4-Schilder für Pralinen, Kräuter und Sortiment" }
+  "createdOnFiles": {
+    "at": "2026-11-04T19:05:00Z",
+    "v": 1
+  },
+  "docs": {
+    "readme": "project/README.md",
+    "sections": []
+  },
+  "groups": [
+    "Produktfotos"
+  ],
+  "lastChange": {
+    "by": "Claude",
+    "at": "2026-11-04T20:10:00Z",
+    "via": "Claude Code",
+    "note": "Neues, modernes Design: kompakte Querformat-Blätter mit euren Fotos, 8 Kräuter"
+  },
+  "layout": "files",
+  "libraries": [],
+  "namespace": "Bazar",
+  "sections": {},
+  "title": "Weihnachtsbazar Auslagen"
 }

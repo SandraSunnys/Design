@@ -1,0 +1,102 @@
+/* Weihnachtsbazar Auslagen – A4 quer, kompakt, modern */
+:root {
+  --weiss: #ffffff; --tinte: #1d1b1a; --tinte-2: #5c5652;
+  --rot: #c8102e; --tanne: #0f5b45;
+  --font-display: "Bricolage Grotesque", "Arial Black", Arial, sans-serif;
+  --font-sans: "DM Sans", "Segoe UI", Arial, sans-serif;
+  --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px; --space-5: 44px;
+  --radius-sm: 10px; --radius-lg: 28px; --radius-rund: 999px;
+}
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #e7e4e0; }
+body { font-family: var(--font-sans); color: var(--tinte); }
+@media print { html, body { background: #fff; } .blatt { margin: 0 !important; } }
+
+.blatt {
+  width: 297mm; height: 210mm; margin: 24px auto; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 34px var(--space-5) 22px;
+  background: var(--weiss);
+  break-after: page; page-break-after: always;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.blatt:last-child { break-after: auto; page-break-after: auto; }
+
+/* ---------- Kopf ---------- */
+.kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+.kopf-text { min-width: 0; }
+.dach { margin: 0 0 6px; font: 700 13px/18px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--rot); }
+.dach--kraeuter { color: var(--tanne); }
+.titel { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 58px; line-height: .95;
+  letter-spacing: -.035em; font-variation-settings: "opsz" 96; }
+.titel .funkeln { display: inline-block; width: 30px; height: 30px; margin-left: 10px; vertical-align: 26px; }
+.titel .funkeln--klein { width: 18px; height: 18px; margin-left: 2px; vertical-align: 46px; }
+.funkeln path { fill: var(--rot); }
+.funkeln--gruen path { fill: var(--tanne); }
+.info { margin: 8px 0 0; font-size: 15px; line-height: 21px; color: var(--tinte-2); }
+
+/* runder Aufkleber */
+.sticker { flex: 0 0 auto; width: 124px; height: 124px; margin: -6px 6px 0 0; border-radius: var(--radius-rund);
+  background: var(--rot); color: var(--weiss); display: grid; place-content: center; text-align: center;
+  transform: rotate(-9deg); }
+.sticker b { display: block; font: 800 30px/1 var(--font-display); letter-spacing: -.03em; }
+.sticker span { display: block; margin-top: 4px; font: 600 15px/1.1 var(--font-sans); }
+.sticker--gruen { background: var(--tanne); }
+
+/* ---------- Raster ---------- */
+.raster { flex: 1; display: grid; gap: 14px; margin-top: 18px; min-height: 0; }
+.raster--3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; }
+.raster--4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; }
+.raster--4x2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 12px; }
+
+/* ---------- Karte ---------- */
+.karte { position: relative; display: flex; flex-direction: column; padding: 16px 20px 18px;
+  border-radius: var(--radius-lg); background: var(--c); overflow: hidden; }
+.foto { flex: 0 0 auto; width: 100px; height: 100px; border-radius: var(--radius-rund); background: var(--weiss);
+  display: grid; place-items: center; overflow: hidden; }
+.foto img { width: 88%; height: 88%; object-fit: contain; }
+.foto--bild img { width: 100%; height: 100%; object-fit: cover; }
+.name { margin: 10px 0 0; font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.02;
+  letter-spacing: -.025em; font-variation-settings: "opsz" 48; }
+.pille { display: inline-block; font: 700 11.5px/16px var(--font-sans); letter-spacing: .07em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: var(--radius-rund); white-space: nowrap; }
+.pille--alk { background: var(--tinte); color: var(--weiss); }
+.pille--ohne { background: var(--weiss); color: var(--tinte); }
+.karte > .pille { position: absolute; top: 18px; right: 18px; }
+.allergene { margin: 7px 0 0; font-size: 13px; line-height: 18px; }
+.allergene b, .zutaten b { font-weight: 700; }
+.zutaten { margin: 6px 0 0; font-size: 14px; line-height: 19px; }
+
+/* 4er-Reihe: große Fotos */
+.raster--4 .karte { padding: 22px; }
+.raster--4 .foto { width: 184px; height: 184px; margin: 34px auto 0; }
+.raster--4 .name { margin-top: 28px; font-size: 23px; }
+.raster--4 .allergene { font-size: 14px; margin-top: 10px; }
+.raster--4 .zutaten { font-size: 16px; line-height: 22px; margin-top: 8px; }
+
+/* Einzelprodukt */
+.karte--gross { flex: 1; margin-top: 18px; flex-direction: row; align-items: center; gap: 36px; padding: 28px 56px 28px 28px; }
+.karte--gross .tafel { flex: 0 0 auto; width: 55%; max-height: 100%; object-fit: contain; }
+.karte--gross .name { margin: 0; font-size: 50px; line-height: .98; }
+.karte--gross .pille { margin-top: 18px; font-size: 13px; padding: 5px 12px; }
+.karte--gross .allergene { font-size: 16px; line-height: 23px; margin-top: 14px; }
+.karte--gross .zutaten { font-size: 20px; line-height: 29px; margin-top: 10px; }
+
+/* Kräuter (4 × 2) */
+.karte--kraut { padding: 14px 16px 16px; }
+.kraut-kopf { display: flex; align-items: center; gap: 12px; }
+.kraut-kopf .foto { width: 84px; height: 84px; }
+.karte--kraut .name { margin: 10px 0 0; font-size: 20px; }
+.latein { margin: 5px 0 0; font-size: 12.5px; line-height: 16px; font-style: italic; }
+.gewicht { display: inline-block; font: 700 12px/16px var(--font-sans); padding: 2px 9px;
+  border-radius: var(--radius-rund); background: var(--weiss); }
+.karte--kraut .zutaten { margin-top: 6px; font-size: 13.5px; line-height: 18.5px; }
+
+/* ---------- Fuß ---------- */
+.fuss { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: 14px;
+  font-size: 13px; line-height: 18px; color: var(--tinte-2); }
+.fuss b { color: var(--tinte); }
+.fuss .gruss { font: 800 15px/1 var(--font-display); letter-spacing: -.01em; color: var(--rot); display: inline-flex; align-items: center; gap: 6px; }
+.fuss .gruss svg { width: 14px; height: 14px; }
+.fuss .credit { font-size: 10.5px; }
