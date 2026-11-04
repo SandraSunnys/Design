@@ -1,0 +1,71 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Weihnachtsbazar Auslagen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--papier); color:var(--tinte); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; width:960px; height:288px; overflow:hidden; }
+  .band { position:absolute; top:0; left:0; width:960px; height:112px; }
+  .band svg { display:block; width:960px; height:112px; }
+  .tanne { fill:var(--tanne); }
+  .kakao { fill:var(--kakao); }
+  .cran  { fill:var(--cranberry); }
+  .gold  { fill:var(--gold); }
+  .kh    { fill:var(--kakao-hell); }
+  .goldh { fill:var(--gold-hell); }
+  .th    { fill:var(--tanne-hell); }
+  .blk   { rx:var(--radius-md); }
+  .words { position:absolute; left:var(--space-6); right:var(--space-6); bottom:var(--space-5); max-width:880px; }
+  .name { margin:0; font-family:var(--font-display); font-size:64px; line-height:.95; font-weight:600; letter-spacing:-.01em; color:var(--kakao); white-space:nowrap; }
+  .tag { margin:var(--space-2) 0 0 2px; font-size:14px; line-height:20px; color:var(--tinte-gedaempft); max-width:440px; }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="band" aria-hidden="true">
+<svg viewBox="0 0 960 112" width="960" height="112">
+<!--
+  blocks      tanne 368×128 (Kräuter, größter Block) · kakao 288×128 (Pralinen) · cranberry 112×128 (Preis/Akzent) · kakao-hell 144 bleeding right (Entlastung) · gold nur als Punkte — ≈ 38 % von 960×288
+  arrangement Streifen ungleicher Bänder oben, alle von oben angeschnitten (top-band, weil der Name zu breit für die 440-px-Zone ist), Fugen space-2
+  pattern     Scheiben (Pralinen) und Blätter (Kräuter) aus radius-rund — „Pralinen = Punkte, Kräuter = Blätter“ wie im Kopfband jedes Schildes; 21 Einheiten
+  scales      Seiten in space-2-Vielfachen; Fugen space-2; Raster space-4 (32 px); Ecken radius-md, Scheiben/Blätter radius-rund
+-->
+<rect class="tanne blk" x="0"   y="-16" width="368" height="128" rx="14"/>
+<rect class="cran blk"  x="384" y="-16" width="112" height="128" rx="14"/>
+<rect class="kakao blk" x="512" y="-16" width="288" height="128" rx="14"/>
+<rect class="kh blk"    x="816" y="-16" width="160" height="128" rx="14"/>
+<!-- Blätter auf Tanne -->
+<path class="goldh" d="M40 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<path class="th"    d="M88 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<path class="goldh" d="M136 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<path class="th"    d="M184 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<path class="goldh" d="M232 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<path class="th"    d="M280 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<path class="goldh" d="M328 72 q0 -16 16 -16 q0 16 -16 16z"/>
+<!-- Pralinen-Scheiben auf Kakao -->
+<circle class="goldh" cx="552" cy="64" r="12"/>
+<circle class="kh"    cx="600" cy="64" r="8"/>
+<circle class="goldh" cx="648" cy="64" r="12"/>
+<circle class="kh"    cx="696" cy="64" r="8"/>
+<circle class="goldh" cx="744" cy="64" r="12"/>
+<!-- Scheiben auf Kakao-hell, eine aus dem Block gelöst -->
+<circle class="kakao" cx="856" cy="64" r="12"/>
+<circle class="gold"  cx="904" cy="64" r="8"/>
+<circle class="cran"  cx="944" cy="64" r="12"/>
+<!-- Akzent: drei Goldpunkte auf Cranberry -->
+<circle class="goldh" cx="416" cy="64" r="6"/>
+<circle class="goldh" cx="440" cy="64" r="6"/>
+<circle class="goldh" cx="464" cy="64" r="6"/>
+</svg>
+</div>
+<div class="words">
+  <h1 class="name">Weihnachtsbazar Auslagen</h1>
+  <p class="tag">A4-Schilder für Pralinen und Kräuter – lesbar aus der Ferne.</p>
+</div>
+</div>
+</body>
+</html>
