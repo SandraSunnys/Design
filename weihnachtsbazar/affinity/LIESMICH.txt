@@ -11,6 +11,7 @@ Texte.txt               Alle Texte zum Kopieren.
 Schriften/              Bricolage Grotesque und DM Sans (frei, SIL Open Font License).
 Fotos/                  Alle Produktfotos (Pralinen freigestellt als PNG, Kräuter als JPG).
 Vorschau/               So soll jede Seite aussehen.
+Anweisung_fuer_Claude.md  Fertige Bau-Anweisung für ein Claude mit Affinity-Zugang.
 
 In 4 Schritten
 --------------
