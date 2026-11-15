@@ -73,24 +73,21 @@ body { font-family: var(--font-sans); color: var(--tinte); }
 .pille--alk { background: var(--tinte); color: var(--weiss); }
 .pille--ohne { background: var(--weiss); color: var(--tinte); }
 .karte > .pille { position: absolute; top: 18px; right: 18px; }
-.allergene { margin: 7px 0 0; font-size: 13px; line-height: 18px; }
-.allergene b, .zutaten b { font-weight: 700; }
-.zutaten { margin: 6px 0 0; font-size: 14px; line-height: 19px; }
+.zutaten b { font-weight: 700; }
+.zutaten { margin: 8px 0 0; font-size: 15px; line-height: 21px; }
 
 /* 4er-Reihe: große Fotos */
 .raster--4 .karte { padding: 22px; }
 .raster--4 .foto { width: 184px; height: 184px; margin: 34px auto 0; }
 .raster--4 .name { margin-top: 28px; font-size: 23px; }
-.raster--4 .allergene { font-size: 14px; margin-top: 10px; }
-.raster--4 .zutaten { font-size: 16px; line-height: 22px; margin-top: 8px; }
+.raster--4 .zutaten { font-size: 17px; line-height: 24px; margin-top: 12px; }
 
 /* Einzelprodukt */
 .karte--gross { flex: 1; margin-top: 18px; flex-direction: row; align-items: center; gap: 36px; padding: 28px 56px 28px 28px; }
 .karte--gross .tafel { flex: 0 0 auto; width: 55%; max-height: 100%; object-fit: contain; }
 .karte--gross .name { margin: 0; font-size: 50px; line-height: .98; }
 .karte--gross .pille { margin-top: 18px; font-size: 13px; padding: 5px 12px; }
-.karte--gross .allergene { font-size: 16px; line-height: 23px; margin-top: 14px; }
-.karte--gross .zutaten { font-size: 20px; line-height: 29px; margin-top: 10px; }
+.karte--gross .zutaten { font-size: 22px; line-height: 32px; margin-top: 18px; }
 
 /* Kräuter (4 × 2) */
 .karte--kraut { padding: 14px 16px 16px; }
@@ -110,6 +107,9 @@ body { font-family: var(--font-sans); color: var(--tinte); }
 .fuss .gruss svg { width: 14px; height: 14px; }
 .fuss .credit { font-size: 10.5px; }
 
+/* Blatt 1: etwas größere Fotos */
+.raster--3 .foto { width: 112px; height: 112px; }
+
 </style>
 </head>
 <body>
@@ -127,42 +127,36 @@ body { font-family: var(--font-sans); color: var(--tinte); }
       <span class="pille pille--alk">mit Alkohol</span>
       <div class="foto"><img src="fotos/kirsch.png" alt=""></div>
       <h2 class="name">Kirschpralinen</h2>
-      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Luz-Träsch, Kirschlikör, Zartbitterschokolade</p>
     </article>
     <article class="karte" style="--c:#ffd75e">
       <span class="pille pille--alk">mit Alkohol</span>
       <div class="foto"><img src="fotos/eierlikoer.png" alt=""></div>
       <h2 class="name">Eierlikörpralinen</h2>
-      <p class="allergene"><b>Allergene:</b> Ei, Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Sahne, Eierlikör, Vanille, Zartbitterschokolade</p>
     </article>
     <article class="karte" style="--c:#e8b994">
       <span class="pille pille--alk">mit Alkohol</span>
       <div class="foto"><img src="fotos/baileys.png" alt=""></div>
       <h2 class="name">Baileys-Trüffel</h2>
-      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Baileys</p>
     </article>
     <article class="karte" style="--c:#d8c3b4">
       <span class="pille pille--alk">mit Alkohol</span>
       <div class="foto"><img src="fotos/cointreau.png" alt=""></div>
       <h2 class="name">Cointreau-Trüffel</h2>
-      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Cointreau, Zartbitterschokolade, Kakaopulver, Kristallzucker</p>
     </article>
     <article class="karte" style="--c:#e6ee6e">
       <span class="pille pille--alk">mit Alkohol</span>
       <div class="foto"><img src="fotos/limoncello.png" alt=""></div>
       <h2 class="name">Limoncello-Trüffel</h2>
-      <p class="allergene"><b>Allergene:</b> Ei, Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Zucker, Sahne, Eigelbpulver, Limoncello, Butter, Kakaobutter, Fruchtpulver Limette, Kristallzucker</p>
     </article>
     <article class="karte" style="--c:#ff9b6a">
       <span class="pille pille--alk">mit Alkohol</span>
       <div class="foto"><img src="fotos/aperol.png" alt=""></div>
       <h2 class="name">Aperolpralinen</h2>
-      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Sahne, Aperol, Orangensaft, Puderzucker, Orangenöl, Kristallzucker, Orangenfruchtpulver</p>
     </article>
   </div>
@@ -182,28 +176,24 @@ body { font-family: var(--font-sans); color: var(--tinte); }
       <span class="pille pille--ohne">ohne Alkohol</span>
       <div class="foto"><img src="fotos/karamell.png" alt=""></div>
       <h2 class="name">Karamell-Trüffel</h2>
-      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Zucker, Honig</p>
     </article>
     <article class="karte" style="--c:#ff86b0">
       <span class="pille pille--ohne">ohne Alkohol</span>
       <div class="foto"><img src="fotos/himbeer.png" alt=""></div>
       <h2 class="name">Himbeerpralinen</h2>
-      <p class="allergene"><b>Allergene:</b> Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> weiße Schokolade, Himbeeren, Zitrone, Sahne, Zucker, Zartbitterschokolade, Fruchtpulver Himbeere, Kristallzucker</p>
     </article>
     <article class="karte" style="--c:#d1a585">
       <span class="pille pille--ohne">ohne Alkohol</span>
       <div class="foto"><img src="fotos/nougat.png" alt=""></div>
       <h2 class="name">Nougatpralinen</h2>
-      <p class="allergene"><b>Allergene:</b> Haselnüsse, Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Nougat, Sahne, Vollmilchschokolade, Zartbitterschokolade</p>
     </article>
     <article class="karte" style="--c:#e7b97c">
       <span class="pille pille--ohne">ohne Alkohol</span>
       <div class="foto"><img src="fotos/haselnuss.png" alt=""></div>
       <h2 class="name">Haselnusspralinen</h2>
-      <p class="allergene"><b>Allergene:</b> Haselnüsse, Milch, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Sahne, Zartbitterschokolade, Haselnusskrokant, Nussöl</p>
     </article>
   </div>
@@ -223,7 +213,6 @@ body { font-family: var(--font-sans); color: var(--tinte); }
     <div>
       <h2 class="name">Schokoladentafel Dubai-Style</h2>
       <span class="pille pille--ohne">ohne Alkohol</span>
-      <p class="allergene"><b>Allergene:</b> Gluten (Weizen), Milch, Pistazien, Sesam, Soja</p>
       <p class="zutaten"><b>Zutaten:</b> Vollmilchschokolade, Kadayif, Pistaziencreme, Tahini, Butter, Rosenwasser</p>
     </div>
   </article>

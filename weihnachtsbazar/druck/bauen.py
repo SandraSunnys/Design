@@ -11,36 +11,35 @@ ADRESSE = "<b>Angelika Ruppel</b> · Talerweg 21 · 81825 München"
 INFO_P = ("Mit belgischer Callebaut-Schokolade hergestellt. Ohne Konservierungsstoffe – "
           "gekühlt haltbar bis Jahresende.")
 
-# name, foto, farbe, alkohol?, allergene, zutaten
+# name, foto, farbe, alkohol?, zutaten
 PRALINEN_1 = [
-    ("Kirschpralinen", "kirsch.png", "#ff8fa0", True, "Milch, Soja",
+    ("Kirschpralinen", "kirsch.png", "#ff8fa0", True,
      "Vollmilchschokolade, Sahne, Luz-Träsch, Kirschlikör, Zartbitterschokolade"),
-    ("Eierlikörpralinen", "eierlikoer.png", "#ffd75e", True, "Ei, Milch, Soja",
+    ("Eierlikörpralinen", "eierlikoer.png", "#ffd75e", True,
      "weiße Schokolade, Sahne, Eierlikör, Vanille, Zartbitterschokolade"),
-    ("Baileys-Trüffel", "baileys.png", "#e8b994", True, "Milch, Soja",
+    ("Baileys-Trüffel", "baileys.png", "#e8b994", True,
      "Vollmilchschokolade, Sahne, Baileys"),
-    ("Cointreau-Trüffel", "cointreau.png", "#d8c3b4", True, "Milch, Soja",
+    ("Cointreau-Trüffel", "cointreau.png", "#d8c3b4", True,
      "Vollmilchschokolade, Sahne, Cointreau, Zartbitterschokolade, Kakaopulver, Kristallzucker"),
-    ("Limoncello-Trüffel", "limoncello.png", "#e6ee6e", True, "Ei, Milch, Soja",
+    ("Limoncello-Trüffel", "limoncello.png", "#e6ee6e", True,
      "weiße Schokolade, Zucker, Sahne, Eigelbpulver, Limoncello, Butter, Kakaobutter, "
      "Fruchtpulver Limette, Kristallzucker"),
-    ("Aperolpralinen", "aperol.png", "#ff9b6a", True, "Milch, Soja",
+    ("Aperolpralinen", "aperol.png", "#ff9b6a", True,
      "weiße Schokolade, Sahne, Aperol, Orangensaft, Puderzucker, Orangenöl, Kristallzucker, "
      "Orangenfruchtpulver"),
 ]
 PRALINEN_2 = [
-    ("Karamell-Trüffel", "karamell.png", "#f7bb5c", False, "Milch, Soja",
+    ("Karamell-Trüffel", "karamell.png", "#f7bb5c", False,
      "Vollmilchschokolade, Sahne, Zucker, Honig"),
-    ("Himbeerpralinen", "himbeer.png", "#ff86b0", False, "Milch, Soja",
+    ("Himbeerpralinen", "himbeer.png", "#ff86b0", False,
      "weiße Schokolade, Himbeeren, Zitrone, Sahne, Zucker, Zartbitterschokolade, "
      "Fruchtpulver Himbeere, Kristallzucker"),
-    ("Nougatpralinen", "nougat.png", "#d1a585", False, "Haselnüsse, Milch, Soja",
+    ("Nougatpralinen", "nougat.png", "#d1a585", False,
      "Nougat, Sahne, Vollmilchschokolade, Zartbitterschokolade"),
-    ("Haselnusspralinen", "haselnuss.png", "#e7b97c", False, "Haselnüsse, Milch, Soja",
+    ("Haselnusspralinen", "haselnuss.png", "#e7b97c", False,
      "Vollmilchschokolade, Sahne, Zartbitterschokolade, Haselnusskrokant, Nussöl"),
 ]
 DUBAI = ("Schokoladentafel Dubai-Style", "dubai.png", "#bfdc80", False,
-         "Gluten (Weizen), Milch, Pistazien, Sesam, Soja",
          "Vollmilchschokolade, Kadayif, Pistaziencreme, Tahini, Butter, Rosenwasser")
 
 # name, gewicht, latein, foto, farbe, verwendung
@@ -110,13 +109,12 @@ def pille(alk):
 
 
 def praline(p):
-    name, foto, farbe, alk, allerg, zut = p
+    name, foto, farbe, alk, zut = p
     return f"""
     <article class="karte" style="--c:{farbe}">
       {pille(alk)}
       <div class="foto"><img src="fotos/{foto}" alt=""></div>
       <h2 class="name">{escape(name)}</h2>
-      <p class="allergene"><b>Allergene:</b> {escape(allerg)}</p>
       <p class="zutaten"><b>Zutaten:</b> {escape(zut)}</p>
     </article>"""
 
@@ -146,14 +144,13 @@ seiten.append(f"""<section class="blatt">{kopf("Handgemacht · ohne Alkohol", "S
   <div class="raster raster--4">{''.join(praline(p) for p in PRALINEN_2)}
   </div>{fuss()}
 </section>""")
-name, foto, farbe, alk, allerg, zut = DUBAI
+name, foto, farbe, alk, zut = DUBAI
 seiten.append(f"""<section class="blatt">{kopf("Handgemacht", "Schokolade im Dubai-Style", INFO_P, ("ca.", "70 g"))}
   <article class="karte karte--gross" style="--c:{farbe}">
     <img class="tafel" src="fotos/{foto}" alt="">
     <div>
       <h2 class="name">{escape(name)}</h2>
       {pille(alk)}
-      <p class="allergene"><b>Allergene:</b> {escape(allerg)}</p>
       <p class="zutaten"><b>Zutaten:</b> {escape(zut)}</p>
     </div>
   </article>{fuss()}

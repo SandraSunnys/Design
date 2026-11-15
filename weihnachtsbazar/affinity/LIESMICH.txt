@@ -1,0 +1,33 @@
+WEIHNACHTSBAZAR AUSLAGEN – PAKET FÜR AFFINITY
+==============================================
+
+Inhalt
+------
+Auslagen_Affinity.pdf   Die 4 Seiten (A4 quer) als Vektor-PDF: Flächen, Kreise, Sterne und Texte
+                        sind einzeln bearbeitbar, die Fotos eingebettet.
+Masse_und_Stile.pdf     Maßblatt: alle Positionen und Größen in mm, Schriftstile in pt, alle Farben.
+Farben.ase              Farbpalette (24 Farben) zum Importieren.
+Texte.txt               Alle Texte zum Kopieren.
+Schriften/              Bricolage Grotesque und DM Sans (frei, SIL Open Font License).
+Fotos/                  Alle Produktfotos (Pralinen freigestellt als PNG, Kräuter als JPG).
+Vorschau/               So soll jede Seite aussehen.
+
+In 4 Schritten
+--------------
+1. Schriften installieren: Ordner "Schriften" öffnen, jede .ttf-Datei doppelklicken
+   und "Installieren" wählen. Danach Affinity neu starten.
+2. In Affinity: Datei > Öffnen > Auslagen_Affinity.pdf. Im Import-Dialog die Option
+   für bearbeitbaren Text einschalten. Jede PDF-Seite wird eine Seite bzw. Zeichenfläche.
+3. Farbpalette: im Farbfelder-Panel über das Menü "Palette importieren" Farben.ase laden.
+4. Texte ändern, Fotos austauschen (Foto auswählen > Ersetzen), drucken mit 100 %.
+
+Gut zu wissen
+-------------
+- Gesperrt gesetzte Texte (Dachzeile "HANDGEMACHT", die Pillen "MIT ALKOHOL" usw.)
+  und der gedrehte Aufkleber können als einzelne Buchstaben ankommen. Am einfachsten
+  diese paar Texte neu setzen: Werte stehen im Maßblatt, die Texte in Texte.txt.
+- Die Pralinenfotos sitzen auf weißen Kreisen, die Kräuterfotos sind rund maskiert.
+- Minze, Oregano und Bergbohnenkraut liegen nur in kleiner Auflösung vor.
+  Bessere Fotos einfach austauschen.
+- Die Fotos von Estragon (CC BY-NC-ND) und Französischem Thymian (CC BY-SA) brauchen
+  den Bildnachweis unten auf der Kräuterseite. Eigene Fotos machen ihn überflüssig.
