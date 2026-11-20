@@ -1,0 +1,906 @@
+<title>Basar-Kasse</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=DM+Sans:opsz,wght@9..40,400..700&display=swap">
+<style>
+/* Layout: Kasse wie ein Verkaufstisch – links das Sortiment als Farbkarten der Auslagen, rechts der Bon; auf dem Handy untereinander mit fester Summenleiste. */
+:root {
+  --grund: #ffffff;
+  --flaeche: #f5f2f0;
+  --linie: #e5dfdb;
+  --tinte: #1d1b1a;
+  --tinte-2: #5c5652;
+  --rot: #c8102e;
+  --rot-tief: #a30c25;
+  --auf-rot: #ffffff;
+  --tanne: #0f5b45;
+  --gut: #0f5b45;
+  --warn: #9a3412;
+  --warn-grund: #fff1e6;
+  --auf-farbe: #1d1b1a;
+  --font-display: "Bricolage Grotesque", "Arial Black", Arial, sans-serif;
+  --font-sans: "DM Sans", "Segoe UI", Arial, sans-serif;
+  --radius-lg: 22px;
+  --radius-sm: 12px;
+  --rund: 999px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --grund: #161413; --flaeche: #221f1d; --linie: #38322f; --tinte: #f4f0ed; --tinte-2: #b5ada7;
+    --rot: #ff5d70; --rot-tief: #ff7f8e; --auf-rot: #1d1b1a; --tanne: #5fd1a5; --gut: #5fd1a5;
+    --warn: #ffb27a; --warn-grund: #3a2414; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --grund: #161413; --flaeche: #221f1d; --linie: #38322f; --tinte: #f4f0ed; --tinte-2: #b5ada7;
+  --rot: #ff5d70; --rot-tief: #ff7f8e; --auf-rot: #1d1b1a; --tanne: #5fd1a5; --gut: #5fd1a5;
+  --warn: #ffb27a; --warn-grund: #3a2414; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--grund); color: var(--tinte); font: 400 15px/1.45 var(--font-sans); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--rot); outline-offset: 2px; }
+.tab { font-variant-numeric: tabular-nums; }
+
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--grund); }
+
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* ---------- Kopf ---------- */
+.kopf { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--grund); border-bottom: 1px solid var(--linie); }
+.kopf .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; padding-block: 12px; }
+.marke { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.marke h1 { margin: 0; font: 800 26px/1 var(--font-display); letter-spacing: -.03em; font-variation-settings: "opsz" 48; }
+.marke svg { width: 18px; height: 18px; flex: none; }
+.funkeln path { fill: var(--rot); }
+.status { font-size: 12.5px; color: var(--tinte-2); display: inline-flex; align-items: center; gap: 6px; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--tinte-2); }
+.status[data-s="live"]::before { background: var(--gut); }
+.status[data-s="lokal"]::before, .status[data-s="fehler"]::before { background: var(--warn); }
+
+.tabs { display: flex; gap: 4px; background: var(--flaeche); border-radius: var(--rund); padding: 4px; }
+.tabs button { border: 0; background: transparent; padding: 8px 16px; border-radius: var(--rund); font-weight: 600; font-size: 14.5px; color: var(--tinte-2); white-space: nowrap; }
+.tabs button[aria-selected="true"] { background: var(--tinte); color: var(--grund); }
+
+.hinweis { margin: 14px 0 0; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--warn-grund); color: var(--tinte); font-size: 14px; }
+.hinweis b { color: var(--warn); }
+.hinweis button { border: 0; background: none; padding: 0; text-decoration: underline; font-weight: 600; }
+
+main { padding-block: 18px 120px; }
+h2 { margin: 0; font: 800 22px/1.1 var(--font-display); letter-spacing: -.025em; text-wrap: balance; }
+h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-2); }
+
+/* ---------- Kasse ---------- */
+.kasse { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+.sortiment { display: grid; gap: 22px; min-width: 0; }
+.gruppe-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
+.kachel { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 104px; padding: 14px 14px 12px; border: 0; border-radius: var(--radius-lg); background: var(--c); color: var(--auf-farbe); text-align: left; hyphens: auto; transition: transform .08s ease; }
+.kachel:active { transform: scale(.97); }
+.kachel .k-name { font: 800 16.5px/1.08 var(--font-display); letter-spacing: -.02em; overflow-wrap: break-word; }
+.kachel.hat-anz .k-name { padding-right: 30px; }
+.kachel .k-info { font-size: 12.5px; opacity: .78; }
+.kachel .k-preis { margin-top: auto; padding-top: 8px; font: 700 16px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+.kachel .k-anz { position: absolute; top: 10px; right: 10px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: var(--rund); background: #1d1b1a; color: #fff; font: 800 15px/28px var(--font-display); text-align: center; }
+
+.leer { padding: 28px 22px; border: 2px dashed var(--linie); border-radius: var(--radius-lg); color: var(--tinte-2); text-align: center; }
+.leer strong { display: block; color: var(--tinte); font: 800 19px/1.2 var(--font-display); margin-bottom: 6px; }
+.leer button { margin-top: 12px; }
+
+.bon { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 130px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 20px; border-radius: var(--radius-lg); background: var(--flaeche); max-height: calc(100vh - 110px); overflow-y: auto; }
+.bon > * { min-width: 0; }
+.bon-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.link { border: 0; background: none; padding: 0; color: var(--tinte-2); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
+
+.posten { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.posten li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; align-items: center; gap: 10px; }
+.posten .punkt { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+.posten .p-name { font-weight: 600; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
+.posten .p-name small { display: block; font-weight: 400; color: var(--tinte-2); font-size: 12.5px; }
+.posten .p-summe { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 64px; text-align: right; }
+.menge { display: inline-flex; align-items: center; border-radius: var(--rund); background: var(--grund); border: 1px solid var(--linie); }
+.menge button { width: 32px; height: 32px; border: 0; background: none; font-size: 18px; line-height: 1; border-radius: var(--rund); }
+.menge span { min-width: 22px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.posten-leer { color: var(--tinte-2); font-size: 14px; }
+
+.zeile { display: flex; gap: 8px; }
+.feld { min-width: 0; flex: 1; height: 42px; padding: 0 12px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); }
+.feld--kurz { flex: 0 0 104px; text-align: right; font-variant-numeric: tabular-nums; }
+.knopf { height: 42px; padding: 0 16px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); font-weight: 600; white-space: nowrap; }
+.knopf--dunkel { background: var(--tinte); color: var(--grund); border-color: var(--tinte); }
+.knopf--rot { background: var(--rot); color: var(--auf-rot); border-color: var(--rot); }
+.knopf:disabled { opacity: .45; cursor: not-allowed; }
+
+.block-label { font-size: 12.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tinte-2); margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { height: 36px; padding: 0 14px; border-radius: var(--rund); border: 1px solid var(--linie); background: var(--grund); font-weight: 600; font-size: 14px; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--rot); border-color: var(--rot); color: var(--auf-rot); }
+.eigen { margin-top: 8px; }
+
+.summen { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 0; font-variant-numeric: tabular-nums; }
+.summen dt { color: var(--tinte-2); }
+.summen dd { margin: 0; padding-left: 12px; text-align: right; white-space: nowrap; }
+.summen .minus { color: var(--rot); }
+.summen .gesamt { padding-top: 10px; margin-top: 6px; border-top: 1px solid var(--linie); color: var(--tinte); font: 800 30px/1 var(--font-display); letter-spacing: -.03em; }
+.summen dt.gesamt { font-size: 18px; align-self: end; padding-bottom: 3px; }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: var(--rund); background: var(--grund); border: 1px solid var(--linie); }
+.seg button { height: 36px; border: 0; border-radius: var(--rund); background: none; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--tinte); color: var(--grund); }
+
+.rueckgeld { margin-top: 10px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--grund); }
+.rueckgeld .r-zahl { font: 800 28px/1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--gut); }
+.rueckgeld .r-zahl.fehlt { color: var(--rot); }
+.rueckgeld .r-text { font-size: 13px; color: var(--tinte-2); margin-top: 2px; }
+.stueckelung { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.stueckelung span { padding: 2px 8px; border-radius: var(--rund); background: var(--flaeche); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.primaer { width: 100%; min-height: 54px; border: 0; border-radius: var(--rund); background: var(--rot); color: var(--auf-rot); font: 800 18px/1 var(--font-display); letter-spacing: -.01em; }
+.primaer:disabled { opacity: .4; cursor: not-allowed; }
+
+.mobil-leiste { display: none; }
+
+/* Toast */
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 14px; max-width: calc(100% - 32px); padding: 12px 14px 12px 18px; border-radius: var(--rund); background: var(--tinte); color: var(--grund); font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.toast button { border: 0; border-radius: var(--rund); padding: 6px 12px; background: var(--grund); color: var(--tinte); font-weight: 700; }
+
+/* ---------- Verkäufe ---------- */
+.v-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; justify-content: space-between; margin-bottom: 16px; }
+.v-kopf .zeile { flex-wrap: wrap; }
+.kennzahlen { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
+.kz { padding: 16px; border-radius: var(--radius-lg); background: var(--flaeche); min-width: 0; }
+.kz .kz-label { font-size: 13px; color: var(--tinte-2); }
+.kz .kz-wert { font: 800 26px/1.1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.kz--haupt { background: var(--rot); color: var(--auf-rot); }
+.kz--haupt .kz-label { color: inherit; opacity: .85; }
+.kz--haupt .kz-wert { font-size: 34px; }
+.zwei { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
+.tabelle-box { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 9px 8px; border-bottom: 1px solid var(--linie); text-align: left; vertical-align: middle; }
+th { font-size: 12.5px; font-weight: 700; color: var(--tinte-2); }
+td.r, th.r { text-align: right; }
+td .punkt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-right: 8px; }
+tfoot td { font-weight: 700; border-bottom: 0; }
+
+.kassensturz { margin-top: 22px; padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--linie); }
+.kassensturz p { margin: 6px 0 0; color: var(--tinte-2); font-size: 14px; }
+.kassensturz .soll { font: 800 24px/1.1 var(--font-display); letter-spacing: -.02em; color: var(--tinte); font-variant-numeric: tabular-nums; }
+
+.liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.liste li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--flaeche); }
+.liste .zeit { font-weight: 700; font-variant-numeric: tabular-nums; }
+.liste .artikel { min-width: 0; overflow-wrap: anywhere; font-size: 14px; }
+.liste .artikel small { display: block; color: var(--tinte-2); font-size: 12.5px; margin-top: 2px; }
+.liste .betrag { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.liste .betrag .link { display: block; margin-top: 4px; margin-left: auto; font-weight: 400; font-size: 13px; }
+.liste li.storno { opacity: .55; }
+.liste li.storno .betrag > span { text-decoration: line-through; }
+.pille { display: inline-block; padding: 1px 8px; border-radius: var(--rund); font-size: 11.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: var(--grund); border: 1px solid var(--linie); }
+.bestaetigen { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+.bestaetigen button { height: 30px; padding: 0 10px; border-radius: var(--rund); border: 1px solid var(--linie); background: var(--grund); font-size: 13px; font-weight: 600; }
+.bestaetigen .ja { background: var(--rot); border-color: var(--rot); color: var(--auf-rot); }
+
+.export-box { margin-top: 12px; }
+.export-box textarea { width: 100%; height: 160px; padding: 10px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); color: var(--tinte); font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+
+/* ---------- Einstellungen ---------- */
+.einst { display: grid; gap: 28px; max-width: 900px; }
+.einst section { display: grid; gap: 12px; }
+.einst .erkl { margin: 0; color: var(--tinte-2); font-size: 14px; max-width: 62ch; }
+.e-zeile { display: grid; grid-template-columns: 34px minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 1.2fr) 104px 42px; gap: 8px; align-items: center; }
+.e-zeile--kopf { font-size: 12.5px; font-weight: 700; color: var(--tinte-2); }
+.e-zeile--rabatt { grid-template-columns: minmax(0, 2fr) 120px 104px 42px; }
+.e-zeile--angebot { grid-template-columns: minmax(0, 1.6fr) 90px 120px minmax(0, 1fr) 42px; }
+.e-zeile .feld { width: 100%; }
+.farbe-wahl { position: relative; width: 34px; height: 34px; }
+.farbe-wahl select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.farbe-wahl span { display: block; width: 34px; height: 34px; border-radius: 50%; background: var(--c); border: 2px solid var(--linie); }
+.weg { width: 42px; height: 42px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); font-size: 18px; color: var(--tinte-2); }
+.e-ergebnis { font-size: 13px; color: var(--tinte-2); }
+.speicher-leiste { position: sticky; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 12px 12px 18px; border-radius: var(--rund); background: var(--tinte); color: var(--grund); }
+.speicher-leiste .knopf { border-color: var(--grund); }
+.speicher-leiste .knopf--rot { border-color: var(--rot); }
+
+/* ---------- schmal ---------- */
+@media (max-width: 920px) {
+  .kasse { grid-template-columns: minmax(0, 1fr); }
+  .bon { position: static; max-height: none; }
+  .kennzahlen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kz--haupt { grid-column: 1 / -1; }
+  .zwei { grid-template-columns: minmax(0, 1fr); }
+  .mobil-leiste:not([hidden]) { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    background: var(--tinte); color: var(--grund); }
+  .mobil-leiste b { font: 800 22px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+  .mobil-leiste span { font-size: 13px; opacity: .8; display: block; }
+  .mobil-leiste button { height: 44px; padding: 0 18px; border: 0; border-radius: var(--rund); background: var(--rot); color: var(--auf-rot); font-weight: 700; }
+}
+@media (max-width: 640px) {
+  .marke h1 { font-size: 22px; }
+  .tabs { width: 100%; }
+  .tabs button { flex: 1; padding: 8px 6px; font-size: 13.5px; }
+  .gruppe-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .e-zeile { grid-template-columns: 34px minmax(0, 1fr) 96px 42px; }
+  .e-zeile .e-gruppe, .e-zeile .e-info { grid-column: 2 / 4; }
+  .e-zeile--kopf { display: none; }
+  .e-produkte { gap: 18px !important; }
+  .e-zeile--rabatt { grid-template-columns: minmax(0, 1fr) 84px 42px; }
+  .e-zeile--rabatt .e-wert { grid-column: 1 / 3; }
+  .e-zeile--angebot { grid-template-columns: minmax(0, 1fr) 70px 42px; }
+  .e-zeile--angebot .e-preis, .e-zeile--angebot .e-ergebnis { grid-column: 1 / 3; }
+}
+@media (prefers-reduced-motion: reduce) { .kachel { transition: none; } }
+</style>
+
+<header class="kopf">
+  <div class="wrap">
+    <div class="marke">
+      <svg class="funkeln" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 8 16 11 24 12C16 13 13 16 12 24C11 16 8 13 0 12C8 11 11 8 12 0Z"/></svg>
+      <h1>Basar-Kasse</h1>
+      <span class="status" id="status" data-s="laden">verbindet …</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Bereiche">
+      <button role="tab" id="tab-kasse" data-ansicht="kasse" aria-selected="true">Kasse</button>
+      <button role="tab" id="tab-verkaeufe" data-ansicht="verkaeufe" aria-selected="false">Verkäufe</button>
+      <button role="tab" id="tab-preise" data-ansicht="preise" aria-selected="false">Preise &amp; Rabatte</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" lang="de">
+  <div id="hinweise"></div>
+
+  <!-- KASSE -->
+  <section id="v-kasse" class="ansicht" style="margin-top:14px">
+    <div class="kasse">
+      <div class="sortiment" id="sortiment"></div>
+
+      <aside class="bon" id="bon" aria-label="Aktueller Verkauf">
+        <div class="bon-kopf"><h2>Aktueller Verkauf</h2><button class="link" id="leeren" type="button">Leeren</button></div>
+        <ul class="posten" id="posten"></ul>
+
+        <div>
+          <div class="block-label">Sonstiges</div>
+          <form class="zeile" id="frei-form">
+            <input class="feld" id="frei-name" placeholder="z. B. Spende, Tüte" autocomplete="off">
+            <input class="feld feld--kurz" id="frei-betrag" inputmode="decimal" placeholder="0,00 €" autocomplete="off">
+            <button class="knopf" type="submit" aria-label="Betrag hinzufügen">+</button>
+          </form>
+        </div>
+
+        <div>
+          <div class="block-label">Rabatt</div>
+          <div class="chips" id="rabatt-chips"></div>
+          <div class="zeile eigen" id="eigen" hidden>
+            <input class="feld" id="eigen-wert" inputmode="decimal" placeholder="Wert" autocomplete="off">
+            <div class="seg" style="flex:0 0 120px">
+              <button type="button" id="eigen-prozent" aria-pressed="true">%</button>
+              <button type="button" id="eigen-euro" aria-pressed="false">€</button>
+            </div>
+          </div>
+        </div>
+
+        <dl class="summen" id="summen"></dl>
+
+        <div>
+          <div class="seg" id="zahlart">
+            <button type="button" data-zahlart="bar" aria-pressed="true">Bar</button>
+            <button type="button" data-zahlart="karte" aria-pressed="false">Karte / PayPal</button>
+          </div>
+          <div id="bar-bereich" style="margin-top:12px">
+            <div class="block-label">Gegeben</div>
+            <div class="chips" id="geld-chips">
+              <button class="chip" type="button" data-geld="passend">Passend</button>
+              <button class="chip" type="button" data-geld="500">5 €</button>
+              <button class="chip" type="button" data-geld="1000">10 €</button>
+              <button class="chip" type="button" data-geld="2000">20 €</button>
+              <button class="chip" type="button" data-geld="5000">50 €</button>
+            </div>
+            <div class="zeile" style="margin-top:8px">
+              <input class="feld" id="gegeben" inputmode="decimal" placeholder="Anderer Betrag in €" autocomplete="off">
+            </div>
+            <div class="rueckgeld" id="rueckgeld" hidden></div>
+          </div>
+        </div>
+
+        <button class="primaer" id="abschliessen" type="button" disabled>Verkauf abschließen</button>
+      </aside>
+    </div>
+    <div class="mobil-leiste" id="mobil-leiste" hidden>
+      <div><span id="ml-anzahl">0 Artikel</span><b id="ml-summe">0,00 €</b></div>
+      <button type="button" id="ml-bon">Zum Bon</button>
+    </div>
+  </section>
+
+  <!-- VERKÄUFE -->
+  <section id="v-verkaeufe" class="ansicht" hidden style="margin-top:14px">
+    <div class="v-kopf">
+      <h2>Verkäufe</h2>
+      <div class="zeile">
+        <select class="feld" id="tag-wahl" aria-label="Tag wählen" style="flex:0 1 auto"></select>
+        <button class="knopf" type="button" id="export">Als CSV exportieren</button>
+      </div>
+    </div>
+    <div id="export-box" class="export-box" hidden></div>
+    <div class="kennzahlen" id="kennzahlen"></div>
+    <div class="zwei">
+      <div>
+        <h3>Nach Produkt</h3>
+        <div class="tabelle-box"><table id="nach-produkt"></table></div>
+        <div class="kassensturz" id="kassensturz"></div>
+      </div>
+      <div>
+        <h3>Einzelne Verkäufe</h3>
+        <ol class="liste" id="liste"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREISE & RABATTE -->
+  <section id="v-preise" class="ansicht" hidden style="margin-top:14px">
+    <div class="einst" id="einst"></div>
+  </section>
+</main>
+
+<div id="toast-ort"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Hilfen ---------- */
+  var fmt = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" });
+  function eur(c) { return fmt.format((c || 0) / 100); }
+  function centAus(s) {
+    if (s == null) return NaN;
+    s = String(s).replace(/[\s€]/g, "");
+    if (!s) return NaN;
+    if (s.indexOf(",") >= 0) s = s.replace(/\./g, "").replace(",", ".");
+    var n = Number(s);
+    return isFinite(n) ? Math.round(n * 100) : NaN;
+  }
+  function centText(c) { return c == null || isNaN(c) ? "" : (c / 100).toFixed(2).replace(".", ","); }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function tagVon(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function heute() { return tagVon(new Date()); }
+  function tagLang(t) {
+    var p = t.split("-"); var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return d.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "long" });
+  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function uid() { return Math.random().toString(36).slice(2, 9); }
+  function $(id) { return document.getElementById(id); }
+  var LS = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var FARBEN = [
+    ["#ff8fa0", "Kirschrosa"], ["#ffd75e", "Eierlikörgelb"], ["#e8b994", "Karamellbeige"], ["#d8c3b4", "Milchkaffee"],
+    ["#e6ee6e", "Limette"], ["#ff9b6a", "Orange"], ["#f7bb5c", "Karamell"], ["#ff86b0", "Himbeerpink"],
+    ["#d1a585", "Nougat"], ["#e7b97c", "Haselnuss"], ["#bfdc80", "Pistazie"], ["#f3ea7a", "Zitrone"],
+    ["#93e4c2", "Minze"], ["#cbb8f2", "Lavendel"], ["#a6db88", "Oregano"], ["#cfe9a6", "Estragon"],
+    ["#b5d1ad", "Thymian"], ["#e3f28f", "Limonengrün"], ["#f4d27e", "Goldsalbei"], ["#e0dcd8", "Hellgrau"]
+  ];
+
+  /* ---------- Zustand ---------- */
+  var S = {
+    modus: "laden",          // laden | db | lokal
+    geladen: false,
+    fehler: null,
+    darfSchreiben: true,
+    einst: null,             // { produkte, rabatte, angebote, wechselgeld, beispielpreise }
+    verkaeufe: [],
+    korb: {},                // produktId -> Menge
+    frei: [],                // { id, name, cent }
+    rabatt: null,            // { id, name, typ, wert }
+    eigenTyp: "prozent",
+    zahlart: "bar",
+    gegeben: null,
+    ansicht: "kasse",
+    tag: heute(),
+    stornoFrage: null,
+    entwurf: null, entwurfGeaendert: false,
+    letzterVerkauf: null
+  };
+  var db = null;
+
+  function produkte() { return (S.einst && S.einst.produkte) || []; }
+  function rabatte() { return (S.einst && S.einst.rabatte) || []; }
+  function angebote() { return (S.einst && S.einst.angebote) || []; }
+  function produkt(id) { return produkte().find(function (p) { return p.id === id; }); }
+
+  /* ---------- Rechnen ---------- */
+  function berechne() {
+    var zeilen = [], zwischen = 0, anzahl = 0;
+    Object.keys(S.korb).forEach(function (id) {
+      var p = produkt(id), m = S.korb[id];
+      if (!p || !m) return;
+      zeilen.push({ p: p, menge: m, summe: p.preis * m });
+      zwischen += p.preis * m; anzahl += m;
+    });
+    S.frei.forEach(function (f) { zwischen += f.cent; anzahl += 1; });
+
+    var angebotRabatt = 0, angebotZeilen = [];
+    angebote().forEach(function (a) {
+      if (!a.anzahl || a.anzahl < 2 || a.preis == null) return;
+      var preise = [];
+      zeilen.forEach(function (z) { if (z.p.gruppe === a.gruppe) for (var i = 0; i < z.menge; i++) preise.push(z.p.preis); });
+      preise.sort(function (x, y) { return y - x; });
+      var saetze = Math.floor(preise.length / a.anzahl), r = 0, n = 0;
+      for (var s = 0; s < saetze; s++) {
+        var normal = preise.slice(s * a.anzahl, (s + 1) * a.anzahl).reduce(function (x, y) { return x + y; }, 0);
+        if (normal > a.preis) { r += normal - a.preis; n++; }
+      }
+      if (r > 0) { angebotRabatt += r; angebotZeilen.push({ text: a.anzahl + " " + a.gruppe + " für " + eur(a.preis) + (n > 1 ? " (" + n + "×)" : ""), cent: r }); }
+    });
+
+    var nachAngebot = zwischen - angebotRabatt;
+    var rabattCent = 0, rabattName = null;
+    if (S.rabatt && nachAngebot > 0) {
+      if (S.rabatt.typ === "prozent") rabattCent = Math.round(nachAngebot * Math.min(100, S.rabatt.wert || 0) / 100);
+      else rabattCent = Math.min(nachAngebot, S.rabatt.wert || 0);
+      rabattName = S.rabatt.name;
+    }
+    return { zeilen: zeilen, anzahl: anzahl, zwischen: zwischen, angebotRabatt: angebotRabatt, angebotZeilen: angebotZeilen,
+      rabattCent: rabattCent, rabattName: rabattName, summe: Math.max(0, nachAngebot - rabattCent) };
+  }
+  function stueckelung(c) {
+    var werte = [5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1], out = [];
+    werte.forEach(function (w) { var n = Math.floor(c / w); if (n) { out.push(n + " × " + (w >= 100 ? (w / 100) + " €" : w + " ct")); c -= n * w; } });
+    return out;
+  }
+
+  /* ---------- Speicher ---------- */
+  function speichereEinst(e) {
+    if (S.modus === "db") return db.doc("kasse/einstellungen").set(e);
+    S.einst = e; LS.set("kasse-einst", e); renderAlles(); return Promise.resolve();
+  }
+  function neuerVerkauf(v) {
+    if (S.modus === "db") { var ref = db.collection("verkaeufe").doc(); return ref.set(v).then(function () { return ref.id; }); }
+    v = Object.assign({ id: "l" + Date.now() + uid() }, v);
+    S.verkaeufe = S.verkaeufe.concat([v]); LS.set("kasse-verkaeufe", S.verkaeufe); renderVerkaeufe();
+    return Promise.resolve(v.id);
+  }
+  function aendereVerkauf(id, daten) {
+    if (S.modus === "db") return db.doc("verkaeufe/" + id).update(daten);
+    S.verkaeufe = S.verkaeufe.map(function (v) { return v.id === id ? Object.assign({}, v, daten) : v; });
+    LS.set("kasse-verkaeufe", S.verkaeufe); renderVerkaeufe(); return Promise.resolve();
+  }
+
+  /* ---------- Render: Kopf & Hinweise ---------- */
+  function renderStatus() {
+    var el = $("status");
+    var m = { laden: ["laden", "verbindet …"], db: ["live", "für alle Geräte gespeichert"], lokal: ["lokal", "nur auf diesem Gerät"] };
+    var s = S.fehler ? ["fehler", "keine Verbindung"] : m[S.modus];
+    el.dataset.s = s[0]; el.textContent = s[1];
+  }
+  function renderHinweise() {
+    var h = [];
+    if (S.fehler) h.push("<b>Keine Verbindung zur Datenbank.</b> " + esc(S.fehler));
+    if (S.modus === "lokal") h.push("<b>Nur auf diesem Gerät.</b> Hier können Verkäufe nicht gemeinsam gespeichert werden. Öffnen Sie die Kasse angemeldet in claude.ai, damit alle Helfer dieselben Zahlen sehen.");
+    if (!S.darfSchreiben) h.push("<b>Nur ansehen.</b> Sie haben für diese Kasse keine Schreibrechte. Bitten Sie um Zugriff als Contributor, um zu kassieren.");
+    if (S.einst && S.einst.beispielpreise) h.push("<b>Beispielpreise.</b> Die Preise sind noch Platzhalter. Bitte unter <button type=\"button\" data-geh=\"preise\">Preise &amp; Rabatte</button> anpassen und speichern.");
+    $("hinweise").innerHTML = h.map(function (t) { return '<p class="hinweis">' + t + "</p>"; }).join("");
+  }
+
+  /* ---------- Render: Kasse ---------- */
+  function renderSortiment() {
+    var el = $("sortiment"), ps = produkte();
+    if (!ps.length) {
+      el.innerHTML = S.modus !== "lokal" && !S.geladen && !S.fehler
+        ? '<div class="leer"><strong>Kasse wird geladen …</strong>Produkte und Preise kommen gleich.</div>'
+        : '<div class="leer"><strong>Noch keine Produkte</strong>Legen Sie Ihr Sortiment mit Preisen an, dann erscheinen hier die Verkaufskacheln.<br><button class="knopf knopf--dunkel" type="button" data-geh="preise">Produkte anlegen</button></div>';
+      return;
+    }
+    var gruppen = [];
+    ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
+    el.innerHTML = gruppen.map(function (g) {
+      return "<div><h3>" + esc(g) + '</h3><div class="gruppe-raster">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
+        var m = S.korb[p.id] || 0;
+        return '<button class="kachel' + (m ? " hat-anz" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
+          '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") +
+          '<span class="k-preis">' + eur(p.preis) + "</span>" + (m ? '<span class="k-anz">' + m + "</span>" : "") + "</button>";
+      }).join("") + "</div></div>";
+    }).join("");
+  }
+  function renderBon() {
+    var r = berechne();
+    var posten = r.zeilen.map(function (z) {
+      return '<li><span class="punkt" style="--c:' + esc(z.p.farbe || "#e0dcd8") + '"></span><span class="p-name">' + esc(z.p.name) + "<small>" + eur(z.p.preis) + " je Stück</small></span>" +
+        '<span class="menge"><button type="button" data-minus="' + esc(z.p.id) + '" aria-label="Eins weniger">−</button><span>' + z.menge + '</span><button type="button" data-plus="' + esc(z.p.id) + '" aria-label="Eins mehr">+</button></span>' +
+        '<span class="p-summe">' + eur(z.summe) + "</span></li>";
+    }).concat(S.frei.map(function (f) {
+      return '<li><span class="punkt" style="--c:var(--linie)"></span><span class="p-name">' + esc(f.name) + "<small>Sonstiges</small></span>" +
+        '<span class="menge"><button type="button" data-frei-weg="' + f.id + '" aria-label="Entfernen">×</button></span><span class="p-summe">' + eur(f.cent) + "</span></li>";
+    }));
+    $("posten").innerHTML = posten.length ? posten.join("") : '<li class="posten-leer">Tippen Sie auf ein Produkt, um es auf den Bon zu setzen.</li>';
+
+    var chips = rabatte().map(function (rb) {
+      var an = S.rabatt && S.rabatt.id === rb.id;
+      return '<button class="chip" type="button" data-rabatt="' + esc(rb.id) + '" aria-pressed="' + an + '">' + esc(rb.name) + "</button>";
+    });
+    var eigenAn = !!(S.rabatt && S.rabatt.id === "eigen");
+    chips.push('<button class="chip" type="button" data-rabatt="eigen" aria-pressed="' + eigenAn + '">Eigener</button>');
+    $("rabatt-chips").innerHTML = chips.join("");
+    $("eigen").hidden = !eigenAn;
+
+    var s = "<dt>Zwischensumme</dt><dd>" + eur(r.zwischen) + "</dd>";
+    r.angebotZeilen.forEach(function (a) { s += "<dt>" + esc(a.text) + '</dt><dd class="minus">− ' + eur(a.cent) + "</dd>"; });
+    if (r.rabattCent) s += "<dt>Rabatt " + esc(r.rabattName) + '</dt><dd class="minus">− ' + eur(r.rabattCent) + "</dd>";
+    s += '<dt class="gesamt">Zu zahlen</dt><dd class="gesamt">' + eur(r.summe) + "</dd>";
+    $("summen").innerHTML = s;
+
+    document.querySelectorAll("#zahlart button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.zahlart === S.zahlart)); });
+    $("bar-bereich").hidden = S.zahlart !== "bar";
+    renderRueckgeld(r);
+
+    var leer = r.anzahl === 0;
+    var btn = $("abschliessen");
+    btn.disabled = leer || !S.darfSchreiben || S.modus === "laden";
+    btn.textContent = leer ? "Verkauf abschließen" : "Verkauf abschließen · " + eur(r.summe);
+
+    $("mobil-leiste").hidden = leer || S.ansicht !== "kasse";
+    $("ml-anzahl").textContent = r.anzahl + (r.anzahl === 1 ? " Artikel" : " Artikel");
+    $("ml-summe").textContent = eur(r.summe);
+  }
+  function renderRueckgeld(r) {
+    r = r || berechne();
+    var el = $("rueckgeld");
+    if (S.zahlart !== "bar" || S.gegeben == null || isNaN(S.gegeben) || r.anzahl === 0) { el.hidden = true; return; }
+    el.hidden = false;
+    var diff = S.gegeben - r.summe;
+    if (diff < 0) {
+      el.innerHTML = '<div class="r-zahl fehlt">' + eur(-diff) + '</div><div class="r-text">fehlen noch (gegeben ' + eur(S.gegeben) + ")</div>";
+    } else {
+      el.innerHTML = '<div class="r-zahl">' + eur(diff) + '</div><div class="r-text">Rückgeld bei ' + eur(S.gegeben) + " gegeben</div>" +
+        (diff > 0 ? '<div class="stueckelung">' + stueckelung(diff).map(function (t) { return "<span>" + t + "</span>"; }).join("") + "</div>" : "");
+    }
+  }
+  function renderKasse() { renderSortiment(); renderBon(); }
+
+  /* ---------- Render: Verkäufe ---------- */
+  function verkaufeAmTag() {
+    return S.verkaeufe.filter(function (v) { return S.tag === "alle" || v.tag === S.tag; })
+      .sort(function (a, b) { return (b.zeit || "").localeCompare(a.zeit || ""); });
+  }
+  function renderVerkaeufe() {
+    var tage = [];
+    S.verkaeufe.forEach(function (v) { if (v.tag && tage.indexOf(v.tag) < 0) tage.push(v.tag); });
+    if (tage.indexOf(heute()) < 0) tage.push(heute());
+    tage.sort().reverse();
+    if (S.tag !== "alle" && tage.indexOf(S.tag) < 0) S.tag = heute();
+    $("tag-wahl").innerHTML = tage.map(function (t) {
+      return '<option value="' + t + '"' + (S.tag === t ? " selected" : "") + ">" + (t === heute() ? "Heute, " : "") + tagLang(t) + "</option>";
+    }).join("") + '<option value="alle"' + (S.tag === "alle" ? " selected" : "") + ">Alle Tage</option>";
+
+    var liste = verkaufeAmTag(), gueltig = liste.filter(function (v) { return !v.storniert; });
+    var summe = 0, bar = 0, karte = 0, rabatt = 0, stueck = 0, proProdukt = {};
+    gueltig.forEach(function (v) {
+      summe += v.summe || 0;
+      if (v.zahlart === "karte") karte += v.summe || 0; else bar += v.summe || 0;
+      rabatt += (v.angebotRabatt || 0) + (v.rabattCent || 0);
+      (v.positionen || []).forEach(function (p) {
+        var k = p.name;
+        if (!proProdukt[k]) proProdukt[k] = { name: p.name, farbe: p.farbe, menge: 0, cent: 0 };
+        proProdukt[k].menge += p.menge; proProdukt[k].cent += p.preis * p.menge; stueck += p.menge;
+      });
+      (v.frei || []).forEach(function (f) {
+        var k = "Sonstiges";
+        if (!proProdukt[k]) proProdukt[k] = { name: k, farbe: "var(--linie)", menge: 0, cent: 0 };
+        proProdukt[k].menge += 1; proProdukt[k].cent += f.cent;
+      });
+    });
+    $("kennzahlen").innerHTML =
+      '<div class="kz kz--haupt"><div class="kz-label">Umsatz' + (S.tag === "alle" ? " gesamt" : "") + '</div><div class="kz-wert">' + eur(summe) + "</div></div>" +
+      '<div class="kz"><div class="kz-label">davon bar</div><div class="kz-wert">' + eur(bar) + "</div></div>" +
+      '<div class="kz"><div class="kz-label">davon Karte / PayPal</div><div class="kz-wert">' + eur(karte) + "</div></div>" +
+      '<div class="kz"><div class="kz-label">Verkäufe · Stück</div><div class="kz-wert">' + gueltig.length + " · " + stueck + "</div></div>" +
+      '<div class="kz"><div class="kz-label">Rabatte gewährt</div><div class="kz-wert">' + eur(rabatt) + "</div></div>";
+
+    var zeilen = Object.keys(proProdukt).map(function (k) { return proProdukt[k]; }).sort(function (a, b) { return b.cent - a.cent; });
+    $("nach-produkt").innerHTML = zeilen.length
+      ? '<thead><tr><th>Produkt</th><th class="r">Stück</th><th class="r">zum Listenpreis</th></tr></thead><tbody>' +
+        zeilen.map(function (z) { return '<tr><td><span class="punkt" style="--c:' + esc(z.farbe || "var(--linie)") + '"></span>' + esc(z.name) + '</td><td class="r">' + z.menge + '</td><td class="r">' + eur(z.cent) + "</td></tr>"; }).join("") +
+        "</tbody><tfoot><tr><td>abzüglich Rabatte</td><td></td><td class=\"r\">− " + eur(rabatt) + "</td></tr><tr><td>Umsatz</td><td></td><td class=\"r\">" + eur(summe) + "</td></tr></tfoot>"
+      : '<tbody><tr><td style="color:var(--tinte-2)">Noch keine Verkäufe an diesem Tag.</td></tr></tbody>';
+
+    var wg = (S.einst && S.einst.wechselgeld) || 0;
+    $("kassensturz").innerHTML = '<h3 style="margin:0">Kassensturz</h3><div class="soll">' + eur(wg + bar) + "</div>" +
+      "<p>sollten in der Geldkassette sein: " + eur(wg) + " Wechselgeld + " + eur(bar) + " Bareinnahmen" + (S.tag === "alle" ? " (alle Tage zusammen)" : "") + ". Das Wechselgeld stellen Sie unter Preise &amp; Rabatte ein.</p>";
+
+    $("liste").innerHTML = liste.length ? liste.map(function (v) {
+      var d = new Date(v.zeit), zeit = isNaN(d) ? "–" : pad(d.getHours()) + ":" + pad(d.getMinutes());
+      var art = (v.positionen || []).map(function (p) { return p.menge + "× " + esc(p.name); }).concat((v.frei || []).map(function (f) { return esc(f.name); })).join(", ");
+      var extra = [];
+      if (v.angebotRabatt) extra.push("Mengenangebot −" + eur(v.angebotRabatt));
+      if (v.rabattCent) extra.push("Rabatt " + esc(v.rabattName || "") + " −" + eur(v.rabattCent));
+      extra.push(v.zahlart === "karte" ? "Karte / PayPal" : "bar");
+      if (S.tag === "alle") extra.unshift(tagLang(v.tag || ""));
+      var aktion = "";
+      if (v.storniert) aktion = '<span class="pille" style="margin-top:4px">storniert</span>' + (S.darfSchreiben ? '<button class="link" type="button" data-zurueck="' + esc(v.id) + '">wiederherstellen</button>' : "");
+      else if (S.stornoFrage === v.id) aktion = '<div class="bestaetigen"><button type="button" data-storno-nein="1">Nein</button><button class="ja" type="button" data-storno-ja="' + esc(v.id) + '">Stornieren</button></div>';
+      else if (S.darfSchreiben) aktion = '<button class="link" type="button" data-storno="' + esc(v.id) + '">stornieren</button>';
+      return '<li class="' + (v.storniert ? "storno" : "") + '"><span class="zeit">' + zeit + '</span><span class="artikel">' + art + "<small>" + extra.join(" · ") + '</small></span><span class="betrag"><span>' + eur(v.summe) + "</span>" + aktion + "</span></li>";
+    }).join("") : '<li style="grid-template-columns:1fr;color:var(--tinte-2)">Hier erscheint jeder abgeschlossene Verkauf mit Uhrzeit. Ein falsch gebuchter Verkauf lässt sich stornieren.</li>';
+  }
+
+  /* ---------- Render: Einstellungen ---------- */
+  function neuerEntwurf() {
+    var e = S.einst ? JSON.parse(JSON.stringify(S.einst)) : { produkte: [], rabatte: [], angebote: [], wechselgeld: 0 };
+    e.produkte = e.produkte || []; e.rabatte = e.rabatte || []; e.angebote = e.angebote || [];
+    S.entwurf = e; S.entwurfGeaendert = false;
+  }
+  function gruppenVon(e) { var g = []; e.produkte.forEach(function (p) { if (p.gruppe && g.indexOf(p.gruppe) < 0) g.push(p.gruppe); }); return g; }
+  function renderEinst() {
+    if (!S.entwurf || !S.entwurfGeaendert) neuerEntwurf();
+    var e = S.entwurf, ro = !S.darfSchreiben ? " disabled" : "";
+    var gruppen = gruppenVon(e);
+    var farbOpts = function (aktiv) { return FARBEN.map(function (f) { return '<option value="' + f[0] + '"' + (f[0] === aktiv ? " selected" : "") + ">" + f[1] + "</option>"; }).join(""); };
+
+    var h = "";
+    h += '<section><div><h2>Produkte &amp; Preise</h2><p class="erkl">Jede Zeile wird eine Kachel an der Kasse. Gleiche Gruppe = gleiche Überschrift, und Mengenangebote gelten pro Gruppe.</p></div>';
+    h += '<div class="e-zeile e-zeile--kopf"><span></span><span>Name</span><span>Gruppe</span><span>Zusatz</span><span>Preis</span><span></span></div>';
+    h += '<div class="e-produkte" style="display:grid;gap:8px">' + e.produkte.map(function (p, i) {
+      return '<div class="e-zeile"><label class="farbe-wahl" title="Farbe"><span style="--c:' + esc(p.farbe) + '"></span><select data-feld="produkte.' + i + '.farbe" aria-label="Farbe"' + ro + ">" + farbOpts(p.farbe) + "</select></label>" +
+        '<input class="feld" data-feld="produkte.' + i + '.name" value="' + esc(p.name) + '" aria-label="Name"' + ro + ">" +
+        '<input class="feld e-gruppe" data-feld="produkte.' + i + '.gruppe" value="' + esc(p.gruppe) + '" list="gruppen-liste" aria-label="Gruppe" placeholder="Gruppe"' + ro + ">" +
+        '<input class="feld e-info" data-feld="produkte.' + i + '.info" value="' + esc(p.info || "") + '" aria-label="Zusatz" placeholder="z. B. 8 Stück"' + ro + ">" +
+        '<input class="feld feld--kurz" data-feld="produkte.' + i + '.preis" data-cent="1" value="' + centText(p.preis) + '" inputmode="decimal" aria-label="Preis in Euro"' + ro + ">" +
+        '<button class="weg" type="button" data-weg="produkte.' + i + '" aria-label="' + esc(p.name) + ' entfernen"' + ro + ">×</button></div>";
+    }).join("") + "</div>";
+    h += '<datalist id="gruppen-liste">' + gruppen.map(function (g) { return '<option value="' + esc(g) + '">'; }).join("") + "</datalist>";
+    h += '<div><button class="knopf" type="button" data-neu="produkte"' + ro + ">+ Produkt hinzufügen</button></div></section>";
+
+    h += '<section><div><h2>Rabatt-Schnellwahl</h2><p class="erkl">Diese Knöpfe stehen im Bon unter „Rabatt“. Ein Rabatt gilt für den ganzen Verkauf, nach den Mengenangeboten. Für Einzelfälle gibt es dort zusätzlich „Eigener“.</p></div>';
+    h += '<div style="display:grid;gap:8px">' + e.rabatte.map(function (r, i) {
+      return '<div class="e-zeile e-zeile--rabatt"><input class="feld" data-feld="rabatte.' + i + '.name" value="' + esc(r.name) + '" aria-label="Bezeichnung" placeholder="z. B. Helfer"' + ro + ">" +
+        '<select class="feld" data-feld="rabatte.' + i + '.typ" aria-label="Art"' + ro + '><option value="prozent"' + (r.typ === "prozent" ? " selected" : "") + '>Prozent</option><option value="betrag"' + (r.typ === "betrag" ? " selected" : "") + ">Euro</option></select>" +
+        '<input class="feld feld--kurz e-wert" data-feld="rabatte.' + i + '.wert" data-rabattwert="' + i + '" value="' + (r.typ === "prozent" ? String(r.wert).replace(".", ",") : centText(r.wert)) + '" inputmode="decimal" aria-label="Wert"' + ro + ">" +
+        '<button class="weg" type="button" data-weg="rabatte.' + i + '" aria-label="Rabatt entfernen"' + ro + ">×</button></div>";
+    }).join("") + "</div>";
+    h += '<div><button class="knopf" type="button" data-neu="rabatte"' + ro + ">+ Rabatt hinzufügen</button></div></section>";
+
+    h += '<section><div><h2>Mengenangebote</h2><p class="erkl">Zum Beispiel „3 Pralinen für 20 €“. Die Kasse erkennt das Angebot automatisch, sobald genug Artikel der Gruppe auf dem Bon stehen, auch bei gemischten Sorten.</p></div>';
+    h += '<div style="display:grid;gap:8px">' + (e.angebote.length ? e.angebote.map(function (a, i) {
+      var normal = null; var bsp = e.produkte.find(function (p) { return p.gruppe === a.gruppe; });
+      if (bsp && a.anzahl) normal = bsp.preis * a.anzahl;
+      return '<div class="e-zeile e-zeile--angebot"><select class="feld" data-feld="angebote.' + i + '.gruppe" aria-label="Gruppe"' + ro + ">" + gruppen.map(function (g) { return '<option value="' + esc(g) + '"' + (g === a.gruppe ? " selected" : "") + ">" + esc(g) + "</option>"; }).join("") + "</select>" +
+        '<input class="feld" data-feld="angebote.' + i + '.anzahl" data-zahl="1" value="' + (a.anzahl || "") + '" inputmode="numeric" aria-label="Anzahl"' + ro + ">" +
+        '<input class="feld feld--kurz e-preis" data-feld="angebote.' + i + '.preis" data-cent="1" value="' + centText(a.preis) + '" inputmode="decimal" aria-label="Preis zusammen"' + ro + ">" +
+        '<span class="e-ergebnis">' + (normal != null && a.preis != null ? (normal > a.preis ? "spart " + eur(normal - a.preis) + " gegenüber " + eur(normal) : "kein Vorteil gegenüber " + eur(normal)) : "") + "</span>" +
+        '<button class="weg" type="button" data-weg="angebote.' + i + '" aria-label="Angebot entfernen"' + ro + ">×</button></div>";
+    }).join("") : '<p class="erkl" style="font-style:italic">Noch kein Mengenangebot.</p>') + "</div>";
+    h += '<div><button class="knopf" type="button" data-neu="angebote"' + (gruppen.length ? ro : " disabled") + ">+ Mengenangebot hinzufügen</button></div></section>";
+
+    h += '<section><div><h2>Wechselgeld</h2><p class="erkl">Womit die Geldkassette morgens startet. Daraus berechnet die Kasse unter „Verkäufe“, wie viel Bargeld abends drin sein sollte.</p></div>' +
+      '<div class="zeile" style="max-width:280px"><input class="feld feld--kurz" style="flex:1" data-feld="wechselgeld" data-cent="1" value="' + centText(e.wechselgeld || 0) + '" inputmode="decimal" aria-label="Wechselgeld in Euro"' + ro + "></div></section>";
+
+    h += '<div class="speicher-leiste" id="speicher-leiste"' + (S.entwurfGeaendert ? "" : " hidden") + '><span>Ungespeicherte Änderungen</span><span class="zeile"><button class="knopf" type="button" id="verwerfen" style="background:transparent;color:inherit">Verwerfen</button><button class="knopf knopf--rot" type="button" id="speichern">Speichern</button></span></div>';
+    $("einst").innerHTML = h;
+  }
+  function markiereGeaendert() { S.entwurfGeaendert = true; var l = $("speicher-leiste"); if (l) l.hidden = false; }
+
+  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); if (S.ansicht === "preise") renderEinst(); }
+
+  /* ---------- Toast ---------- */
+  var toastTimer = null;
+  function toast(text, aktion) {
+    clearTimeout(toastTimer);
+    $("toast-ort").innerHTML = '<div class="toast" role="status"><span>' + text + "</span>" + (aktion ? '<button type="button" id="toast-aktion">' + aktion.text + "</button>" : "") + "</div>";
+    if (aktion) $("toast-aktion").onclick = function () { $("toast-ort").innerHTML = ""; aktion.fn(); };
+    toastTimer = setTimeout(function () { $("toast-ort").innerHTML = ""; }, 6000);
+  }
+
+  /* ---------- Aktionen ---------- */
+  function zeige(a) {
+    S.ansicht = a;
+    ["kasse", "verkaeufe", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
+    if (a === "preise") renderEinst();
+    renderBon();
+    window.scrollTo(0, 0);
+  }
+  function korbLeeren() { S.korb = {}; S.frei = []; S.rabatt = null; S.gegeben = null; $("gegeben").value = ""; $("eigen-wert").value = ""; renderKasse(); }
+
+  function abschliessen() {
+    var r = berechne();
+    if (!r.anzahl || !S.darfSchreiben) return;
+    var jetzt = new Date();
+    var v = {
+      zeit: jetzt.toISOString(), tag: tagVon(jetzt),
+      positionen: r.zeilen.map(function (z) { return { id: z.p.id, name: z.p.name, gruppe: z.p.gruppe, farbe: z.p.farbe, preis: z.p.preis, menge: z.menge }; }),
+      frei: S.frei.map(function (f) { return { name: f.name, cent: f.cent }; }),
+      zwischensumme: r.zwischen, angebotRabatt: r.angebotRabatt,
+      rabattName: r.rabattName, rabattCent: r.rabattCent,
+      summe: r.summe, zahlart: S.zahlart,
+      gegeben: S.zahlart === "bar" && S.gegeben != null && !isNaN(S.gegeben) ? S.gegeben : null,
+      storniert: false
+    };
+    var btn = $("abschliessen"); btn.disabled = true; btn.textContent = "Speichert …";
+    neuerVerkauf(v).then(function (id) {
+      korbLeeren();
+      toast("Verkauf gespeichert · " + eur(v.summe), { text: "Rückgängig", fn: function () { aendereVerkauf(id, { storniert: true }).then(function () { toast("Verkauf storniert"); }); } });
+    }).catch(function (e) {
+      renderBon();
+      if (e && e.code === "invalid_argument") { S.darfSchreiben = false; renderAlles(); }
+      toast("Nicht gespeichert: " + esc(e && e.code === "quota_exceeded" ? "Speicher voll" : "bitte noch einmal versuchen"));
+    });
+  }
+
+  function setzeFeld(pfad, wert) {
+    var teile = pfad.split("."), o = S.entwurf;
+    for (var i = 0; i < teile.length - 1; i++) o = o[teile[i]];
+    o[teile[teile.length - 1]] = wert;
+  }
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest("button"); if (!t) return;
+    var d = t.dataset;
+    if (d.ansicht) return zeige(d.ansicht);
+    if (d.geh) return zeige(d.geh);
+    if (d.plus) { S.korb[d.plus] = (S.korb[d.plus] || 0) + 1; renderKasse(); wachHalten(); return; }
+    if (d.minus) { S.korb[d.minus] = Math.max(0, (S.korb[d.minus] || 0) - 1); if (!S.korb[d.minus]) delete S.korb[d.minus]; renderKasse(); return; }
+    if (d.freiWeg) { S.frei = S.frei.filter(function (f) { return f.id !== d.freiWeg; }); renderBon(); return; }
+    if (d.rabatt) {
+      if (S.rabatt && S.rabatt.id === d.rabatt) S.rabatt = null;
+      else if (d.rabatt === "eigen") { S.rabatt = { id: "eigen", name: "", typ: S.eigenTyp, wert: 0 }; leseEigen(); setTimeout(function () { $("eigen-wert").focus(); }, 0); }
+      else { var rb = rabatte().find(function (x) { return x.id === d.rabatt; }); if (rb) S.rabatt = { id: rb.id, name: rb.name, typ: rb.typ, wert: rb.wert }; }
+      renderBon(); return;
+    }
+    if (d.zahlart) { S.zahlart = d.zahlart; renderBon(); return; }
+    if (d.geld) {
+      var r = berechne();
+      S.gegeben = d.geld === "passend" ? r.summe : +d.geld;
+      $("gegeben").value = centText(S.gegeben); renderRueckgeld(); return;
+    }
+    if (t.id === "leeren") return korbLeeren();
+    if (t.id === "abschliessen") return abschliessen();
+    if (t.id === "ml-bon") { $("bon").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    if (t.id === "eigen-prozent" || t.id === "eigen-euro") { S.eigenTyp = t.id === "eigen-prozent" ? "prozent" : "betrag"; $("eigen-prozent").setAttribute("aria-pressed", String(S.eigenTyp === "prozent")); $("eigen-euro").setAttribute("aria-pressed", String(S.eigenTyp === "betrag")); leseEigen(); renderBon(); return; }
+    if (d.storno) { S.stornoFrage = d.storno; renderVerkaeufe(); return; }
+    if (d.stornoNein) { S.stornoFrage = null; renderVerkaeufe(); return; }
+    if (d.stornoJa) { S.stornoFrage = null; aendereVerkauf(d.stornoJa, { storniert: true }).then(function () { toast("Verkauf storniert"); }).catch(function () { toast("Storno nicht gespeichert"); }); renderVerkaeufe(); return; }
+    if (d.zurueck) { aendereVerkauf(d.zurueck, { storniert: false }).then(function () { toast("Verkauf wiederhergestellt"); }); return; }
+    if (t.id === "export") return exportieren();
+    if (t.id === "kopieren") { var ta = $("csv-text"); var ok = function () { toast("CSV kopiert"); }; try { navigator.clipboard.writeText(ta.value).then(ok, function () { ta.select(); }); } catch (e) { ta.select(); } return; }
+    /* Einstellungen */
+    if (d.neu) {
+      var e = S.entwurf;
+      if (d.neu === "produkte") { var g = gruppenVon(e); e.produkte.push({ id: "p" + uid(), name: "", gruppe: g[g.length - 1] || "", info: "", preis: 0, farbe: FARBEN[e.produkte.length % FARBEN.length][0] }); }
+      if (d.neu === "rabatte") e.rabatte.push({ id: "r" + uid(), name: "", typ: "prozent", wert: 10 });
+      if (d.neu === "angebote") e.angebote.push({ id: "a" + uid(), gruppe: gruppenVon(e)[0], anzahl: 3, preis: null });
+      S.entwurfGeaendert = true; renderEinst(); return;
+    }
+    if (d.weg) { var p = d.weg.split("."); S.entwurf[p[0]].splice(+p[1], 1); S.entwurfGeaendert = true; renderEinst(); return; }
+    if (t.id === "verwerfen") { S.entwurfGeaendert = false; renderEinst(); return; }
+    if (t.id === "speichern") {
+      var en = JSON.parse(JSON.stringify(S.entwurf));
+      en.produkte = en.produkte.filter(function (x) { return x.name && x.name.trim(); }).map(function (x) { x.name = x.name.trim(); x.gruppe = (x.gruppe || "").trim() || "Sonstiges"; x.preis = Math.max(0, x.preis || 0); return x; });
+      en.rabatte = en.rabatte.filter(function (x) { return x.name && x.name.trim() && x.wert > 0; });
+      en.angebote = en.angebote.filter(function (x) { return x.gruppe && x.anzahl >= 2 && x.preis > 0; });
+      en.beispielpreise = false;
+      t.disabled = true; t.textContent = "Speichert …";
+      speichereEinst(en).then(function () { S.einst = en; S.entwurfGeaendert = false; renderAlles(); toast("Preise &amp; Rabatte gespeichert"); })
+        .catch(function () { t.disabled = false; t.textContent = "Speichern"; toast("Nicht gespeichert, bitte noch einmal versuchen"); });
+      return;
+    }
+  });
+
+  function leseEigen() {
+    if (!S.rabatt || S.rabatt.id !== "eigen") return;
+    var raw = $("eigen-wert").value;
+    if (S.eigenTyp === "prozent") { var n = Number(String(raw).replace(",", ".")); S.rabatt = { id: "eigen", typ: "prozent", wert: isFinite(n) ? Math.max(0, Math.min(100, n)) : 0, name: (isFinite(n) && n ? String(n).replace(".", ",") : "") + " %" }; }
+    else { var c = centAus(raw); S.rabatt = { id: "eigen", typ: "betrag", wert: isNaN(c) ? 0 : Math.max(0, c), name: isNaN(c) ? "€" : eur(c) }; }
+  }
+
+  document.addEventListener("input", function (ev) {
+    var t = ev.target;
+    if (t.id === "gegeben") { var c = centAus(t.value); S.gegeben = isNaN(c) ? null : c; renderRueckgeld(); return; }
+    if (t.id === "eigen-wert") { leseEigen(); renderBon(); return; }
+    if (t.dataset && t.dataset.feld && S.entwurf) {
+      var v = t.value;
+      if (t.dataset.cent) { var cc = centAus(v); v = isNaN(cc) ? (v.trim() ? null : 0) : cc; if (v === null) return; }
+      else if (t.dataset.zahl) { v = parseInt(v, 10) || 0; }
+      else if (t.dataset.rabattwert != null) {
+        var rb = S.entwurf.rabatte[+t.dataset.rabattwert];
+        if (rb.typ === "prozent") { var n = Number(String(v).replace(",", ".")); v = isFinite(n) ? n : 0; } else { var c2 = centAus(v); v = isNaN(c2) ? 0 : c2; }
+      }
+      setzeFeld(t.dataset.feld, v);
+      markiereGeaendert();
+      if (/\.farbe$/.test(t.dataset.feld)) t.previousElementSibling.style.setProperty("--c", v);
+    }
+  });
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (t.id === "tag-wahl") { S.tag = t.value; S.stornoFrage = null; renderVerkaeufe(); return; }
+    if (t.dataset && t.dataset.feld && (/\.typ$/.test(t.dataset.feld) || /^angebote\./.test(t.dataset.feld) || /\.gruppe$/.test(t.dataset.feld))) {
+      if (/\.typ$/.test(t.dataset.feld)) { var i = +t.dataset.feld.split(".")[1]; var r = S.entwurf.rabatte[i]; r.wert = r.typ === "prozent" ? 10 : 100; }
+      setTimeout(function () {
+        var a = document.activeElement, f = a && a.dataset ? a.dataset.feld : null;
+        renderEinst();
+        if (f) { var el = document.querySelector('[data-feld="' + f + '"]'); if (el) el.focus(); }
+      }, 0);
+    }
+  });
+  $("frei-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var c = centAus($("frei-betrag").value);
+    if (isNaN(c) || c <= 0) { $("frei-betrag").focus(); return; }
+    S.frei.push({ id: uid(), name: $("frei-name").value.trim() || "Sonstiges", cent: c });
+    $("frei-name").value = ""; $("frei-betrag").value = "";
+    renderBon();
+  });
+
+  /* ---------- Export ---------- */
+  function exportieren() {
+    var liste = verkaufeAmTag().slice().reverse();
+    var zahl = function (c) { return ((c || 0) / 100).toFixed(2).replace(".", ","); };
+    var q = function (s) { return '"' + String(s == null ? "" : s).replace(/"/g, '""') + '"'; };
+    var zeilen = [["Datum", "Uhrzeit", "Artikel", "Stück", "Zwischensumme", "Mengenangebot", "Rabatt", "Rabatt-Art", "Summe", "Zahlart", "Storniert"].join(";")];
+    liste.forEach(function (v) {
+      var d = new Date(v.zeit);
+      var art = (v.positionen || []).map(function (p) { return p.menge + "x " + p.name; }).concat((v.frei || []).map(function (f) { return f.name + " " + zahl(f.cent); })).join(", ");
+      var st = (v.positionen || []).reduce(function (a, p) { return a + p.menge; }, 0) + (v.frei || []).length;
+      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl(v.angebotRabatt), zahl(v.rabattCent), q(v.rabattName || ""), zahl(v.summe), v.zahlart === "karte" ? "Karte" : "Bar", v.storniert ? "ja" : "nein"].join(";"));
+    });
+    var csv = "﻿" + zeilen.join("\r\n");
+    var name = "basar-verkaeufe-" + (S.tag === "alle" ? "alle-tage" : S.tag) + ".csv";
+    var zeigeText = function () {
+      var box = $("export-box"); box.hidden = false;
+      box.innerHTML = '<div class="zeile" style="justify-content:space-between;align-items:center;margin-bottom:6px"><span style="color:var(--tinte-2);font-size:14px">Zum Kopieren in Excel oder Numbers:</span><button class="knopf" type="button" id="kopieren">Kopieren</button></div><textarea id="csv-text" readonly></textarea>';
+      $("csv-text").value = csv.slice(1);
+    };
+    var dl = window.claude && window.claude.use ? window.claude.use("downloads") : Promise.resolve(null);
+    Promise.resolve(dl).then(function (d) {
+      if (!d) return zeigeText();
+      return d.save({ filename: name, data: csv }).then(function (r) { if (r && r.status === "saved") toast("CSV gespeichert"); }, function (e) { if (!e || e.code !== "declined") zeigeText(); });
+    }).catch(zeigeText);
+  }
+
+  /* ---------- Bildschirm wach halten ---------- */
+  var wach = null;
+  function wachHalten() {
+    if (wach || !navigator.wakeLock) return;
+    navigator.wakeLock.request("screen").then(function (l) { wach = l; l.addEventListener("release", function () { wach = null; }); }).catch(function () {});
+  }
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible" && Object.keys(S.korb).length) wachHalten(); });
+
+  /* ---------- Start ---------- */
+  function lokalStarten() {
+    S.modus = "lokal";
+    S.einst = LS.get("kasse-einst", null);
+    S.verkaeufe = LS.get("kasse-verkaeufe", []);
+    renderAlles();
+  }
+  function start() {
+    renderAlles();
+    var c = window.claude;
+    if (!c || !c.use) return lokalStarten();
+    var zeitlimit = setTimeout(function () { if (!S.geladen) { S.fehler = "Die Daten kommen gerade nicht an. Prüfen Sie die Internetverbindung; die Kasse versucht es weiter."; renderAlles(); } }, 10000);
+    Promise.all([c.use("db"), c.use("user")]).then(function (res) {
+      var dbx = res[0], user = res[1];
+      if (user && user.can) Promise.resolve(user.can("data.write")).then(function (ok) { if (ok === false) { S.darfSchreiben = false; renderAlles(); } }).catch(function () {});
+      if (!dbx) { clearTimeout(zeitlimit); return lokalStarten(); }
+      db = dbx; S.modus = "db";
+      var cache = LS.get("kasse-einst-cache", null);
+      if (cache && !S.einst) S.einst = cache;
+      renderAlles();
+      var fertig = function () { if (!S.geladen) { S.geladen = true; clearTimeout(zeitlimit); } if (S.fehler) { S.fehler = null; } };
+      db.doc("kasse/einstellungen").onSnapshot(function (snap) {
+        S.einst = snap.exists ? snap.data() : null;
+        if (!snap.metadata.fromCache) { fertig(); LS.set("kasse-einst-cache", S.einst); }
+        renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe();
+        if (S.ansicht === "preise" && !S.entwurfGeaendert) renderEinst();
+      }, function (e) { S.fehler = "Preise konnten nicht geladen werden (" + e.code + "). Laden Sie die Seite neu."; clearTimeout(zeitlimit); renderAlles(); });
+      db.collection("verkaeufe").onSnapshot(function (snap) {
+        S.verkaeufe = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+        if (!snap.metadata.fromCache) fertig();
+        renderStatus(); renderHinweise(); renderVerkaeufe();
+      }, function (e) { S.fehler = "Verkäufe konnten nicht geladen werden (" + e.code + "). Laden Sie die Seite neu."; clearTimeout(zeitlimit); renderAlles(); });
+    }).catch(function () { clearTimeout(zeitlimit); lokalStarten(); });
+  }
+  start();
+})();
+</script>
