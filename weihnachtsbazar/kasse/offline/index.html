@@ -254,6 +254,42 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .pp-einst .pp-leer { width: 140px; height: 140px; display: grid; place-items: center; border: 2px dashed var(--linie); border-radius: var(--radius-sm); color: var(--tinte-2); font-size: 13px; text-align: center; padding: 10px; }
 .pp-einst-text { display: grid; gap: 10px; flex: 1 1 260px; min-width: 0; }
 
+/* ---------- Zählhilfe ---------- */
+.zaehlen { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--linie); }
+.zaehlen summary { cursor: pointer; font-weight: 700; font-size: 15px; }
+.zaehl-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px 14px; margin-top: 12px; }
+.zaehl { display: grid; grid-template-columns: 48px 62px minmax(0, 1fr); align-items: center; gap: 8px; font-size: 14px; }
+.zaehl .feld { height: 40px; width: 100%; text-align: center; padding: 0 4px; font-variant-numeric: tabular-nums; }
+.zaehl .z-wert { font-weight: 700; white-space: nowrap; }
+.zaehl .z-summe { text-align: right; color: var(--tinte-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.zaehl-ergebnis { margin-top: 12px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--flaeche); display: grid; gap: 4px; font-size: 14px; color: var(--tinte-2); font-variant-numeric: tabular-nums; }
+.zaehl-ergebnis .z-diff { font: 800 24px/1.1 var(--font-display); letter-spacing: -.02em; color: var(--tinte); }
+.zaehl-ergebnis .z-diff.gut { color: var(--gut); }
+.zaehl-ergebnis .z-diff.warn { color: var(--warn); }
+
+/* ---------- Rückblick ---------- */
+.rueckblick { margin-top: 30px; display: grid; gap: 12px; }
+.rb-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+.rb-kopf p { margin: 0; color: var(--tinte-2); font-size: 14px; }
+.rb-raster { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; align-items: start; }
+.rb-block { display: grid; gap: 10px; align-content: start; min-width: 0; padding: 16px; border-radius: var(--radius-lg); background: var(--flaeche); }
+.rb-block h4 { margin: 0; font: 800 17px/1.2 var(--font-display); letter-spacing: -.01em; }
+.rb-leer { margin: 0; color: var(--tinte-2); font-size: 14px; }
+.bs-zeile { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; font-size: 14px; }
+.bs-zeile .bs-zahl { font-variant-numeric: tabular-nums; color: var(--tinte-2); white-space: nowrap; }
+.bs-zeile .bs-zahl b { color: var(--tinte); }
+.bs-balken { grid-column: 1 / -1; height: 8px; border-radius: 4px; background: var(--linie); overflow: hidden; }
+.bs-balken span { display: block; height: 100%; border-radius: 4px; background: var(--rot); }
+.std { display: flex; align-items: flex-end; gap: 2px; height: 150px; }
+.std-spalte { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.std-balken { width: 100%; max-width: 34px; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--rot); }
+.std-wert { margin-bottom: 4px; font-size: 11.5px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.std-achse { display: flex; gap: 2px; padding-top: 4px; border-top: 1px solid var(--linie); }
+.std-achse span { flex: 1; min-width: 0; text-align: center; font-size: 11.5px; color: var(--tinte-2); font-variant-numeric: tabular-nums; }
+.aus-zeile { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--linie); font-size: 14px; }
+.aus-zeile:last-child { border-bottom: 0; }
+.aus-zeile span:last-child { color: var(--tinte-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
 /* ---------- Vorbestellungen ---------- */
 .vb-raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
 .vb-raster > div { display: grid; gap: 14px; min-width: 0; }
@@ -452,6 +488,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       <div class="zeile">
         <select class="feld" id="tag-wahl" aria-label="Tag wählen" style="flex:0 1 auto"></select>
         <button class="knopf" type="button" id="export">Als CSV exportieren</button>
+        <button class="knopf knopf--dunkel" type="button" id="bericht">Bericht speichern</button>
       </div>
     </div>
     <div id="export-box" class="export-box" hidden></div>
@@ -467,6 +504,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
         <ol class="liste" id="liste"></ol>
       </div>
     </div>
+    <div class="rueckblick" id="rueckblick"></div>
   </section>
 
   <!-- VORBESTELLUNGEN -->
@@ -617,7 +655,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     vorbestellungAktiv: null,
     vbBezahltAktiv: false,
     vb: { id: null, pos: {} },
-    vbFrage: null
+    vbFrage: null,
+    zaehlung: {}
   };
   var db = null;
 
@@ -728,6 +767,13 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       };
       leser.readAsDataURL(datei);
     });
+  }
+  var ZAEHL_WERTE = [10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1];
+  function geldName(w) { return w >= 100 ? (w / 100) + " €" : w + " ct"; }
+  function speichereZaehlung(neu) {
+    S.zaehlung = neu;
+    if (S.modus === "db") return db.doc("kasse/zaehlung").set({ tage: neu });
+    return LS.set("kasse-zaehlung", neu) ? Promise.resolve() : Promise.reject({ code: "quota_exceeded" });
   }
   function neueVorbestellung(d) {
     if (S.modus === "db") return db.collection("vorbestellungen").doc().set(d);
@@ -909,6 +955,106 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var n = v.zahlart === "vorab" ? "vorab bezahlt" : v.zahlart && v.zahlart !== "bar" ? "PayPal" : "bar";
     return gross ? n.charAt(0).toUpperCase() + n.slice(1) : n;
   }
+  function auswertung() {
+    var liste = verkaufeAmTag(), gueltig = liste.filter(function (v) { return !v.storniert; });
+    var a = { liste: liste, gueltig: gueltig, summe: 0, bar: 0, paypal: 0, vorab: 0, rabatt: 0, stueck: 0, produkte: [], stunden: [], ausverkauft: [] };
+    var pp = {}, std = {};
+    gueltig.forEach(function (v) {
+      a.summe += v.summe || 0; a.rabatt += (v.angebotRabatt || 0) + (v.rabattCent || 0);
+      if (v.zahlart === "vorab") a.vorab += v.summe || 0; else if (v.zahlart && v.zahlart !== "bar") a.paypal += v.summe || 0; else a.bar += v.summe || 0;
+      (v.positionen || []).forEach(function (p) {
+        if (!pp[p.name]) pp[p.name] = { name: p.name, menge: 0, cent: 0 };
+        pp[p.name].menge += p.menge; pp[p.name].cent += p.preis * p.menge; a.stueck += p.menge;
+      });
+      var d = new Date(v.zeit); if (isNaN(d)) return;
+      var h = d.getHours(); if (!std[h]) std[h] = { stunde: h, bons: 0, cent: 0 };
+      std[h].bons++; std[h].cent += v.summe || 0;
+    });
+    a.produkte = Object.keys(pp).map(function (k) { return pp[k]; }).sort(function (x, y) { return y.menge - x.menge || y.cent - x.cent; });
+    var hs = Object.keys(std).map(Number);
+    if (hs.length) for (var h = Math.min.apply(null, hs); h <= Math.max.apply(null, hs); h++) a.stunden.push(std[h] || { stunde: h, bons: 0, cent: 0 });
+    // Ausverkauft: aus Lagerzahlen berechnet oder von Hand markiert
+    var alle = S.verkaeufe.filter(function (v) { return !v.storniert && v.zeit; }).sort(function (x, y) { return x.zeit.localeCompare(y.zeit); });
+    produkte().forEach(function (p) {
+      var b = S.lager && S.lager.bestand && S.lager.bestand[p.id], wann = null;
+      if (b && b.menge != null) {
+        var n = 0;
+        for (var i = 0; i < alle.length && !wann; i++) {
+          if (alle[i].zeit < b.seit) continue;
+          (alle[i].positionen || []).forEach(function (q) { if (q.id === p.id) n += q.menge; });
+          if (n >= b.menge) wann = alle[i].zeit;
+        }
+      }
+      if (!wann && S.ausverkauft[p.id]) wann = S.ausverkauft[p.id];
+      if (wann && (S.tag === "alle" || wann.slice(0, 10) === S.tag || tagVon(new Date(wann)) === S.tag)) a.ausverkauft.push({ name: p.name, zeit: wann });
+    });
+    a.ausverkauft.sort(function (x, y) { return x.zeit.localeCompare(y.zeit); });
+    return a;
+  }
+  function wannText(iso) { var t = tagVon(new Date(iso)); return (t === heute() ? "heute" : tagLang(t)) + ", " + uhrzeit(iso) + " Uhr"; }
+  function renderRueckblick() {
+    var a = auswertung(), el = $("rueckblick");
+    var zeitraum = S.tag === "alle" ? "alle Tage zusammen" : (S.tag === heute() ? "heute" : tagLang(S.tag));
+    if (!a.gueltig.length) { el.innerHTML = '<div class="rb-kopf"><h2>Rückblick</h2><p>' + zeitraum + '</p></div><p class="rb-leer">Sobald verkauft wurde, sehen Sie hier die Bestseller, die Uhrzeiten mit dem meisten Andrang und wann etwas ausverkauft war.</p>'; return; }
+    var maxM = a.produkte[0].menge, top = a.produkte.slice(0, 10);
+    var bs = top.map(function (p) {
+      return '<div class="bs-zeile"><span>' + esc(p.name) + '</span><span class="bs-zahl"><b>' + p.menge + "</b> Stück · " + eur(p.cent) + '</span><span class="bs-balken"><span style="width:' + Math.max(2, Math.round(p.menge / maxM * 100)) + '%"></span></span></div>';
+    }).join("") + (a.produkte.length > 10 ? '<p class="rb-leer">und ' + (a.produkte.length - 10) + " weitere Sorten</p>" : "");
+    var maxC = Math.max.apply(null, a.stunden.map(function (h) { return h.cent; })) || 1;
+    var stdHtml = '<div class="std" role="img" aria-label="Umsatz je Stunde">' + a.stunden.map(function (h) {
+      var istMax = h.cent === maxC;
+      return '<div class="std-spalte" title="' + h.stunde + "–" + (h.stunde + 1) + " Uhr: " + h.bons + (h.bons === 1 ? " Verkauf, " : " Verkäufe, ") + eur(h.cent) + '">' + (istMax ? '<span class="std-wert">' + eur(h.cent) + "</span>" : "") +
+        '<div class="std-balken" style="height:' + (h.cent ? Math.max(3, Math.round(h.cent / maxC * 82)) : 0) + '%"></div></div>';
+    }).join("") + '</div><div class="std-achse">' + a.stunden.map(function (h) { return "<span>" + h.stunde + "</span>"; }).join("") + "</div>";
+    var spitze = a.stunden.filter(function (h) { return h.cent === maxC; })[0];
+    var aus = a.ausverkauft.length ? a.ausverkauft.map(function (x) { return '<div class="aus-zeile"><span>' + esc(x.name) + "</span><span>" + wannText(x.zeit) + "</span></div>"; }).join("") : '<p class="rb-leer">Bisher ist nichts ausverkauft.</p>';
+    el.innerHTML = '<div class="rb-kopf"><h2>Rückblick</h2><p>' + zeitraum + " · " + a.gueltig.length + " Verkäufe · im Schnitt " + eur(Math.round(a.summe / a.gueltig.length)) + " pro Verkauf</p></div>" +
+      '<div class="rb-raster"><div class="rb-block"><h4>Bestseller</h4>' + bs + "</div>" +
+      '<div class="rb-block"><h4>Wann war am meisten los?</h4>' + stdHtml + '<p class="rb-leer">Umsatz je Stunde' + (S.tag === "alle" ? ", alle Tage zusammengezählt" : "") + ". Am stärksten: " + spitze.stunde + "–" + (spitze.stunde + 1) + " Uhr mit " + spitze.bons + (spitze.bons === 1 ? " Verkauf." : " Verkäufen.") + "</p></div>" +
+      '<div class="rb-block"><h4>Ausverkauft</h4>' + aus + "</div></div>";
+  }
+  function datumAbs(tag) { var q = tag.split("-"); return new Date(+q[0], +q[1] - 1, +q[2]).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "long", year: "numeric" }); }
+  function wannAbs(iso) { return datumAbs(tagVon(new Date(iso))) + ", " + uhrzeit(iso) + " Uhr"; }
+  function berichtHtml() {
+    var a = auswertung(), z = zaehlStand(), wg = (S.einst && S.einst.wechselgeld) || 0;
+    var zeitraum = S.tag === "alle" ? "alle Tage" : datumAbs(S.tag);
+    var zeile = function (l, w) { return "<tr><td>" + l + '</td><td class="r">' + w + "</td></tr>"; };
+    var offen = S.vorbestellungen.filter(function (x) { return x.status !== "abgeholt"; });
+    var h = '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Basar-Bericht ' + esc(zeitraum) + "</title><style>" +
+      "body{font:15px/1.45 -apple-system,'Segoe UI',Arial,sans-serif;color:#1d1b1a;max-width:760px;margin:0 auto;padding:28px 18px;background:#fff}h1{font-size:28px;margin:0}h2{font-size:18px;margin:28px 0 8px;padding-bottom:4px;border-bottom:2px solid #c8102e}" +
+      "p.sub{color:#5c5652;margin:4px 0 0}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}td,th{padding:6px 4px;border-bottom:1px solid #e5dfdb;text-align:left}th{font-size:13px;color:#5c5652}.r{text-align:right}tr.sum td{font-weight:700;border-bottom:0}ul{padding-left:20px}</style></head><body>" +
+      "<h1>Basar-Bericht</h1><p class=\"sub\">" + esc(zeitraum) + " · erstellt " + wannAbs(new Date().toISOString()) + "</p>" +
+      "<h2>Umsatz</h2><table>" + zeile("Umsatz gesamt", "<b>" + eur(a.summe) + "</b>") + zeile("davon bar", eur(a.bar)) + zeile("davon PayPal", eur(a.paypal)) + (a.vorab ? zeile("davon vorab bezahlt", eur(a.vorab)) : "") +
+      zeile("Verkäufe", a.gueltig.length) + zeile("verkaufte Stück", a.stueck) + zeile("Rabatte gewährt", eur(a.rabatt)) + (a.gueltig.length ? zeile("im Schnitt pro Verkauf", eur(Math.round(a.summe / a.gueltig.length))) : "") + "</table>" +
+      "<h2>Kassensturz</h2><table>" + zeile("Wechselgeld", eur(wg)) + zeile("Bareinnahmen", eur(a.bar)) + zeile("<b>Soll in der Kassette</b>", "<b>" + eur(wg + a.bar) + "</b>") +
+      (z.gezaehlt ? zeile("Gezählt", eur(z.ist)) + zeile("Differenz", z.diff === 0 ? "stimmt genau" : (z.diff > 0 ? "+" : "−") + eur(Math.abs(z.diff))) : zeile("Gezählt", "nicht gezählt")) + "</table>" +
+      (z.gezaehlt ? "<table style=\"margin-top:8px\"><tr><th>Geld</th><th class=\"r\">Anzahl</th><th class=\"r\">Summe</th></tr>" + ZAEHL_WERTE.filter(function (w) { return (S.zaehlung[S.tag] || {})[w]; }).map(function (w) { var n = S.zaehlung[S.tag][w]; return "<tr><td>" + geldName(w) + '</td><td class="r">' + n + '</td><td class="r">' + eur(n * w) + "</td></tr>"; }).join("") + "</table>" : "") +
+      "<h2>Verkauft nach Sorte</h2>" + (a.produkte.length ? "<table><tr><th>Sorte</th><th class=\"r\">Stück</th><th class=\"r\">zum Listenpreis</th></tr>" + a.produkte.map(function (p) { return "<tr><td>" + esc(p.name) + '</td><td class="r">' + p.menge + '</td><td class="r">' + eur(p.cent) + "</td></tr>"; }).join("") + "</table>" : "<p>Keine Verkäufe.</p>") +
+      "<h2>Uhrzeiten</h2>" + (a.stunden.length ? "<table><tr><th>Stunde</th><th class=\"r\">Verkäufe</th><th class=\"r\">Umsatz</th></tr>" + a.stunden.map(function (s2) { return "<tr><td>" + s2.stunde + "–" + (s2.stunde + 1) + ' Uhr</td><td class="r">' + s2.bons + '</td><td class="r">' + eur(s2.cent) + "</td></tr>"; }).join("") + "</table>" : "<p>Keine Verkäufe.</p>") +
+      "<h2>Ausverkauft</h2>" + (a.ausverkauft.length ? "<ul>" + a.ausverkauft.map(function (x) { return "<li>" + esc(x.name) + ": " + wannAbs(x.zeit) + "</li>"; }).join("") + "</ul>" : "<p>Nichts ausverkauft.</p>") +
+      "<h2>Vorbestellungen</h2><p>" + (S.vorbestellungen.length - offen.length) + " abgeholt, " + offen.length + " offen</p>" + (offen.length ? "<ul>" + offen.map(function (x) { return "<li>" + esc(x.name) + ": " + vbText(x) + (x.notiz ? " (" + esc(x.notiz) + ")" : "") + "</li>"; }).join("") + "</ul>" : "") +
+      "<h2>Notizen</h2>" + (S.notizen.length ? "<ul>" + S.notizen.slice().sort(function (x, y) { return (x.zeit || "").localeCompare(y.zeit || ""); }).map(function (n) { return "<li>" + esc(n.text) + " <span style=\"color:#5c5652\">(" + wannAbs(n.zeit) + (n.erledigt ? ", erledigt" : "") + ")</span></li>"; }).join("") + "</ul>" : "<p>Keine Notizen.</p>") +
+      "</body></html>";
+    return h;
+  }
+  function berichtSpeichern() {
+    var name = "basar-bericht-" + (S.tag === "alle" ? "alle-tage" : S.tag) + ".html";
+    dateiAnbieten(name, berichtHtml(), "text/html;charset=utf-8").then(function (ok) {
+      if (ok === true) toast("Bericht gespeichert"); else if (ok !== "abgelehnt") toast("Bericht konnte nicht gespeichert werden");
+    });
+  }
+  function zaehlStand() {
+    var zg = S.zaehlung[S.tag] || {}, ist = 0, irgendwas = false;
+    ZAEHL_WERTE.forEach(function (w) { var n = zg[w] || 0; if (n) irgendwas = true; ist += n * w; });
+    return { ist: ist, gezaehlt: irgendwas, diff: ist - (S.soll || 0) };
+  }
+  function zaehlErgebnis() {
+    var el = $("zaehl-ergebnis"); if (!el) return;
+    var z = zaehlStand();
+    if (!z.gezaehlt) { el.innerHTML = "Noch nichts gezählt."; return; }
+    var text = z.diff === 0 ? "Stimmt genau" : eur(Math.abs(z.diff)) + (z.diff > 0 ? " zu viel" : " zu wenig");
+    el.innerHTML = '<span class="z-diff ' + (z.diff === 0 ? "gut" : "warn") + '">' + text + "</span><span>Gezählt " + eur(z.ist) + " · Soll " + eur(S.soll || 0) + "</span>";
+  }
   function renderVerkaeufe() {
     var tage = [];
     S.verkaeufe.forEach(function (v) { if (v.tag && tage.indexOf(v.tag) < 0) tage.push(v.tag); });
@@ -952,8 +1098,19 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       : '<tbody><tr><td style="color:var(--tinte-2)">Noch keine Verkäufe an diesem Tag.</td></tr></tbody>';
 
     var wg = (S.einst && S.einst.wechselgeld) || 0;
-    $("kassensturz").innerHTML = '<h3 style="margin:0">Kassensturz</h3><div class="soll">' + eur(wg + bar) + "</div>" +
-      "<p>sollten in der Geldkassette sein: " + eur(wg) + " Wechselgeld + " + eur(bar) + " Bareinnahmen" + (S.tag === "alle" ? " (alle Tage zusammen)" : "") + ". Das Wechselgeld stellen Sie unter Preise &amp; Rabatte ein.</p>";
+    S.soll = wg + bar;
+    var ksFokus = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.zaehl;
+    if (!ksFokus) {
+      var zg = S.zaehlung[S.tag] || {}, hatZaehlung = Object.keys(zg).some(function (k) { return zg[k] > 0; });
+      $("kassensturz").innerHTML = '<h3 style="margin:0">Kassensturz</h3><div class="soll">' + eur(wg + bar) + "</div>" +
+        "<p>sollten in der Geldkassette sein: " + eur(wg) + " Wechselgeld + " + eur(bar) + " Bareinnahmen" + (S.tag === "alle" ? " (alle Tage zusammen)" : "") + ". Das Wechselgeld stellen Sie unter Preise &amp; Rabatte ein.</p>" +
+        '<details class="zaehlen"' + (hatZaehlung ? " open" : "") + '><summary>Kasse zählen</summary><p style="margin:8px 0 0">Tragen Sie ein, wie viele Scheine und Münzen jeder Sorte in der Kassette liegen.</p><div class="zaehl-raster">' +
+        ZAEHL_WERTE.map(function (w) {
+          var n = zg[w] || 0;
+          return '<label class="zaehl"><span class="z-wert">' + geldName(w) + '</span><input class="feld" data-zaehl="' + w + '" value="' + (n || "") + '" inputmode="numeric" placeholder="0" aria-label="Anzahl ' + geldName(w) + '"><span class="z-summe" data-zaehl-summe="' + w + '">' + (n ? eur(n * w) : "") + "</span></label>";
+        }).join("") + '</div><div class="zaehl-ergebnis" id="zaehl-ergebnis"></div><button class="link" type="button" id="zaehl-leeren" style="margin-top:10px">Zählung zurücksetzen</button></details>';
+    }
+    zaehlErgebnis();
 
     $("liste").innerHTML = liste.length ? liste.map(function (v) {
       var d = new Date(v.zeit), zeit = isNaN(d) ? "–" : pad(d.getHours()) + ":" + pad(d.getMinutes());
@@ -969,7 +1126,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       else if (S.darfSchreiben) aktion = '<button class="link" type="button" data-storno="' + esc(v.id) + '">stornieren</button>';
       return '<li class="' + (v.storniert ? "storno" : "") + '"><span class="zeit">' + zeit + '</span><span class="artikel">' + art + "<small>" + extra.join(" · ") + '</small></span><span class="betrag"><span>' + eur(v.summe) + "</span>" + aktion + "</span></li>";
     }).join("") : '<li style="grid-template-columns:1fr;color:var(--tinte-2)">Hier erscheint jeder abgeschlossene Verkauf mit Uhrzeit. Ein falsch gebuchter Verkauf lässt sich stornieren.</li>';
-    renderLager(); renderSortiment();
+    renderLager(); renderSortiment(); renderRueckblick();
   }
 
   /* ---------- Render: Einstellungen ---------- */
@@ -1277,6 +1434,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (d.stornoJa) { S.stornoFrage = null; aendereVerkauf(d.stornoJa, { storniert: true }).then(function () { toast("Verkauf storniert"); }).catch(function () { toast("Storno nicht gespeichert"); }); renderVerkaeufe(); return; }
     if (d.zurueck) { aendereVerkauf(d.zurueck, { storniert: false }).then(function () { toast("Verkauf wiederhergestellt"); }); return; }
     if (t.id === "export") return exportieren();
+    if (t.id === "bericht") return berichtSpeichern();
+    if (t.id === "zaehl-leeren") { var zn = Object.assign({}, S.zaehlung); delete zn[S.tag]; speichereZaehlung(zn).then(function () { renderVerkaeufe(); }).catch(function () { toast("Nicht gespeichert"); }); return; }
     if (t.id === "kopieren") { var ta = $("csv-text"); var ok = function () { toast("CSV kopiert"); }; try { navigator.clipboard.writeText(ta.value).then(ok, function () { ta.select(); }); } catch (e) { ta.select(); } return; }
     /* Einstellungen */
     if (d.neu) {
@@ -1310,6 +1469,14 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
 
   document.addEventListener("input", function (ev) {
     var t = ev.target;
+    if (t.dataset && t.dataset.zaehl) {
+      var zw = +t.dataset.zaehl, zn2 = parseInt(t.value, 10);
+      var neuZ = Object.assign({}, S.zaehlung); neuZ[S.tag] = Object.assign({}, neuZ[S.tag] || {});
+      if (isNaN(zn2) || zn2 <= 0) delete neuZ[S.tag][zw]; else neuZ[S.tag][zw] = zn2;
+      S.zaehlung = neuZ;
+      var zs = document.querySelector('[data-zaehl-summe="' + zw + '"]'); if (zs) zs.textContent = zn2 > 0 ? eur(zn2 * zw) : "";
+      zaehlErgebnis(); return;
+    }
     if (t.id === "gegeben") { var c = centAus(t.value); S.gegeben = isNaN(c) ? null : c; renderRueckgeld(); return; }
     if (t.id === "eigen-wert") { leseEigen(); renderBon(); return; }
     if (t.dataset && t.dataset.feld && S.entwurf) {
@@ -1337,6 +1504,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       t.value = ""; return;
     }
     if (t.id === "pp-name-feld") { speicherePaypal({ qr: (S.paypal && S.paypal.qr) || "", name: t.value.trim() }).catch(function () { toast("Nicht gespeichert"); }); return; }
+    if (t.dataset && t.dataset.zaehl) { speichereZaehlung(S.zaehlung).catch(function () { toast("Zählung nicht gespeichert"); }); return; }
     if (t.id === "knapp") {
       var kn = parseInt(t.value, 10);
       speichereLager(Object.assign({}, S.lager, { knapp: isNaN(kn) ? 3 : Math.max(0, kn) })).catch(function () { toast("Nicht gespeichert"); });
@@ -1391,6 +1559,18 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   });
 
   /* ---------- Export ---------- */
+  function dateiAnbieten(name, inhalt, typ) {
+    try {
+      var datei = new File([inhalt], name, { type: typ.split(";")[0] });
+      if (navigator.canShare && navigator.share && navigator.canShare({ files: [datei] })) {
+        return navigator.share({ files: [datei] }).then(function () { return true; }, function (e) {
+          if (e && e.name === "AbortError") return "abgelehnt";
+          return speichereDatei(name, inhalt, typ);
+        });
+      }
+    } catch (e) {}
+    return Promise.resolve(speichereDatei(name, inhalt, typ));
+  }
   function speichereDatei(name, inhalt, typ) {
     try {
       var url = URL.createObjectURL(new Blob([inhalt], { type: typ }));
@@ -1418,8 +1598,9 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       box.innerHTML = '<div class="zeile" style="justify-content:space-between;align-items:center;margin-bottom:6px"><span style="color:var(--tinte-2);font-size:14px">Zum Kopieren in Excel oder Numbers:</span><button class="knopf" type="button" id="kopieren">Kopieren</button></div><textarea id="csv-text" readonly></textarea>';
       $("csv-text").value = csv.slice(1);
     };
-    if (speichereDatei(name, csv, "text/csv;charset=utf-8")) toast("CSV-Datei erstellt");
-    zeigeText();
+    dateiAnbieten(name, csv, "text/csv;charset=utf-8").then(function (ok) {
+      if (ok === true) toast("CSV gespeichert"); else if (ok !== "abgelehnt") zeigeText();
+    });
   }
 
   /* ---------- Bildschirm wach halten ---------- */
@@ -1440,6 +1621,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
     S.paypal = LS.get("kasse-paypal", { qr: "", name: "" });
     S.vorbestellungen = LS.get("kasse-vorbestellungen", []);
+    S.zaehlung = LS.get("kasse-zaehlung", {});
     renderAlles();
   }
   var STANDARD = {"beispielpreise": false, "wechselgeld": 0, "produkte": [{"id": "kirsch", "name": "Kirschpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ff8fa0"}, {"id": "eierlikoer", "name": "Eierlikörpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ffd75e"}, {"id": "baileys", "name": "Baileys-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#e8b994"}, {"id": "cointreau", "name": "Cointreau-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#d8c3b4"}, {"id": "limoncello", "name": "Limoncello-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#e6ee6e"}, {"id": "aperol", "name": "Aperolpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ff9b6a"}, {"id": "karamell", "name": "Karamell-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#f7bb5c"}, {"id": "himbeer", "name": "Himbeerpralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#ff86b0"}, {"id": "nougat", "name": "Nougatpralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#d1a585"}, {"id": "haselnuss", "name": "Haselnusspralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#e7b97c"}, {"id": "mix-alk", "name": "Pralinen gemischt mit Alkohol", "gruppe": "Pralinen", "info": "Tüte · gemischt · mit Alkohol", "preis": 800, "farbe": "#ffc58f"}, {"id": "mix-ohne", "name": "Pralinen gemischt ohne Alkohol", "gruppe": "Pralinen", "info": "Tüte · gemischt · ohne Alkohol", "preis": 800, "farbe": "#f9dfa6"}, {"id": "schachtel", "name": "Pralinenschachtel", "gruppe": "Pralinen", "info": "gemischt · vorgepackt", "preis": 1100, "farbe": "#f2b8c6"}, {"id": "dubai", "name": "Dubaischokolade", "gruppe": "Schokolade", "info": "Tafel ca. 70 g", "preis": 800, "farbe": "#bfdc80"}, {"id": "zitronenverbene", "name": "Zitronenverbene", "gruppe": "Kräuter", "info": "6 g", "preis": 250, "farbe": "#f3ea7a"}, {"id": "minze", "name": "Marokkanische Minze", "gruppe": "Kräuter", "info": "12 g", "preis": 250, "farbe": "#93e4c2"}, {"id": "bergbohnenkraut", "name": "Bergbohnenkraut", "gruppe": "Kräuter", "info": "20 g", "preis": 250, "farbe": "#cbb8f2"}, {"id": "oregano", "name": "Oregano", "gruppe": "Kräuter", "info": "15 g", "preis": 250, "farbe": "#a6db88"}, {"id": "estragon", "name": "Estragon", "gruppe": "Kräuter", "info": "17 g", "preis": 250, "farbe": "#cfe9a6"}, {"id": "thymian", "name": "Französischer Thymian", "gruppe": "Kräuter", "info": "20 g", "preis": 250, "farbe": "#b5d1ad"}, {"id": "limonenthymian", "name": "Limonenthymian", "gruppe": "Kräuter", "info": "18 g", "preis": 250, "farbe": "#e3f28f"}, {"id": "goldsalbei", "name": "Goldsalbei", "gruppe": "Kräuter", "info": "10 g · ganze Blätter", "preis": 250, "farbe": "#f4d27e"}, {"id": "babyschuhe", "name": "Babyschuhe", "gruppe": "Geschenke", "info": "", "preis": 1000, "farbe": "#b9d3f0"}, {"id": "tasse-weihnacht", "name": "Tasse Weihnacht", "gruppe": "Geschenke", "info": "", "preis": 1300, "farbe": "#f6a6a0"}, {"id": "tasse-hutschenreuther", "name": "Tasse Hutschenreuther", "gruppe": "Geschenke", "info": "", "preis": 1600, "farbe": "#c9cbe8"}], "rabatte": [{"id": "r10", "name": "10 %", "typ": "prozent", "wert": 10}, {"id": "r20", "name": "20 %", "typ": "prozent", "wert": 20}, {"id": "r1", "name": "1 € Nachlass", "typ": "betrag", "wert": 100}], "angebote": []};
@@ -1454,6 +1636,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
     S.paypal = LS.get("kasse-paypal", null) || PAYPAL_STANDARD;
     S.vorbestellungen = LS.get("kasse-vorbestellungen", []);
+    S.zaehlung = LS.get("kasse-zaehlung", {});
     renderAlles();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
@@ -1463,8 +1646,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   document.addEventListener("click", function (ev) {
     var t = ev.target.closest("button"); if (!t) return;
     if (t.id === "sicherung") {
-      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal, vorbestellungen: S.vorbestellungen }, null, 1);
-      toast(speichereDatei("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json") ? "Sicherung erstellt" : "Sicherung konnte nicht gespeichert werden");
+      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal, vorbestellungen: S.vorbestellungen, zaehlung: S.zaehlung }, null, 1);
+      dateiAnbieten("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json").then(function (ok) { if (ok === true) { LS.set("kasse-letzte-sicherung", new Date().toISOString()); toast("Sicherung gespeichert"); } else if (ok !== "abgelehnt") toast("Sicherung konnte nicht gespeichert werden"); });
     }
     if (t.id === "alles-loeschen") {
       $("loesch-frage").innerHTML = '<div class="bestaetigen" style="justify-content:flex-start;align-items:center;flex-wrap:wrap"><span>Wirklich alle ' + S.verkaeufe.length + ' Verkäufe löschen? Das lässt sich nicht rückgängig machen.</span><button type="button" id="loeschen-nein">Nein</button><button class="ja" type="button" id="loeschen-ja">Ja, löschen</button></div>';
@@ -1487,6 +1670,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
           S.notizen = S.notizen.concat(d.notizen.filter(function (n) { return n && n.id && !nb[n.id]; })); LS.set("kasse-notizen", S.notizen);
         }
         if (d.paypal && typeof d.paypal.qr === "string" && /^data:image[/]/.test(d.paypal.qr)) { S.paypal = d.paypal; LS.set("kasse-paypal", d.paypal); }
+        if (d.zaehlung && typeof d.zaehlung === "object") { S.zaehlung = Object.assign({}, d.zaehlung, S.zaehlung); LS.set("kasse-zaehlung", S.zaehlung); }
         if (Array.isArray(d.vorbestellungen)) {
           var vbk = {}; S.vorbestellungen.forEach(function (x) { vbk[x.id] = true; });
           S.vorbestellungen = S.vorbestellungen.concat(d.vorbestellungen.filter(function (x) { return x && x.id && !vbk[x.id]; })); LS.set("kasse-vorbestellungen", S.vorbestellungen);

@@ -10,8 +10,10 @@ Kassen-App für den Stand: Produkte antippen, die Kasse rechnet Summe, Rabatte u
 - **Kasse**: Kacheln in den Sortenfarben der Auslagen, mit Restbestand („noch 5“). Bon mit +/−, „Sonstiges“ für freie
   Beträge (Spende, Tüte), Rabatt-Schnellwahl oder eigener Rabatt in % oder €, Bar (mit Rückgeld und Stückelung) oder PayPal: der hinterlegte
   PayPal-QR-Code wird mit dem Betrag groß angezeigt.
-- **Verkäufe**: Umsatz pro Tag (bar/PayPal getrennt), Stück pro Produkt, gewährte Rabatte, Kassensturz
-  (Wechselgeld + Bareinnahmen), Storno einzelner Verkäufe, Export als CSV für Excel.
+- **Verkäufe**: Umsatz pro Tag (bar/PayPal/vorab getrennt), Stück pro Produkt, gewährte Rabatte, Kassensturz
+  (Wechselgeld + Bareinnahmen) mit Zählhilfe für Scheine und Münzen, Storno einzelner Verkäufe, Export als CSV.
+  Darunter der **Rückblick**: Bestseller, Umsatz je Stunde, wann was ausverkauft war. **Bericht speichern** erzeugt
+  eine HTML-Datei mit allem (inkl. Zählung, Vorbestellungen, Notizen) zum Aufheben fürs nächste Jahr.
 - **Vorbestellungen**: Name, Abholung, Notiz und Sorten vormerken, optional „schon bezahlt“. Die Ware gilt im Lager als
   reserviert. Bei der Abholung „Abholen & kassieren“ (Bestellung landet im Bon, Extras einfach dazutippen). Wenn schon
   bezahlt: „Abgeholt“ oder „Abholen & dazukaufen“ (Vorbestelltes steht als „bezahlt“ im Bon, kassiert werden nur die

@@ -125,14 +125,20 @@ def main():
         '''    if (S.speicherFehler) h.push("<b>Achtung, hier wird nichts gespeichert.</b> Dieser Browser erlaubt kein Speichern, zum Beispiel in einem privaten Fenster. Öffnen Sie die Kasse in einem normalen Fenster.");''')
 
     # ---------- Export: Datei direkt speichern ----------
-    html = ersetze(html,
-        '''    var dl = window.claude && window.claude.use ? window.claude.use("downloads") : Promise.resolve(null);
-    Promise.resolve(dl).then(function (d) {
-      if (!d) return zeigeText();
-      return d.save({ filename: name, data: csv }).then(function (r) { if (r && r.status === "saved") toast("CSV gespeichert"); }, function (e) { if (!e || e.code !== "declined") zeigeText(); });
-    }).catch(zeigeText);''',
-        '''    if (speichereDatei(name, csv, "text/csv;charset=utf-8")) toast("CSV-Datei erstellt");
-    zeigeText();''')
+    # Auf dem iPad über das Teilen-Menü („In Dateien sichern“, Mail, AirDrop), sonst als Download
+    i = html.index("  /* dateiAnbieten:start */"); j = html.index("  /* dateiAnbieten:ende */") + len("  /* dateiAnbieten:ende */")
+    html = html[:i] + '''  function dateiAnbieten(name, inhalt, typ) {
+    try {
+      var datei = new File([inhalt], name, { type: typ.split(";")[0] });
+      if (navigator.canShare && navigator.share && navigator.canShare({ files: [datei] })) {
+        return navigator.share({ files: [datei] }).then(function () { return true; }, function (e) {
+          if (e && e.name === "AbortError") return "abgelehnt";
+          return speichereDatei(name, inhalt, typ);
+        });
+      }
+    } catch (e) {}
+    return Promise.resolve(speichereDatei(name, inhalt, typ));
+  }''' + html[j:]
     html = ersetze(html, "  function exportieren() {", '''  function speichereDatei(name, inhalt, typ) {
     try {
       var url = URL.createObjectURL(new Blob([inhalt], { type: typ }));
@@ -167,6 +173,7 @@ def main():
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
     S.paypal = LS.get("kasse-paypal", null) || PAYPAL_STANDARD;
     S.vorbestellungen = LS.get("kasse-vorbestellungen", []);
+    S.zaehlung = LS.get("kasse-zaehlung", {});
     renderAlles();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
@@ -176,8 +183,8 @@ def main():
   document.addEventListener("click", function (ev) {
     var t = ev.target.closest("button"); if (!t) return;
     if (t.id === "sicherung") {
-      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal, vorbestellungen: S.vorbestellungen }, null, 1);
-      toast(speichereDatei("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json") ? "Sicherung erstellt" : "Sicherung konnte nicht gespeichert werden");
+      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal, vorbestellungen: S.vorbestellungen, zaehlung: S.zaehlung }, null, 1);
+      dateiAnbieten("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json").then(function (ok) { if (ok === true) { LS.set("kasse-letzte-sicherung", new Date().toISOString()); toast("Sicherung gespeichert"); } else if (ok !== "abgelehnt") toast("Sicherung konnte nicht gespeichert werden"); });
     }
     if (t.id === "alles-loeschen") {
       $("loesch-frage").innerHTML = '<div class="bestaetigen" style="justify-content:flex-start;align-items:center;flex-wrap:wrap"><span>Wirklich alle ' + S.verkaeufe.length + ' Verkäufe löschen? Das lässt sich nicht rückgängig machen.</span><button type="button" id="loeschen-nein">Nein</button><button class="ja" type="button" id="loeschen-ja">Ja, löschen</button></div>';
@@ -200,6 +207,7 @@ def main():
           S.notizen = S.notizen.concat(d.notizen.filter(function (n) { return n && n.id && !nb[n.id]; })); LS.set("kasse-notizen", S.notizen);
         }
         if (d.paypal && typeof d.paypal.qr === "string" && /^data:image[/]/.test(d.paypal.qr)) { S.paypal = d.paypal; LS.set("kasse-paypal", d.paypal); }
+        if (d.zaehlung && typeof d.zaehlung === "object") { S.zaehlung = Object.assign({}, d.zaehlung, S.zaehlung); LS.set("kasse-zaehlung", S.zaehlung); }
         if (Array.isArray(d.vorbestellungen)) {
           var vbk = {}; S.vorbestellungen.forEach(function (x) { vbk[x.id] = true; });
           S.vorbestellungen = S.vorbestellungen.concat(d.vorbestellungen.filter(function (x) { return x && x.id && !vbk[x.id]; })); LS.set("kasse-vorbestellungen", S.vorbestellungen);
@@ -230,7 +238,7 @@ def main():
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     (HIER / "sw.js").write_text('''// Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-10";
+const VERSION = "basar-kasse-12";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));
