@@ -1,0 +1,211 @@
+{
+ "beispielpreise": false,
+ "wechselgeld": 0,
+ "produkte": [
+  {
+   "id": "kirsch",
+   "name": "Kirschpralinen",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · mit Alkohol",
+   "preis": 800,
+   "farbe": "#ff8fa0"
+  },
+  {
+   "id": "eierlikoer",
+   "name": "Eierlikörpralinen",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · mit Alkohol",
+   "preis": 800,
+   "farbe": "#ffd75e"
+  },
+  {
+   "id": "baileys",
+   "name": "Baileys-Trüffel",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · mit Alkohol",
+   "preis": 800,
+   "farbe": "#e8b994"
+  },
+  {
+   "id": "cointreau",
+   "name": "Cointreau-Trüffel",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · mit Alkohol",
+   "preis": 800,
+   "farbe": "#d8c3b4"
+  },
+  {
+   "id": "limoncello",
+   "name": "Limoncello-Trüffel",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · mit Alkohol",
+   "preis": 800,
+   "farbe": "#e6ee6e"
+  },
+  {
+   "id": "aperol",
+   "name": "Aperolpralinen",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · mit Alkohol",
+   "preis": 800,
+   "farbe": "#ff9b6a"
+  },
+  {
+   "id": "karamell",
+   "name": "Karamell-Trüffel",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · ohne Alkohol",
+   "preis": 800,
+   "farbe": "#f7bb5c"
+  },
+  {
+   "id": "himbeer",
+   "name": "Himbeerpralinen",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · ohne Alkohol",
+   "preis": 800,
+   "farbe": "#ff86b0"
+  },
+  {
+   "id": "nougat",
+   "name": "Nougatpralinen",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · ohne Alkohol",
+   "preis": 800,
+   "farbe": "#d1a585"
+  },
+  {
+   "id": "haselnuss",
+   "name": "Haselnusspralinen",
+   "gruppe": "Pralinen",
+   "info": "8 Stück · ohne Alkohol",
+   "preis": 800,
+   "farbe": "#e7b97c"
+  },
+  {
+   "id": "schachtel",
+   "name": "Pralinenschachtel",
+   "gruppe": "Pralinen",
+   "info": "Schachtel",
+   "preis": 1100,
+   "farbe": "#f2b8c6"
+  },
+  {
+   "id": "dubai",
+   "name": "Dubaischokolade",
+   "gruppe": "Schokolade",
+   "info": "Tafel ca. 70 g",
+   "preis": 800,
+   "farbe": "#bfdc80"
+  },
+  {
+   "id": "zitronenverbene",
+   "name": "Zitronenverbene",
+   "gruppe": "Kräuter",
+   "info": "6 g",
+   "preis": 250,
+   "farbe": "#f3ea7a"
+  },
+  {
+   "id": "minze",
+   "name": "Marokkanische Minze",
+   "gruppe": "Kräuter",
+   "info": "12 g",
+   "preis": 250,
+   "farbe": "#93e4c2"
+  },
+  {
+   "id": "bergbohnenkraut",
+   "name": "Bergbohnenkraut",
+   "gruppe": "Kräuter",
+   "info": "20 g",
+   "preis": 250,
+   "farbe": "#cbb8f2"
+  },
+  {
+   "id": "oregano",
+   "name": "Oregano",
+   "gruppe": "Kräuter",
+   "info": "15 g",
+   "preis": 250,
+   "farbe": "#a6db88"
+  },
+  {
+   "id": "estragon",
+   "name": "Estragon",
+   "gruppe": "Kräuter",
+   "info": "17 g",
+   "preis": 250,
+   "farbe": "#cfe9a6"
+  },
+  {
+   "id": "thymian",
+   "name": "Französischer Thymian",
+   "gruppe": "Kräuter",
+   "info": "20 g",
+   "preis": 250,
+   "farbe": "#b5d1ad"
+  },
+  {
+   "id": "limonenthymian",
+   "name": "Limonenthymian",
+   "gruppe": "Kräuter",
+   "info": "18 g",
+   "preis": 250,
+   "farbe": "#e3f28f"
+  },
+  {
+   "id": "goldsalbei",
+   "name": "Goldsalbei",
+   "gruppe": "Kräuter",
+   "info": "10 g · ganze Blätter",
+   "preis": 250,
+   "farbe": "#f4d27e"
+  },
+  {
+   "id": "babyschuhe",
+   "name": "Babyschuhe",
+   "gruppe": "Geschenke",
+   "info": "",
+   "preis": 1000,
+   "farbe": "#b9d3f0"
+  },
+  {
+   "id": "tasse-weihnacht",
+   "name": "Tasse Weihnacht",
+   "gruppe": "Geschenke",
+   "info": "",
+   "preis": 1300,
+   "farbe": "#f6a6a0"
+  },
+  {
+   "id": "tasse-hutschenreuther",
+   "name": "Tasse Hutschenreuther",
+   "gruppe": "Geschenke",
+   "info": "",
+   "preis": 1600,
+   "farbe": "#c9cbe8"
+  }
+ ],
+ "rabatte": [
+  {
+   "id": "r10",
+   "name": "10 %",
+   "typ": "prozent",
+   "wert": 10
+  },
+  {
+   "id": "r20",
+   "name": "20 %",
+   "typ": "prozent",
+   "wert": 20
+  },
+  {
+   "id": "r1",
+   "name": "1 € Nachlass",
+   "typ": "betrag",
+   "wert": 100
+  }
+ ],
+ "angebote": []
+}

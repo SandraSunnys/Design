@@ -22,45 +22,8 @@ QUELLE = HIER.parent / "kasse.html"
 SCHRIFTEN = HIER.parent.parent / "affinity" / "Schriften"
 ROT = (200, 16, 46)
 
-# Sortiment aus den Auslagen. Preise sind Platzhalter, bis sie in der App
-# unter „Preise & Rabatte“ gespeichert werden.
-PRALINEN = [
-    ("kirsch", "Kirschpralinen", "mit Alkohol", "#ff8fa0"),
-    ("eierlikoer", "Eierlikörpralinen", "mit Alkohol", "#ffd75e"),
-    ("baileys", "Baileys-Trüffel", "mit Alkohol", "#e8b994"),
-    ("cointreau", "Cointreau-Trüffel", "mit Alkohol", "#d8c3b4"),
-    ("limoncello", "Limoncello-Trüffel", "mit Alkohol", "#e6ee6e"),
-    ("aperol", "Aperolpralinen", "mit Alkohol", "#ff9b6a"),
-    ("karamell", "Karamell-Trüffel", "ohne Alkohol", "#f7bb5c"),
-    ("himbeer", "Himbeerpralinen", "ohne Alkohol", "#ff86b0"),
-    ("nougat", "Nougatpralinen", "ohne Alkohol", "#d1a585"),
-    ("haselnuss", "Haselnusspralinen", "ohne Alkohol", "#e7b97c"),
-]
-KRAEUTER = [
-    ("zitronenverbene", "Zitronenverbene", "6 g", "#f3ea7a"),
-    ("minze", "Marokkanische Minze", "12 g", "#93e4c2"),
-    ("bergbohnenkraut", "Bergbohnenkraut", "20 g", "#cbb8f2"),
-    ("oregano", "Oregano", "15 g", "#a6db88"),
-    ("estragon", "Estragon", "17 g", "#cfe9a6"),
-    ("thymian", "Französischer Thymian", "20 g", "#b5d1ad"),
-    ("limonenthymian", "Limonenthymian", "18 g", "#e3f28f"),
-    ("goldsalbei", "Goldsalbei", "10 g · ganze Blätter", "#f4d27e"),
-]
-STANDARD = {
-    "beispielpreise": True,
-    "wechselgeld": 0,
-    "produkte": (
-        [{"id": i, "name": n, "gruppe": "Pralinen", "info": "8 Stück · " + a, "preis": 750, "farbe": f} for i, n, a, f in PRALINEN]
-        + [{"id": "dubai", "name": "Schokoladentafel Dubai-Style", "gruppe": "Schokolade", "info": "ca. 70 g", "preis": 600, "farbe": "#bfdc80"}]
-        + [{"id": i, "name": n, "gruppe": "Kräuter", "info": g, "preis": 400, "farbe": f} for i, n, g, f in KRAEUTER]
-    ),
-    "rabatte": [
-        {"id": "r10", "name": "10 %", "typ": "prozent", "wert": 10},
-        {"id": "r20", "name": "20 %", "typ": "prozent", "wert": 20},
-        {"id": "r1", "name": "1 € Nachlass", "typ": "betrag", "wert": 100},
-    ],
-    "angebote": [],
-}
+# Sortiment und Preise kommen aus ../sortiment.json (dieselben Daten wie online).
+STANDARD = json.loads((HIER.parent / "sortiment.json").read_text(encoding="utf-8"))
 
 
 def b64(pfad):
@@ -247,7 +210,7 @@ def main():
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     (HIER / "sw.js").write_text('''// Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-1";
+const VERSION = "basar-kasse-2";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));
