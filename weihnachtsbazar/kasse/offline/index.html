@@ -615,6 +615,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     paypal: { qr: "", name: "" },
     vorbestellungen: [],
     vorbestellungAktiv: null,
+    vbBezahltAktiv: false,
     vb: { id: null, pos: {} },
     vbFrage: null
   };
@@ -748,10 +749,16 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   function reserviertVon(id) {
     var n = 0;
     S.vorbestellungen.forEach(function (x) {
-      if (x.status === "abgeholt" || x.id === S.vorbestellungAktiv) return;
+      if (x.status === "abgeholt" || (x.id === S.vorbestellungAktiv && !S.vbBezahltAktiv)) return;
       (x.positionen || []).forEach(function (p) { if (p.id === id) n += p.menge; });
     });
     return n;
+  }
+  function aktiveVorbestellung() { return S.vorbestellungAktiv ? S.vorbestellungen.find(function (x) { return x.id === S.vorbestellungAktiv; }) || null : null; }
+  function vorabVerkauf(x, jetzt) {
+    var pos = (x.positionen || []).map(function (p) { var pr = produkt(p.id) || { id: p.id, name: p.name || "?", gruppe: "", farbe: "", preis: 0 }; return { id: pr.id, name: pr.name, gruppe: pr.gruppe, farbe: pr.farbe, preis: pr.preis, menge: p.menge }; });
+    var su = pos.reduce(function (a, p) { return a + p.preis * p.menge; }, 0);
+    return { zeit: jetzt.toISOString(), tag: tagVon(jetzt), positionen: pos, frei: [], zwischensumme: su, angebotRabatt: 0, rabattName: null, rabattCent: 0, summe: su, zahlart: "vorab", gegeben: null, storniert: false, vorbestellung: x.name };
   }
   function vbSumme(x) { return (x.positionen || []).reduce(function (a, p) { var pr = produkt(p.id); return a + (pr ? pr.preis * p.menge : 0); }, 0); }
   function vbText(x) { return (x.positionen || []).map(function (p) { var pr = produkt(p.id); return p.menge + "× " + esc(pr ? pr.name : p.name || "?"); }).join(", "); }
@@ -822,7 +829,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var r = berechne();
     var vbA = S.vorbestellungAktiv && S.vorbestellungen.find(function (x) { return x.id === S.vorbestellungAktiv; });
     $("vb-hinweis").hidden = !vbA;
-    if (vbA) $("vb-hinweis").innerHTML = '<div class="vb-banner"><span>Vorbestellung von <b>' + esc(vbA.name) + '</b></span><button type="button" id="vb-loesen">lösen</button></div>';
+    if (vbA) $("vb-hinweis").innerHTML = '<div class="vb-banner"><span>Vorbestellung von <b>' + esc(vbA.name) + "</b>" + (S.vbBezahltAktiv ? " · schon bezahlt. Weitere Sachen einfach antippen." : "") + '</span><button type="button" id="vb-loesen">lösen</button></div>';
+    var vorabPos = vbA && S.vbBezahltAktiv ? (vbA.positionen || []) : [];
     var posten = r.zeilen.map(function (z) {
       return '<li><span class="punkt" style="--c:' + esc(z.p.farbe || "#e0dcd8") + '"></span><span class="p-name">' + esc(z.p.name) + "<small>" + eur(z.p.preis) + " je Stück</small></span>" +
         '<span class="menge"><button type="button" data-minus="' + esc(z.p.id) + '" aria-label="Eins weniger">−</button><span>' + z.menge + '</span><button type="button" data-plus="' + esc(z.p.id) + '" aria-label="Eins mehr">+</button></span>' +
@@ -831,6 +839,11 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       return '<li><span class="punkt" style="--c:var(--linie)"></span><span class="p-name">' + esc(f.name) + "<small>Sonstiges</small></span>" +
         '<span class="menge"><button type="button" data-frei-weg="' + f.id + '" aria-label="Entfernen">×</button></span><span class="p-summe">' + eur(f.cent) + "</span></li>";
     }));
+    posten = vorabPos.map(function (vp) {
+      var pr = produkt(vp.id);
+      return '<li><span class="punkt" style="--c:' + esc((pr && pr.farbe) || "#e0dcd8") + '"></span><span class="p-name">' + esc(pr ? pr.name : vp.name || "?") + "<small>vorbestellt</small></span>" +
+        '<span class="menge" style="padding:0 14px;height:44px;display:inline-flex;align-items:center"><span>' + vp.menge + '×</span></span><span class="p-summe"><span class="pille pille--bezahlt">bezahlt</span></span></li>';
+    }).concat(posten);
     $("posten").innerHTML = posten.length ? posten.join("") : '<li class="posten-leer">Tippen Sie auf ein Produkt, um es auf den Bon zu setzen.</li>';
 
     var chips = rabatte().map(function (rb) {
@@ -859,10 +872,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     }
     renderRueckgeld(r);
 
-    var leer = r.anzahl === 0;
+    var leer = r.anzahl === 0 && !vorabPos.length;
     var btn = $("abschliessen");
     btn.disabled = leer || !S.darfSchreiben || S.modus === "laden";
-    btn.textContent = leer ? "Verkauf abschließen" : "Verkauf abschließen · " + eur(r.summe);
+    btn.textContent = leer ? "Verkauf abschließen" : r.anzahl === 0 ? "Abholung buchen" : (vorabPos.length ? "Abholung + Extras abschließen · " : "Verkauf abschließen · ") + eur(r.summe);
 
     $("mobil-leiste").hidden = leer || S.ansicht !== "kasse";
     $("ml-anzahl").textContent = r.anzahl + (r.anzahl === 1 ? " Artikel" : " Artikel");
@@ -1043,7 +1056,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       else if (S.vbFrage === "weg:" + x.id) aktion = '<span class="vb-text">Wirklich löschen?</span><button class="knopf" type="button" data-vb-nein="1">Nein</button><button class="knopf knopf--rot" type="button" data-vb-weg-ja="' + esc(x.id) + '">Löschen</button>';
       else if (S.vbFrage === "aus:" + x.id) aktion = '<span class="vb-text">Ware übergeben und als vorab bezahlt buchen?</span><button class="knopf" type="button" data-vb-nein="1">Nein</button><button class="knopf knopf--dunkel" type="button" data-vb-aus-ja="' + esc(x.id) + '">Ja, buchen</button>';
       else if (S.darfSchreiben) aktion = (x.bezahlt
-          ? '<button class="knopf knopf--dunkel" type="button" data-vb-aus="' + esc(x.id) + '">Abgeholt</button>'
+          ? '<button class="knopf knopf--dunkel" type="button" data-vb-aus="' + esc(x.id) + '">Abgeholt</button><button class="knopf knopf--rot" type="button" data-vb-kasse="' + esc(x.id) + '">Abholen &amp; dazukaufen</button>'
           : '<button class="knopf knopf--rot" type="button" data-vb-kasse="' + esc(x.id) + '">Abholen &amp; kassieren</button>') +
         '<button class="knopf" type="button" data-vb-bearbeiten="' + esc(x.id) + '">Bearbeiten</button><button class="link" type="button" data-vb-weg="' + esc(x.id) + '">löschen</button>';
       return '<div class="vb-karte' + (x.status === "abgeholt" ? " fertig" : "") + '"><div class="vb-kopf"><span class="vb-name">' + esc(x.name) + '</span><span class="vb-betrag">' + eur(vbSumme(x)) +
@@ -1134,12 +1147,12 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     renderBon();
     window.scrollTo(0, 0);
   }
-  function korbLeeren() { S.korb = {}; S.frei = []; S.rabatt = null; S.gegeben = null; S.vorbestellungAktiv = null; $("gegeben").value = ""; $("eigen-wert").value = ""; renderKasse(); }
+  function korbLeeren() { S.korb = {}; S.frei = []; S.rabatt = null; S.gegeben = null; S.vorbestellungAktiv = null; S.vbBezahltAktiv = false; $("gegeben").value = ""; $("eigen-wert").value = ""; renderKasse(); }
 
   function abschliessen() {
     var r = berechne();
-    if (!r.anzahl || !S.darfSchreiben) return;
-    var vbId = S.vorbestellungAktiv, vb = vbId ? S.vorbestellungen.find(function (x) { return x.id === vbId; }) : null;
+    var vb = aktiveVorbestellung(), vorab = !!(vb && S.vbBezahltAktiv);
+    if ((!r.anzahl && !vorab) || !S.darfSchreiben) return;
     var jetzt = new Date();
     var v = {
       zeit: jetzt.toISOString(), tag: tagVon(jetzt),
@@ -1153,6 +1166,23 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       vorbestellung: vb ? vb.name : null
     };
     var btn = $("abschliessen"); btn.disabled = true; btn.textContent = "Speichert …";
+    if (vorab) {
+      var vv = vorabVerkauf(vb, jetzt), vorabId = null;
+      neuerVerkauf(vv).then(function (vid) {
+        vorabId = vid;
+        return r.anzahl ? neuerVerkauf(v) : null;
+      }).then(function () {
+        return aendereVorbestellung(vb.id, { status: "abgeholt", abgeholtAm: jetzt.toISOString(), verkaufId: vorabId });
+      }).then(function () {
+        korbLeeren();
+        toast(r.anzahl ? "Abholung von " + esc(vb.name) + " gebucht, Extras " + eur(v.summe) + " kassiert" : "Abholung von " + esc(vb.name) + " gebucht");
+      }).catch(function () {
+        renderBon();
+        toast(vorabId ? "Abholung gebucht, Extras nicht gespeichert. Bitte die Extras nochmal kassieren." : "Nicht gespeichert, bitte noch einmal versuchen");
+        if (vorabId) { aendereVorbestellung(vb.id, { status: "abgeholt", abgeholtAm: jetzt.toISOString(), verkaufId: vorabId }).catch(function () {}); S.vorbestellungAktiv = null; S.vbBezahltAktiv = false; renderBon(); }
+      });
+      return;
+    }
     neuerVerkauf(v).then(function (id) {
       if (vb) aendereVorbestellung(vb.id, { status: "abgeholt", abgeholtAm: v.zeit, verkaufId: id }).catch(function () { toast("Vorbestellung nicht als abgeholt markiert"); });
       korbLeeren();
@@ -1231,13 +1261,13 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (d.vbKasse) {
       var xk = S.vorbestellungen.find(function (x) { return x.id === d.vbKasse; }); if (!xk) return;
       korbLeeren();
-      (xk.positionen || []).forEach(function (p) { if (produkt(p.id)) S.korb[p.id] = p.menge; });
-      S.vorbestellungAktiv = xk.id;
+      if (!xk.bezahlt) (xk.positionen || []).forEach(function (p) { if (produkt(p.id)) S.korb[p.id] = p.menge; });
+      S.vorbestellungAktiv = xk.id; S.vbBezahltAktiv = !!xk.bezahlt;
       zeige("kasse"); renderKasse(); renderLager();
-      toast("Vorbestellung von " + esc(xk.name) + " ist im Bon");
+      toast(xk.bezahlt ? "Vorbestellung von " + esc(xk.name) + " ist bezahlt. Extras jetzt antippen." : "Vorbestellung von " + esc(xk.name) + " ist im Bon");
       return;
     }
-    if (t.id === "vb-loesen") { S.vorbestellungAktiv = null; renderKasse(); renderLager(); return; }
+    if (t.id === "vb-loesen") { S.vorbestellungAktiv = null; S.vbBezahltAktiv = false; renderKasse(); renderLager(); return; }
     if (t.id === "leeren") return korbLeeren();
     if (t.id === "abschliessen") return abschliessen();
     if (t.id === "ml-bon") { $("bon").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
