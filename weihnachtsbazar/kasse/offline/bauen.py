@@ -24,6 +24,9 @@ ROT = (200, 16, 46)
 
 # Sortiment und Preise kommen aus ../sortiment.json (dieselben Daten wie online).
 STANDARD = json.loads((HIER.parent / "sortiment.json").read_text(encoding="utf-8"))
+# PayPal-QR-Code zum Geld-Empfangen (aus der PayPal-App), wird beim ersten Start hinterlegt.
+_QR = HIER.parent / "paypal-qr.jpg"
+PAYPAL = {"qr": "data:image/jpeg;base64," + base64.b64encode(_QR.read_bytes()).decode() if _QR.exists() else "", "name": ""}
 
 
 def b64(pfad):
@@ -153,6 +156,7 @@ def main():
     # ---------- Start: ohne claude.ai ----------
     start_alt = html[html.index("  function start() {"): html.index("  start();\n})();")]
     start_neu = '''  var STANDARD = ''' + json.dumps(STANDARD, ensure_ascii=False) + ''';
+  var PAYPAL_STANDARD = ''' + json.dumps(PAYPAL) + ''';
   function start() {
     S.modus = "lokal"; S.geladen = true;
     try { localStorage.setItem("kasse-test", "1"); localStorage.removeItem("kasse-test"); } catch (e) { S.speicherFehler = true; }
@@ -161,7 +165,7 @@ def main():
     S.notizen = LS.get("kasse-notizen", []);
     S.ausverkauft = LS.get("kasse-ausverkauft", {});
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
-    S.paypal = LS.get("kasse-paypal", { qr: "", name: "" });
+    S.paypal = LS.get("kasse-paypal", null) || PAYPAL_STANDARD;
     renderAlles();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
@@ -221,7 +225,7 @@ def main():
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     (HIER / "sw.js").write_text('''// Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-6";
+const VERSION = "basar-kasse-8";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));
