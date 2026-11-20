@@ -211,6 +211,27 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .speicher-leiste .knopf { border-color: var(--grund); }
 .speicher-leiste .knopf--rot { border-color: var(--rot); }
 
+/* ---------- PayPal ---------- */
+.pp-bon { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: center; margin-top: 12px; padding: 12px; border-radius: var(--radius-sm); background: var(--grund); }
+.pp-bon img { width: 96px; height: 96px; object-fit: contain; background: #fff; border-radius: 8px; }
+.pp-bon .knopf { margin-top: 8px; }
+.pp-bon p { margin: 0; font-size: 14px; color: var(--tinte-2); }
+.pp-overlay { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; overflow-y: auto; background: #ffffff; color: #1d1b1a;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.pp-karte { width: min(560px, 100%); display: grid; gap: 14px; justify-items: center; text-align: center; }
+.pp-dach { margin: 0; font: 700 13px/18px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: #c8102e; }
+.pp-betrag { font: 800 clamp(48px, 9vw, 84px)/1 var(--font-display); letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.pp-karte img { width: min(380px, 80vw, 46vh); aspect-ratio: 1; max-width: 100%; object-fit: contain; }
+.pp-name { margin: 0; font-weight: 700; font-size: 18px; }
+.pp-hilfe { margin: 0; color: #5c5652; font-size: 15px; max-width: 42ch; }
+.pp-knoepfe { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; width: 100%; margin-top: 6px; }
+.pp-knoepfe .knopf { height: 54px; background: #fff; color: #1d1b1a; border-color: #e5dfdb; }
+.pp-knoepfe .primaer { background: #c8102e; color: #fff; }
+.pp-einst { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.pp-einst img { width: 140px; height: 140px; object-fit: contain; background: #fff; border: 1px solid var(--linie); border-radius: var(--radius-sm); }
+.pp-einst .pp-leer { width: 140px; height: 140px; display: grid; place-items: center; border: 2px dashed var(--linie); border-radius: var(--radius-sm); color: var(--tinte-2); font-size: 13px; text-align: center; padding: 10px; }
+.pp-einst-text { display: grid; gap: 10px; flex: 1 1 260px; min-width: 0; }
+
 /* ---------- Lager ---------- */
 .kachel .k-lager { margin-top: 6px; padding: 2px 8px; border-radius: var(--rund); background: rgba(255,255,255,.65); color: #1d1b1a; font: 700 12px/16px var(--font-sans); font-variant-numeric: tabular-nums; }
 .kachel .k-lager.knapp { background: #9a3412; color: #fff; }
@@ -340,7 +361,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
         <div>
           <div class="seg" id="zahlart">
             <button type="button" data-zahlart="bar" aria-pressed="true">Bar</button>
-            <button type="button" data-zahlart="karte" aria-pressed="false">Karte / PayPal</button>
+            <button type="button" data-zahlart="paypal" aria-pressed="false">PayPal</button>
           </div>
           <div id="bar-bereich" style="margin-top:12px">
             <div class="block-label">Gegeben</div>
@@ -356,6 +377,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
             </div>
             <div class="rueckgeld" id="rueckgeld" hidden></div>
           </div>
+          <div id="paypal-bereich" hidden></div>
         </div>
 
         <button class="primaer" id="abschliessen" type="button" disabled>Verkauf abschließen</button>
@@ -430,6 +452,20 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   </section>
 </main>
 
+<div class="pp-overlay" id="pp-overlay" hidden role="dialog" aria-modal="true" aria-label="Mit PayPal bezahlen">
+  <div class="pp-karte">
+    <p class="pp-dach">Mit PayPal bezahlen</p>
+    <div class="pp-betrag" id="pp-betrag">0,00 €</div>
+    <img id="pp-bild" alt="PayPal-QR-Code">
+    <p class="pp-name" id="pp-name"></p>
+    <p class="pp-hilfe">QR-Code mit der Handykamera oder der PayPal-App scannen und den Betrag senden.</p>
+    <div class="pp-knoepfe">
+      <button class="knopf" type="button" id="pp-zurueck">Zurück</button>
+      <button class="primaer" type="button" id="pp-erhalten">Zahlung erhalten · abschließen</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-ort"></div>
 
 <script>
@@ -491,7 +527,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     letzterVerkauf: null,
     notizen: [],
     ausverkauft: {},
-    lager: { bestand: {}, knapp: 3 }
+    lager: { bestand: {}, knapp: 3 },
+    paypal: { qr: "", name: "" }
   };
   var db = null;
 
@@ -574,6 +611,32 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (S.modus === "db") return db.doc("notizen/" + id).delete();
     S.notizen = S.notizen.filter(function (n) { return n.id !== id; });
     LS.set("kasse-notizen", S.notizen); renderNotizen(); return Promise.resolve();
+  }
+  function speicherePaypal(neu) {
+    S.paypal = neu; renderBon(); if (S.ansicht === "preise") renderEinst();
+    if (S.modus === "db") return db.doc("kasse/paypal").set(neu);
+    return LS.set("kasse-paypal", neu) ? Promise.resolve() : Promise.reject({ code: "quota_exceeded" });
+  }
+  function bildVerkleinern(datei) {
+    return new Promise(function (ok, fehler) {
+      var leser = new FileReader();
+      leser.onerror = fehler;
+      leser.onload = function () {
+        var img = new Image();
+        img.onerror = fehler;
+        img.onload = function () {
+          var max = 700, f = Math.min(1, max / Math.max(img.width, img.height));
+          var c = document.createElement("canvas"); c.width = Math.round(img.width * f); c.height = Math.round(img.height * f);
+          var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.imageSmoothingEnabled = f === 1 ? false : true;
+          g.drawImage(img, 0, 0, c.width, c.height);
+          var url = c.toDataURL("image/png");
+          if (url.length > 180000) url = c.toDataURL("image/jpeg", 0.88);
+          ok(url);
+        };
+        img.src = leser.result;
+      };
+      leser.readAsDataURL(datei);
+    });
   }
   var lagerKette = Promise.resolve();
   function speichereLager(neu) {
@@ -665,6 +728,13 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
 
     document.querySelectorAll("#zahlart button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.zahlart === S.zahlart)); });
     $("bar-bereich").hidden = S.zahlart !== "bar";
+    var pb = $("paypal-bereich");
+    pb.hidden = S.zahlart !== "paypal";
+    if (S.zahlart === "paypal") {
+      pb.innerHTML = S.paypal && S.paypal.qr
+        ? '<div class="pp-bon"><img src="' + S.paypal.qr + '" alt="PayPal-QR-Code"><div><p>Dem Kunden den QR-Code zeigen. Erst abschließen, wenn das Geld angekommen ist.</p><button class="knopf knopf--dunkel" type="button" id="pp-zeigen"' + (r.anzahl ? "" : " disabled") + '>QR-Code groß zeigen</button></div></div>'
+        : '<div class="pp-bon" style="grid-template-columns:1fr"><p>Noch kein PayPal-QR-Code hinterlegt. Unter <button class="link" type="button" data-geh="preise">Preise &amp; Rabatte</button> können Sie ihn als Bild hinzufügen.</p></div>';
+    }
     renderRueckgeld(r);
 
     var leer = r.anzahl === 0;
@@ -710,7 +780,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var summe = 0, bar = 0, karte = 0, rabatt = 0, stueck = 0, proProdukt = {};
     gueltig.forEach(function (v) {
       summe += v.summe || 0;
-      if (v.zahlart === "karte") karte += v.summe || 0; else bar += v.summe || 0;
+      if (v.zahlart && v.zahlart !== "bar") karte += v.summe || 0; else bar += v.summe || 0;
       rabatt += (v.angebotRabatt || 0) + (v.rabattCent || 0);
       (v.positionen || []).forEach(function (p) {
         var k = p.name;
@@ -726,7 +796,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     $("kennzahlen").innerHTML =
       '<div class="kz kz--haupt"><div class="kz-label">Umsatz' + (S.tag === "alle" ? " gesamt" : "") + '</div><div class="kz-wert">' + eur(summe) + "</div></div>" +
       '<div class="kz"><div class="kz-label">davon bar</div><div class="kz-wert">' + eur(bar) + "</div></div>" +
-      '<div class="kz"><div class="kz-label">davon Karte / PayPal</div><div class="kz-wert">' + eur(karte) + "</div></div>" +
+      '<div class="kz"><div class="kz-label">davon PayPal</div><div class="kz-wert">' + eur(karte) + "</div></div>" +
       '<div class="kz"><div class="kz-label">Verkäufe · Stück</div><div class="kz-wert">' + gueltig.length + " · " + stueck + "</div></div>" +
       '<div class="kz"><div class="kz-label">Rabatte gewährt</div><div class="kz-wert">' + eur(rabatt) + "</div></div>";
 
@@ -747,7 +817,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       var extra = [];
       if (v.angebotRabatt) extra.push("Mengenangebot −" + eur(v.angebotRabatt));
       if (v.rabattCent) extra.push("Rabatt " + esc(v.rabattName || "") + " −" + eur(v.rabattCent));
-      extra.push(v.zahlart === "karte" ? "Karte / PayPal" : "bar");
+      extra.push(v.zahlart && v.zahlart !== "bar" ? "PayPal" : "bar");
       if (S.tag === "alle") extra.unshift(tagLang(v.tag || ""));
       var aktion = "";
       if (v.storniert) aktion = '<span class="pille" style="margin-top:4px">storniert</span>' + (S.darfSchreiben ? '<button class="link" type="button" data-zurueck="' + esc(v.id) + '">wiederherstellen</button>' : "");
@@ -793,6 +863,14 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
         '<button class="weg" type="button" data-weg="rabatte.' + i + '" aria-label="Rabatt entfernen"' + ro + ">×</button></div>";
     }).join("") + "</div>";
     h += '<div><button class="knopf" type="button" data-neu="rabatte"' + ro + ">+ Rabatt hinzufügen</button></div></section>";
+
+    var pp = S.paypal || {};
+    h += '<section><div><h2>PayPal-QR-Code</h2><p class="erkl">Öffnen Sie in der PayPal-App „Geld empfangen“ bzw. Ihren QR-Code, machen Sie davon ein Bildschirmfoto und wählen Sie es hier aus. Beim Kassieren mit PayPal zeigt die Kasse den Code groß mit dem Betrag.</p></div>' +
+      '<div class="pp-einst">' + (pp.qr ? '<img src="' + pp.qr + '" alt="Hinterlegter PayPal-QR-Code">' : '<div class="pp-leer">Noch kein QR-Code</div>') +
+      '<div class="pp-einst-text"><div class="zeile" style="flex-wrap:wrap"><label class="knopf knopf--dunkel" style="position:relative;display:inline-flex;align-items:center;cursor:pointer">' + (pp.qr ? "Anderes Bild wählen" : "Bild auswählen") +
+      '<input type="file" id="pp-datei" accept="image/*" style="position:absolute;inset:0;opacity:0;width:100%;cursor:pointer"' + ro + '></label>' +
+      (pp.qr ? '<button class="knopf" type="button" id="pp-entfernen"' + ro + '>Entfernen</button>' : "") + '</div>' +
+      '<label style="display:grid;gap:6px;font-size:14px;color:var(--tinte-2)">Name unter dem Code (optional)<input class="feld" id="pp-name-feld" value="' + esc(pp.name || "") + '" placeholder="z. B. Angelika Ruppel" autocomplete="off"' + ro + '></label></div></div></section>';
 
     h += '<section><div><h2>Wechselgeld</h2><p class="erkl">Womit die Geldkassette morgens startet. Daraus berechnet die Kasse unter „Verkäufe“, wie viel Bargeld abends drin sein sollte.</p></div>' +
       '<div class="zeile" style="max-width:280px"><input class="feld feld--kurz" style="flex:1" data-feld="wechselgeld" data-cent="1" value="' + centText(e.wechselgeld || 0) + '" inputmode="decimal" aria-label="Wechselgeld in Euro"' + ro + "></div></section>";
@@ -938,6 +1016,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       speichereAusverkauft(karte).then(function () { if (pa) toast(esc(pa.name) + (karte[d.aus] ? " ist ausverkauft" : " ist wieder da")); }).catch(function () { toast("Nicht gespeichert"); });
       return;
     }
+    if (t.id === "pp-zeigen") { var rb2 = berechne(); $("pp-betrag").textContent = eur(rb2.summe); $("pp-bild").src = S.paypal.qr; $("pp-name").textContent = S.paypal.name || ""; $("pp-overlay").hidden = false; wachHalten(); return; }
+    if (t.id === "pp-zurueck") { $("pp-overlay").hidden = true; return; }
+    if (t.id === "pp-erhalten") { $("pp-overlay").hidden = true; return abschliessen(); }
+    if (t.id === "pp-entfernen") { speicherePaypal({ qr: "", name: (S.paypal && S.paypal.name) || "" }).then(function () { toast("QR-Code entfernt"); }).catch(function () { toast("Nicht gespeichert"); }); return; }
     if (t.id === "leeren") return korbLeeren();
     if (t.id === "abschliessen") return abschliessen();
     if (t.id === "ml-bon") { $("bon").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
@@ -1000,6 +1082,13 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   });
   document.addEventListener("change", function (ev) {
     var t = ev.target;
+    if (t.id === "pp-datei" && t.files && t.files[0]) {
+      bildVerkleinern(t.files[0]).then(function (url) {
+        return speicherePaypal({ qr: url, name: (S.paypal && S.paypal.name) || "" }).then(function () { toast("PayPal-QR-Code gespeichert"); });
+      }).catch(function () { toast("Das Bild konnte nicht gespeichert werden"); });
+      t.value = ""; return;
+    }
+    if (t.id === "pp-name-feld") { speicherePaypal({ qr: (S.paypal && S.paypal.qr) || "", name: t.value.trim() }).catch(function () { toast("Nicht gespeichert"); }); return; }
     if (t.id === "knapp") {
       var kn = parseInt(t.value, 10);
       speichereLager(Object.assign({}, S.lager, { knapp: isNaN(kn) ? 3 : Math.max(0, kn) })).catch(function () { toast("Nicht gespeichert"); });
@@ -1050,7 +1139,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       var d = new Date(v.zeit);
       var art = (v.positionen || []).map(function (p) { return p.menge + "x " + p.name; }).concat((v.frei || []).map(function (f) { return f.name + " " + zahl(f.cent); })).join(", ");
       var st = (v.positionen || []).reduce(function (a, p) { return a + p.menge; }, 0) + (v.frei || []).length;
-      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl((v.angebotRabatt || 0) + (v.rabattCent || 0)), q(v.rabattName || ""), zahl(v.summe), v.zahlart === "karte" ? "Karte" : "Bar", v.storniert ? "ja" : "nein"].join(";"));
+      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl((v.angebotRabatt || 0) + (v.rabattCent || 0)), q(v.rabattName || ""), zahl(v.summe), v.zahlart && v.zahlart !== "bar" ? "PayPal" : "Bar", v.storniert ? "ja" : "nein"].join(";"));
     });
     var csv = "﻿" + zeilen.join("\r\n");
     var name = "basar-verkaeufe-" + (S.tag === "alle" ? "alle-tage" : S.tag) + ".csv";
@@ -1082,6 +1171,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     S.notizen = LS.get("kasse-notizen", []);
     S.ausverkauft = LS.get("kasse-ausverkauft", {});
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
+    S.paypal = LS.get("kasse-paypal", { qr: "", name: "" });
     renderAlles();
   }
   function start() {
@@ -1112,6 +1202,11 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       db.collection("notizen").onSnapshot(function (snap) {
         S.notizen = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
         renderNotizen();
+      }, function () {});
+      db.doc("kasse/paypal").onSnapshot(function (snap) {
+        var d = snap.exists ? snap.data() : null;
+        S.paypal = { qr: (d && d.qr) || "", name: (d && d.name) || "" };
+        renderBon(); if (S.ansicht === "preise" && !S.entwurfGeaendert) renderEinst();
       }, function () {});
       db.doc("kasse/lager").onSnapshot(function (snap) {
         var d = snap.exists ? snap.data() : null;

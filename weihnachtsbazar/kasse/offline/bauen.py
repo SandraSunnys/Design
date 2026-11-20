@@ -161,6 +161,7 @@ def main():
     S.notizen = LS.get("kasse-notizen", []);
     S.ausverkauft = LS.get("kasse-ausverkauft", {});
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
+    S.paypal = LS.get("kasse-paypal", { qr: "", name: "" });
     renderAlles();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
@@ -170,7 +171,7 @@ def main():
   document.addEventListener("click", function (ev) {
     var t = ev.target.closest("button"); if (!t) return;
     if (t.id === "sicherung") {
-      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager }, null, 1);
+      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal }, null, 1);
       toast(speichereDatei("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json") ? "Sicherung erstellt" : "Sicherung konnte nicht gespeichert werden");
     }
     if (t.id === "alles-loeschen") {
@@ -193,6 +194,7 @@ def main():
           var nb = {}; S.notizen.forEach(function (n) { nb[n.id] = true; });
           S.notizen = S.notizen.concat(d.notizen.filter(function (n) { return n && n.id && !nb[n.id]; })); LS.set("kasse-notizen", S.notizen);
         }
+        if (d.paypal && typeof d.paypal.qr === "string" && /^data:image[/]/.test(d.paypal.qr)) { S.paypal = d.paypal; LS.set("kasse-paypal", d.paypal); }
         if (d.lager && typeof d.lager === "object" && d.lager.bestand) { S.lager = d.lager; LS.set("kasse-lager", d.lager); }
         if (d.ausverkauft && typeof d.ausverkauft === "object") { S.ausverkauft = d.ausverkauft; LS.set("kasse-ausverkauft", d.ausverkauft); }
         if (d.einst && Array.isArray(d.einst.produkte)) { S.einst = d.einst; LS.set("kasse-einst", d.einst); S.entwurfGeaendert = false; }
@@ -219,7 +221,7 @@ def main():
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     (HIER / "sw.js").write_text('''// Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-4";
+const VERSION = "basar-kasse-5";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));

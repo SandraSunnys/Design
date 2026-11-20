@@ -8,14 +8,15 @@ Kassen-App für den Stand: Produkte antippen, die Kasse rechnet Summe, Rabatte u
 ## Bereiche
 
 - **Kasse**: Kacheln in den Sortenfarben der Auslagen, mit Restbestand („noch 5“). Bon mit +/−, „Sonstiges“ für freie
-  Beträge (Spende, Tüte), Rabatt-Schnellwahl oder eigener Rabatt in % oder €, Bar oder Karte/PayPal, Rückgeld mit Stückelung.
-- **Verkäufe**: Umsatz pro Tag (bar/Karte getrennt), Stück pro Produkt, gewährte Rabatte, Kassensturz
+  Beträge (Spende, Tüte), Rabatt-Schnellwahl oder eigener Rabatt in % oder €, Bar (mit Rückgeld und Stückelung) oder PayPal: der hinterlegte
+  PayPal-QR-Code wird mit dem Betrag groß angezeigt.
+- **Verkäufe**: Umsatz pro Tag (bar/PayPal getrennt), Stück pro Produkt, gewährte Rabatte, Kassensturz
   (Wechselgeld + Bareinnahmen), Storno einzelner Verkäufe, Export als CSV für Excel.
 - **Lager**: Bestand je Sorte eintragen; jeder Verkauf zieht ab, ein Storno bucht zurück. Übersicht „wird knapp“ und
   „leer“; leere Sorten erscheinen an der Kasse grau. Nachzählen = neue Zahl eintragen.
 - **Notizen**: Zettel für alles, was ausgeht oder fehlt, mit Uhrzeit und Abhaken. Sorten ohne Lagerzahl lassen sich
   dort von Hand als „ausverkauft“ markieren.
-- **Preise & Rabatte**: Produkte und Preise, Rabatt-Knöpfe, Wechselgeld. Mengenrabatte gibt es nicht.
+- **Preise & Rabatte**: Produkte und Preise, Rabatt-Knöpfe, PayPal-QR-Code (Bildschirmfoto aus der PayPal-App), Wechselgeld. Mengenrabatte gibt es nicht.
 
 ## Offline-Version
 
