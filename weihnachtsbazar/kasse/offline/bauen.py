@@ -115,14 +115,18 @@ def main():
     return Promise.resolve(v.id);''',
         '''    var neu = S.verkaeufe.concat([v]);
     if (!LS.set("kasse-verkaeufe", neu)) return Promise.reject({ code: "quota_exceeded" });
-    S.verkaeufe = neu; renderVerkaeufe();
+    S.verkaeufe = neu; renderVerkaeufe(); renderStatus(); renderHinweise();
     return Promise.resolve(v.id);''')
 
     # ---------- Status & Hinweise ----------
     html = ersetze(html, 'lokal: ["lokal", "nur auf diesem Gerät"]', 'lokal: ["live", "offline bereit"]')
     html = ersetze(html,
         '''    if (S.modus === "lokal") h.push("<b>Nur auf diesem Gerät.</b> Hier können Verkäufe nicht gemeinsam gespeichert werden. Öffnen Sie die Kasse angemeldet in claude.ai, damit alle Helfer dieselben Zahlen sehen.");''',
-        '''    if (S.speicherFehler) h.push("<b>Achtung, hier wird nichts gespeichert.</b> Dieser Browser erlaubt kein Speichern, zum Beispiel in einem privaten Fenster. Öffnen Sie die Kasse in einem normalen Fenster.");''')
+        '''    if (S.speicherFehler) h.push("<b>Achtung, hier wird nichts gespeichert.</b> Dieser Browser erlaubt kein Speichern, zum Beispiel in einem privaten Fenster. Öffnen Sie die Kasse in einem normalen Fenster.");
+    var sw = sicherungsStand();
+    if (sw.empfohlen) h.push("<b>Sicherung empfohlen.</b> " + sw.grund + ' <button type="button" data-sicherung="1">Jetzt sichern</button>');''')
+    # Kopfzeile: wann zuletzt gesichert
+    html = ersetze(html, "    el.dataset.s = s[0]; el.textContent = s[1];", "    el.dataset.s = s[0]; el.textContent = s[1] + sicherungsText();")
 
     # ---------- Export: Datei direkt speichern ----------
     # Auf dem iPad über das Teilen-Menü („In Dateien sichern“, Mail, AirDrop), sonst als Download
@@ -179,12 +183,28 @@ def main():
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
   }
 
+  function sicherungsStand() {
+    var letzte = LS.get("kasse-letzte-sicherung", null);
+    var seit = S.verkaeufe.filter(function (v) { return !letzte || (v.zeit && v.zeit > letzte); }).length;
+    var std = letzte ? (Date.now() - new Date(letzte).getTime()) / 3600000 : null;
+    var r = { letzte: letzte, seit: seit, empfohlen: false, grund: "" };
+    if (!letzte && seit >= 10) { r.empfohlen = true; r.grund = "Es gibt " + seit + " Verkäufe und noch keine Sicherung."; }
+    else if (seit >= 20) { r.empfohlen = true; r.grund = "Seit der letzten Sicherung gab es " + seit + " Verkäufe."; }
+    else if (seit > 0 && std !== null && std >= 3) { r.empfohlen = true; r.grund = "Die letzte Sicherung ist über " + Math.floor(std) + " Stunden her."; }
+    return r;
+  }
+  function sicherungsText() {
+    var l = LS.get("kasse-letzte-sicherung", null);
+    if (!l) return S.verkaeufe.length ? " · noch nicht gesichert" : "";
+    return " · gesichert " + (tagVon(new Date(l)) === heute() ? "" : tagLang(tagVon(new Date(l))) + ", ") + uhrzeit(l);
+  }
+
   /* ---------- Sicherung ---------- */
   document.addEventListener("click", function (ev) {
     var t = ev.target.closest("button"); if (!t) return;
-    if (t.id === "sicherung") {
+    if (t.id === "sicherung" || t.dataset.sicherung) {
       var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal, vorbestellungen: S.vorbestellungen, zaehlung: S.zaehlung }, null, 1);
-      dateiAnbieten("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json").then(function (ok) { if (ok === true) { LS.set("kasse-letzte-sicherung", new Date().toISOString()); toast("Sicherung gespeichert"); } else if (ok !== "abgelehnt") toast("Sicherung konnte nicht gespeichert werden"); });
+      dateiAnbieten("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json").then(function (ok) { if (ok === true) { LS.set("kasse-letzte-sicherung", new Date().toISOString()); toast("Sicherung gespeichert"); renderStatus(); renderHinweise(); } else if (ok !== "abgelehnt") toast("Sicherung konnte nicht gespeichert werden"); });
     }
     if (t.id === "alles-loeschen") {
       $("loesch-frage").innerHTML = '<div class="bestaetigen" style="justify-content:flex-start;align-items:center;flex-wrap:wrap"><span>Wirklich alle ' + S.verkaeufe.length + ' Verkäufe löschen? Das lässt sich nicht rückgängig machen.</span><button type="button" id="loeschen-nein">Nein</button><button class="ja" type="button" id="loeschen-ja">Ja, löschen</button></div>';
@@ -238,7 +258,7 @@ def main():
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     (HIER / "sw.js").write_text('''// Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-12";
+const VERSION = "basar-kasse-15";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));

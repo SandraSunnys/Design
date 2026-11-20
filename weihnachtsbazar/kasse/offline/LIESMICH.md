@@ -21,6 +21,26 @@ den ganzen Ordner `offline/` einmal ins Internet stellen, als App auf den Startb
 
 Wichtig: Immer die App vom Startbildschirm benutzen, nicht den Safari-Tab. Beide speichern getrennt.
 
+## Daten sicher behalten
+
+Alles liegt im Speicher der Kassen-App auf dem iPad. Das übersteht Ausschalten, leeren Akku, Neustart und Schließen der App.
+Verloren gehen die Daten nur, wenn
+
+- das Symbol der Kasse vom Home-Bildschirm **gelöscht** wird (iPadOS löscht dabei die Daten mit),
+- in den Einstellungen unter Safari **„Verlauf und Websitedaten löschen“** gewählt wird,
+- das iPad verloren geht oder kaputt ist,
+- eine neue Version über eine **neue Netlify-Adresse** geöffnet wird (dann ist die alte App mit den Daten noch da, aber die
+  neue sieht sie nicht).
+
+Deshalb:
+
+- Tagsüber zwischendurch **sichern**: Die Kasse zeigt oben „gesichert 14:05“ und meldet „Sicherung empfohlen“ nach
+  20 Verkäufen oder 3 Stunden. „Jetzt sichern“ → Teilen-Menü → **In Dateien sichern** (geht auch offline; liegt die Datei in
+  iCloud Drive, lädt das iPad sie abends hoch, sobald es online ist).
+- Abends, wenn wieder Internet da ist: **Sicherung** und **Bericht** speichern (iCloud Drive oder Mail an sich selbst).
+- **Updates immer in dieselbe Netlify-Seite** laden: in Netlify die bestehende Seite öffnen → „Deploys“ → neue Dateien in
+  das Feld ziehen. Nicht über app.netlify.com/drop eine neue Seite anlegen. Vor einem Update eine Sicherung machen.
+
 ## Vor dem Basar
 
 - Unter **Preise & Rabatte** die echten Preise und das Wechselgeld eintragen und **Speichern**.
