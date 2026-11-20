@@ -12,6 +12,8 @@ Alle Verkäufe werden gemeinsam gespeichert, sodass jedes Helfer-Handy dieselben
   Rabatt-Schnellwahl oder eigener Rabatt in % oder €, Bar oder Karte/PayPal, Rückgeld mit Stückelung.
 - **Verkäufe**: Umsatz pro Tag (bar/Karte getrennt), Stück pro Produkt, gewährte Rabatte, Kassensturz
   (Wechselgeld + Bareinnahmen), Storno einzelner Verkäufe, Export als CSV für Excel.
+- **Notizen**: Zettel für alles, was ausgeht oder fehlt, mit Uhrzeit und Abhaken. Darunter Sorten als „ausverkauft“
+  markieren; an der Kasse erscheinen sie dann grau.
 - **Preise & Rabatte**: Produkte und Preise, Rabatt-Knöpfe, Mengenangebote („3 Pralinen für 20 €“, gilt auch für
   gemischte Sorten einer Gruppe), Wechselgeld.
 

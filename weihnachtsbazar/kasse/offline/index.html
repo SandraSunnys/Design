@@ -58,7 +58,7 @@ body { margin: 0; -webkit-text-size-adjust: 100%; } img { max-width: 100%; }
 [hidden] { display: none !important; }
 body { background: var(--grund); color: var(--tinte); font: 400 15px/1.45 var(--font-sans); }
 button, input, select { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--rot); outline-offset: 2px; }
 .tab { font-variant-numeric: tabular-nums; }
 
@@ -81,6 +81,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tabs { display: flex; gap: 4px; background: var(--flaeche); border-radius: var(--rund); padding: 4px; }
 .tabs button { border: 0; background: transparent; padding: 8px 16px; border-radius: var(--rund); font-weight: 600; font-size: 14.5px; color: var(--tinte-2); white-space: nowrap; }
 .tabs button[aria-selected="true"] { background: var(--tinte); color: var(--grund); }
+.tabs .zahl { display: inline-block; min-width: 20px; height: 20px; margin-left: 6px; padding: 0 6px; border-radius: var(--rund); background: var(--rot); color: var(--auf-rot); font: 700 12px/20px var(--font-sans); text-align: center; vertical-align: 1px; }
 
 .hinweis { margin: 14px 0 0; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--warn-grund); color: var(--tinte); font-size: 14px; }
 .hinweis b { color: var(--warn); }
@@ -100,6 +101,10 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .kachel.hat-anz .k-name { padding-right: 30px; }
 .kachel .k-info { font-size: 12.5px; opacity: .78; }
 .kachel .k-preis { margin-top: auto; padding-top: 8px; font: 700 16px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+.kachel { -webkit-user-select: none; user-select: none; }
+.kachel.aus { opacity: .5; }
+.kachel.aus .k-preis { text-decoration: line-through; }
+.kachel .k-aus { margin-top: 6px; padding: 2px 8px; border-radius: var(--rund); background: #1d1b1a; color: #fff; font: 700 11px/16px var(--font-sans); letter-spacing: .07em; text-transform: uppercase; }
 .kachel .k-anz { position: absolute; top: 10px; right: 10px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: var(--rund); background: #1d1b1a; color: #fff; font: 800 15px/28px var(--font-display); text-align: center; }
 
 .leer { padding: 28px 22px; border: 2px dashed var(--linie); border-radius: var(--radius-lg); color: var(--tinte-2); text-align: center; }
@@ -123,7 +128,7 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .posten-leer { color: var(--tinte-2); font-size: 14px; }
 
 .zeile { display: flex; gap: 8px; }
-.feld { min-width: 0; flex: 1; height: 42px; padding: 0 12px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); }
+.feld { min-width: 0; flex: 1; height: 42px; font-size: 16px; padding: 0 12px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); }
 .feld--kurz { flex: 0 0 104px; text-align: right; font-variant-numeric: tabular-nums; }
 .knopf { height: 42px; padding: 0 16px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); font-weight: 600; white-space: nowrap; }
 .knopf--dunkel { background: var(--tinte); color: var(--grund); border-color: var(--tinte); }
@@ -222,8 +227,27 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .speicher-leiste .knopf { border-color: var(--grund); }
 .speicher-leiste .knopf--rot { border-color: var(--rot); }
 
+/* ---------- Notizen ---------- */
+.notiz-raster { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.notiz-raster > div { display: grid; gap: 12px; min-width: 0; }
+.erkl-n { margin: 0; color: var(--tinte-2); font-size: 14px; max-width: 60ch; }
+.notizen { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+.notizen li { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto 36px; gap: 10px; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--flaeche); }
+.notizen .n-text { min-width: 0; overflow-wrap: break-word; font-size: 16px; line-height: 1.35; }
+.notizen .n-zeit { font-size: 13px; color: var(--tinte-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.notizen li.erledigt .n-text { text-decoration: line-through; color: var(--tinte-2); }
+.haken { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--linie); background: var(--grund); color: transparent; font-size: 18px; font-weight: 700; line-height: 1; }
+.haken[aria-pressed="true"] { background: var(--tanne); border-color: var(--tanne); color: var(--grund); }
+.notizen .weg { width: 36px; height: 36px; }
+.notiz-leer { padding: 18px; border: 2px dashed var(--linie); border-radius: var(--radius-sm); color: var(--tinte-2); }
+.aus-gruppe { display: grid; gap: 8px; margin-bottom: 14px; }
+.aus-gruppe .chip { height: auto; min-height: 40px; padding: 6px 14px; text-align: left; white-space: normal; }
+.aus-gruppe .chip small { font-weight: 400; opacity: .85; }
+
 /* ---------- schmal ---------- */
-@media (max-width: 920px) {
+@media (max-width: 1060px) { .kasse { grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; } .bon { padding: 16px; } }
+@media (max-width: 760px) {
+  .notiz-raster { grid-template-columns: minmax(0, 1fr); }
   .kasse { grid-template-columns: minmax(0, 1fr); }
   .bon { position: static; max-height: none; }
   .kennzahlen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -239,7 +263,8 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 @media (max-width: 640px) {
   .marke h1 { font-size: 22px; }
   .tabs { width: 100%; }
-  .tabs button { flex: 1; padding: 8px 6px; font-size: 13.5px; }
+  .tabs button { flex: 1; padding: 8px 4px; font-size: 13px; }
+  .tabs .zahl { margin-left: 3px; }
   .gruppe-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .e-zeile { grid-template-columns: 34px minmax(0, 1fr) 96px 42px; }
   .e-zeile .e-gruppe, .e-zeile .e-info { grid-column: 2 / 4; }
@@ -265,6 +290,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     <nav class="tabs" role="tablist" aria-label="Bereiche">
       <button role="tab" id="tab-kasse" data-ansicht="kasse" aria-selected="true">Kasse</button>
       <button role="tab" id="tab-verkaeufe" data-ansicht="verkaeufe" aria-selected="false">Verkäufe</button>
+      <button role="tab" id="tab-notizen" data-ansicht="notizen" aria-selected="false">Notizen<span class="zahl" id="notiz-zahl" hidden></span></button>
       <button role="tab" id="tab-preise" data-ansicht="preise" aria-selected="false">Preise &amp; Rabatte</button>
     </nav>
   </div>
@@ -359,6 +385,26 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     </div>
   </section>
 
+  <!-- NOTIZEN -->
+  <section id="v-notizen" class="ansicht" hidden style="margin-top:14px">
+    <div class="notiz-raster">
+      <div>
+        <h2>Notizen</h2>
+        <p class="erkl-n">Was geht aus, was fehlt, was ist zu erledigen? Abhaken, wenn es erledigt ist.</p>
+        <form class="zeile" id="notiz-form">
+          <input class="feld" id="notiz-text" placeholder="z. B. Kirschpralinen nur noch 2" autocomplete="off" enterkeyhint="done">
+          <button class="knopf knopf--dunkel" type="submit">Notieren</button>
+        </form>
+        <ul class="notizen" id="notizen"></ul>
+      </div>
+      <div>
+        <h2>Ausverkauft</h2>
+        <p class="erkl-n">Tippen Sie auf eine Sorte, sobald sie weg ist. An der Kasse erscheint sie dann grau. Nochmal tippen hebt das auf.</p>
+        <div id="aus-liste"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- PREISE & RABATTE -->
   <section id="v-preise" class="ansicht" hidden style="margin-top:14px">
     <div class="einst" id="einst"></div>
@@ -423,7 +469,9 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     tag: heute(),
     stornoFrage: null,
     entwurf: null, entwurfGeaendert: false,
-    letzterVerkauf: null
+    letzterVerkauf: null,
+    notizen: [],
+    ausverkauft: {}
   };
   var db = null;
 
@@ -492,6 +540,29 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     LS.set("kasse-verkaeufe", S.verkaeufe); renderVerkaeufe(); return Promise.resolve();
   }
 
+  function neueNotiz(n) {
+    if (S.modus === "db") return db.collection("notizen").doc().set(n);
+    n = Object.assign({ id: "n" + Date.now() + uid() }, n);
+    var neu = S.notizen.concat([n]);
+    if (!LS.set("kasse-notizen", neu)) return Promise.reject({ code: "quota_exceeded" });
+    S.notizen = neu; renderNotizen(); return Promise.resolve();
+  }
+  function aendereNotiz(id, daten) {
+    if (S.modus === "db") return db.doc("notizen/" + id).update(daten);
+    S.notizen = S.notizen.map(function (n) { return n.id === id ? Object.assign({}, n, daten) : n; });
+    LS.set("kasse-notizen", S.notizen); renderNotizen(); return Promise.resolve();
+  }
+  function loescheNotiz(id) {
+    if (S.modus === "db") return db.doc("notizen/" + id).delete();
+    S.notizen = S.notizen.filter(function (n) { return n.id !== id; });
+    LS.set("kasse-notizen", S.notizen); renderNotizen(); return Promise.resolve();
+  }
+  function speichereAusverkauft(karte) {
+    S.ausverkauft = karte; renderNotizen(); renderSortiment();
+    if (S.modus === "db") return db.doc("kasse/status").set({ ausverkauft: karte });
+    LS.set("kasse-ausverkauft", karte); return Promise.resolve();
+  }
+
   /* ---------- Render: Kopf & Hinweise ---------- */
   function renderStatus() {
     var el = $("status");
@@ -521,9 +592,9 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
     el.innerHTML = gruppen.map(function (g) {
       return "<div><h3>" + esc(g) + '</h3><div class="gruppe-raster">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
-        var m = S.korb[p.id] || 0;
-        return '<button class="kachel' + (m ? " hat-anz" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
-          '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") +
+        var m = S.korb[p.id] || 0, aus = !!S.ausverkauft[p.id];
+        return '<button class="kachel' + (m ? " hat-anz" : "") + (aus ? " aus" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
+          '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") + (aus ? '<span class="k-aus">ausverkauft</span>' : "") +
           '<span class="k-preis">' + eur(p.preis) + "</span>" + (m ? '<span class="k-anz">' + m + "</span>" : "") + "</button>";
       }).join("") + "</div></div>";
     }).join("");
@@ -700,7 +771,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     h += '<section><div><h2>Wechselgeld</h2><p class="erkl">Womit die Geldkassette morgens startet. Daraus berechnet die Kasse unter „Verkäufe“, wie viel Bargeld abends drin sein sollte.</p></div>' +
       '<div class="zeile" style="max-width:280px"><input class="feld feld--kurz" style="flex:1" data-feld="wechselgeld" data-cent="1" value="' + centText(e.wechselgeld || 0) + '" inputmode="decimal" aria-label="Wechselgeld in Euro"' + ro + "></div></section>";
 
-    h += '<section><div><h2>Daten sichern</h2><p class="erkl">Preise und Verkäufe liegen nur auf diesem Gerät. Speichern Sie abends eine Sicherung, zum Beispiel per Mail an sich selbst. Mit „Sicherung einlesen“ holen Sie alles zurück oder auf ein anderes Gerät.</p></div>' +
+    h += '<section><div><h2>Daten sichern</h2><p class="erkl">Preise, Verkäufe und Notizen liegen nur auf diesem Gerät. Speichern Sie abends eine Sicherung, zum Beispiel per Mail an sich selbst. Mit „Sicherung einlesen“ holen Sie alles zurück oder auf ein anderes Gerät.</p></div>' +
       '<div class="zeile" style="flex-wrap:wrap"><button class="knopf" type="button" id="sicherung">Sicherung speichern</button>' +
       '<label class="knopf" style="position:relative;display:inline-flex;align-items:center;cursor:pointer">Sicherung einlesen<input type="file" id="einlesen" accept=".json,application/json" style="position:absolute;inset:0;opacity:0;width:100%;cursor:pointer"></label>' +
       '<button class="knopf" type="button" id="alles-loeschen">Alle Verkäufe löschen</button></div><div id="loesch-frage"></div></section>';
@@ -709,7 +780,31 @@ tfoot td { font-weight: 700; border-bottom: 0; }
   }
   function markiereGeaendert() { S.entwurfGeaendert = true; var l = $("speicher-leiste"); if (l) l.hidden = false; }
 
-  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); if (S.ansicht === "preise") renderEinst(); }
+  function uhrzeit(iso) { var d = new Date(iso); return isNaN(d) ? "" : pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function renderNotizen() {
+    var offen = S.notizen.filter(function (n) { return !n.erledigt; }).sort(function (a, b) { return (b.zeit || "").localeCompare(a.zeit || ""); });
+    var fertig = S.notizen.filter(function (n) { return n.erledigt; }).sort(function (a, b) { return (b.zeit || "").localeCompare(a.zeit || ""); });
+    var zeile = function (n) {
+      var zeit = uhrzeit(n.zeit), tag = (n.zeit || "").slice(0, 10);
+      if (tag && tag !== heute()) zeit = tagLang(tag) + ", " + zeit;
+      return '<li class="' + (n.erledigt ? "erledigt" : "") + '"><button class="haken" type="button" data-notiz-fertig="' + esc(n.id) + '" aria-pressed="' + !!n.erledigt + '" aria-label="' + (n.erledigt ? "Wieder offen" : "Erledigt") + '">✓</button>' +
+        '<span class="n-text">' + esc(n.text) + '</span><span class="n-zeit">' + zeit + '</span>' +
+        '<button class="weg" type="button" data-notiz-weg="' + esc(n.id) + '" aria-label="Notiz löschen">×</button></li>';
+    };
+    $("notizen").innerHTML = offen.length || fertig.length ? offen.concat(fertig).map(zeile).join("") : '<li class="notiz-leer" style="display:block">Noch keine Notizen. Schreiben Sie oben, was ausgeht oder fehlt.</li>';
+    var z = $("notiz-zahl"); z.hidden = !offen.length; z.textContent = offen.length;
+
+    var ps = produkte(), gruppen = [];
+    ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
+    $("aus-liste").innerHTML = ps.length ? gruppen.map(function (g) {
+      return '<div class="aus-gruppe"><h3 style="margin:0">' + esc(g) + '</h3><div class="chips">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
+        var seit = S.ausverkauft[p.id];
+        return '<button class="chip" type="button" data-aus="' + esc(p.id) + '" aria-pressed="' + !!seit + '"' + (S.darfSchreiben ? "" : " disabled") + '>' + esc(p.name) + (seit ? " <small>seit " + uhrzeit(seit) + "</small>" : "") + "</button>";
+      }).join("") + "</div></div>";
+    }).join("") : '<p class="erkl-n">Noch keine Produkte angelegt.</p>';
+  }
+
+  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); renderNotizen(); if (S.ansicht === "preise") renderEinst(); }
 
   /* ---------- Toast ---------- */
   var toastTimer = null;
@@ -723,7 +818,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
   /* ---------- Aktionen ---------- */
   function zeige(a) {
     S.ansicht = a;
-    ["kasse", "verkaeufe", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
+    ["kasse", "verkaeufe", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
     if (a === "preise") renderEinst();
     renderBon();
     window.scrollTo(0, 0);
@@ -780,6 +875,14 @@ tfoot td { font-weight: 700; border-bottom: 0; }
       var r = berechne();
       S.gegeben = d.geld === "passend" ? r.summe : +d.geld;
       $("gegeben").value = centText(S.gegeben); renderRueckgeld(); return;
+    }
+    if (d.notizFertig) { var nf = S.notizen.find(function (n) { return n.id === d.notizFertig; }); if (nf) aendereNotiz(nf.id, { erledigt: !nf.erledigt }).catch(function () { toast("Nicht gespeichert"); }); return; }
+    if (d.notizWeg) { loescheNotiz(d.notizWeg).catch(function () { toast("Nicht gelöscht"); }); return; }
+    if (d.aus) {
+      var karte = Object.assign({}, S.ausverkauft), pa = produkt(d.aus);
+      if (karte[d.aus]) delete karte[d.aus]; else karte[d.aus] = new Date().toISOString();
+      speichereAusverkauft(karte).then(function () { if (pa) toast(esc(pa.name) + (karte[d.aus] ? " ist ausverkauft" : " ist wieder da")); }).catch(function () { toast("Nicht gespeichert"); });
+      return;
     }
     if (t.id === "leeren") return korbLeeren();
     if (t.id === "abschliessen") return abschliessen();
@@ -850,6 +953,14 @@ tfoot td { font-weight: 700; border-bottom: 0; }
       }, 0);
     }
   });
+  $("notiz-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var feld = $("notiz-text"), text = feld.value.trim();
+    if (!text) { feld.focus(); return; }
+    if (!S.darfSchreiben) return;
+    feld.value = "";
+    neueNotiz({ text: text, zeit: new Date().toISOString(), erledigt: false }).catch(function () { feld.value = text; toast("Notiz nicht gespeichert"); });
+  });
   $("frei-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var c = centAus($("frei-betrag").value);
@@ -904,6 +1015,8 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     S.modus = "lokal";
     S.einst = LS.get("kasse-einst", null);
     S.verkaeufe = LS.get("kasse-verkaeufe", []);
+    S.notizen = LS.get("kasse-notizen", []);
+    S.ausverkauft = LS.get("kasse-ausverkauft", {});
     renderAlles();
   }
   var STANDARD = {"beispielpreise": false, "wechselgeld": 0, "produkte": [{"id": "kirsch", "name": "Kirschpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ff8fa0"}, {"id": "eierlikoer", "name": "Eierlikörpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ffd75e"}, {"id": "baileys", "name": "Baileys-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#e8b994"}, {"id": "cointreau", "name": "Cointreau-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#d8c3b4"}, {"id": "limoncello", "name": "Limoncello-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#e6ee6e"}, {"id": "aperol", "name": "Aperolpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ff9b6a"}, {"id": "karamell", "name": "Karamell-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#f7bb5c"}, {"id": "himbeer", "name": "Himbeerpralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#ff86b0"}, {"id": "nougat", "name": "Nougatpralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#d1a585"}, {"id": "haselnuss", "name": "Haselnusspralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#e7b97c"}, {"id": "schachtel", "name": "Pralinenschachtel", "gruppe": "Pralinen", "info": "Schachtel", "preis": 1100, "farbe": "#f2b8c6"}, {"id": "dubai", "name": "Dubaischokolade", "gruppe": "Schokolade", "info": "Tafel ca. 70 g", "preis": 800, "farbe": "#bfdc80"}, {"id": "zitronenverbene", "name": "Zitronenverbene", "gruppe": "Kräuter", "info": "6 g", "preis": 250, "farbe": "#f3ea7a"}, {"id": "minze", "name": "Marokkanische Minze", "gruppe": "Kräuter", "info": "12 g", "preis": 250, "farbe": "#93e4c2"}, {"id": "bergbohnenkraut", "name": "Bergbohnenkraut", "gruppe": "Kräuter", "info": "20 g", "preis": 250, "farbe": "#cbb8f2"}, {"id": "oregano", "name": "Oregano", "gruppe": "Kräuter", "info": "15 g", "preis": 250, "farbe": "#a6db88"}, {"id": "estragon", "name": "Estragon", "gruppe": "Kräuter", "info": "17 g", "preis": 250, "farbe": "#cfe9a6"}, {"id": "thymian", "name": "Französischer Thymian", "gruppe": "Kräuter", "info": "20 g", "preis": 250, "farbe": "#b5d1ad"}, {"id": "limonenthymian", "name": "Limonenthymian", "gruppe": "Kräuter", "info": "18 g", "preis": 250, "farbe": "#e3f28f"}, {"id": "goldsalbei", "name": "Goldsalbei", "gruppe": "Kräuter", "info": "10 g · ganze Blätter", "preis": 250, "farbe": "#f4d27e"}, {"id": "babyschuhe", "name": "Babyschuhe", "gruppe": "Geschenke", "info": "", "preis": 1000, "farbe": "#b9d3f0"}, {"id": "tasse-weihnacht", "name": "Tasse Weihnacht", "gruppe": "Geschenke", "info": "", "preis": 1300, "farbe": "#f6a6a0"}, {"id": "tasse-hutschenreuther", "name": "Tasse Hutschenreuther", "gruppe": "Geschenke", "info": "", "preis": 1600, "farbe": "#c9cbe8"}], "rabatte": [{"id": "r10", "name": "10 %", "typ": "prozent", "wert": 10}, {"id": "r20", "name": "20 %", "typ": "prozent", "wert": 20}, {"id": "r1", "name": "1 € Nachlass", "typ": "betrag", "wert": 100}], "angebote": []};
@@ -912,6 +1025,8 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     try { localStorage.setItem("kasse-test", "1"); localStorage.removeItem("kasse-test"); } catch (e) { S.speicherFehler = true; }
     S.einst = LS.get("kasse-einst", null) || JSON.parse(JSON.stringify(STANDARD));
     S.verkaeufe = LS.get("kasse-verkaeufe", []);
+    S.notizen = LS.get("kasse-notizen", []);
+    S.ausverkauft = LS.get("kasse-ausverkauft", {});
     renderAlles();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
@@ -921,7 +1036,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
   document.addEventListener("click", function (ev) {
     var t = ev.target.closest("button"); if (!t) return;
     if (t.id === "sicherung") {
-      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe }, null, 1);
+      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft }, null, 1);
       toast(speichereDatei("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json") ? "Sicherung erstellt" : "Sicherung konnte nicht gespeichert werden");
     }
     if (t.id === "alles-loeschen") {
@@ -940,6 +1055,11 @@ tfoot td { font-weight: 700; border-bottom: 0; }
         var bekannt = {}; S.verkaeufe.forEach(function (v) { bekannt[v.id] = true; });
         var neu = d.verkaeufe.filter(function (v) { return v && v.id && !bekannt[v.id]; });
         S.verkaeufe = S.verkaeufe.concat(neu); LS.set("kasse-verkaeufe", S.verkaeufe);
+        if (Array.isArray(d.notizen)) {
+          var nb = {}; S.notizen.forEach(function (n) { nb[n.id] = true; });
+          S.notizen = S.notizen.concat(d.notizen.filter(function (n) { return n && n.id && !nb[n.id]; })); LS.set("kasse-notizen", S.notizen);
+        }
+        if (d.ausverkauft && typeof d.ausverkauft === "object") { S.ausverkauft = d.ausverkauft; LS.set("kasse-ausverkauft", d.ausverkauft); }
         if (d.einst && Array.isArray(d.einst.produkte)) { S.einst = d.einst; LS.set("kasse-einst", d.einst); S.entwurfGeaendert = false; }
         renderAlles(); toast("Sicherung eingelesen: " + neu.length + " Verkäufe dazu");
       } catch (e) { toast("Diese Datei ist keine Sicherung der Basar-Kasse"); }
