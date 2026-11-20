@@ -54,7 +54,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .kopf { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--grund); border-bottom: 1px solid var(--linie); }
 .kopf .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; padding-block: 12px; }
 .marke { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.marke h1 { margin: 0; font: 800 26px/1 var(--font-display); letter-spacing: -.03em; font-variation-settings: "opsz" 48; }
+.marke h1 { margin: 0; white-space: nowrap; font: 800 26px/1 var(--font-display); letter-spacing: -.03em; font-variation-settings: "opsz" 48; }
 .marke svg { width: 18px; height: 18px; flex: none; }
 .funkeln path { fill: var(--rot); }
 .status { font-size: 12.5px; color: var(--tinte-2); display: inline-flex; align-items: center; gap: 6px; }

@@ -20,3 +20,8 @@ Alle Verkäufe werden gemeinsam gespeichert, sodass jedes Helfer-Handy dieselben
 1. Zwischensumme aller Artikel
 2. Mengenangebote je Gruppe (die teuersten Artikel zuerst, falls Preise in einer Gruppe verschieden sind)
 3. Rabatt auf den restlichen Betrag (Prozent auf den Cent gerundet, Euro-Betrag höchstens bis 0 €)
+
+## Offline-Version
+
+Für einen Stand ohne Internet: `offline/` (Anleitung in `offline/LIESMICH.md`). Gleiche Kasse, speichert aber nur auf
+dem Kassengerät. Wird mit `python3 offline/bauen.py` aus `kasse.html` erzeugt.
