@@ -62,7 +62,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .status[data-s="live"]::before { background: var(--gut); }
 .status[data-s="lokal"]::before, .status[data-s="fehler"]::before { background: var(--warn); }
 
-.tabs { display: flex; gap: 4px; background: var(--flaeche); border-radius: var(--rund); padding: 4px; }
+.tabs { display: flex; gap: 4px; max-width: 100%; overflow-x: auto; scrollbar-width: none; background: var(--flaeche); border-radius: var(--rund); padding: 4px; }
 .tabs button { border: 0; background: transparent; padding: 8px 16px; border-radius: var(--rund); font-weight: 600; font-size: 14.5px; color: var(--tinte-2); white-space: nowrap; }
 .tabs button[aria-selected="true"] { background: var(--tinte); color: var(--grund); }
 .tabs .zahl { display: inline-block; min-width: 20px; height: 20px; margin-left: 6px; padding: 0 6px; border-radius: var(--rund); background: var(--rot); color: var(--auf-rot); font: 700 12px/20px var(--font-sans); text-align: center; vertical-align: 1px; }
@@ -109,7 +109,7 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .menge { display: inline-flex; align-items: center; border-radius: var(--rund); background: var(--grund); border: 1px solid var(--linie); }
 .menge button { width: 32px; height: 32px; border: 0; background: none; font-size: 18px; line-height: 1; border-radius: var(--rund); }
 .menge span { min-width: 22px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
-.posten-leer { color: var(--tinte-2); font-size: 14px; }
+.posten li.posten-leer { display: block; color: var(--tinte-2); font-size: 14px; }
 
 .zeile { display: flex; gap: 8px; }
 .feld { min-width: 0; flex: 1; height: 42px; font-size: 16px; padding: 0 12px; border: 1px solid var(--linie); border-radius: var(--radius-sm); background: var(--grund); }
@@ -211,6 +211,28 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .speicher-leiste .knopf { border-color: var(--grund); }
 .speicher-leiste .knopf--rot { border-color: var(--rot); }
 
+/* ---------- Lager ---------- */
+.kachel .k-lager { margin-top: 6px; padding: 2px 8px; border-radius: var(--rund); background: rgba(255,255,255,.65); color: #1d1b1a; font: 700 12px/16px var(--font-sans); font-variant-numeric: tabular-nums; }
+.kachel .k-lager.knapp { background: #9a3412; color: #fff; }
+.lager-kopf { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 16px; }
+.lager-kopf > div { display: grid; gap: 6px; min-width: 0; }
+.knapp-wahl { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--tinte-2); white-space: nowrap; }
+.knapp-wahl .feld { flex: 0 0 70px; text-align: center; }
+.lager-kz { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
+.lager-kz .kz small { display: block; margin-top: 6px; font-size: 13px; color: var(--tinte-2); line-height: 1.35; }
+.kz--warn { background: var(--warn-grund); }
+.kz--warn .kz-wert { color: var(--warn); }
+table.lager td { padding-block: 6px; }
+table.lager .gruppe-zeile td { padding-top: 18px; border-bottom: 0; font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-2); }
+table.lager .lager-feld { width: 84px; flex: none; text-align: center; font-variant-numeric: tabular-nums; }
+table.lager .noch { font: 800 22px/1 var(--font-display); letter-spacing: -.02em; }
+table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
+.zustand { display: inline-block; padding: 3px 10px; border-radius: var(--rund); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+.zustand--gut { background: var(--flaeche); color: var(--gut); }
+.zustand--knapp { background: var(--warn-grund); color: var(--warn); }
+.zustand--leer { background: var(--rot); color: var(--auf-rot); }
+.zustand--offen { color: var(--tinte-2); font-weight: 400; text-transform: none; letter-spacing: 0; }
+
 /* ---------- Notizen ---------- */
 .notiz-raster { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; align-items: start; }
 .notiz-raster > div { display: grid; gap: 12px; min-width: 0; }
@@ -247,7 +269,8 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 @media (max-width: 640px) {
   .marke h1 { font-size: 22px; }
   .tabs { width: 100%; }
-  .tabs button { flex: 1; padding: 8px 4px; font-size: 13px; }
+  .tabs button { flex: none; padding: 8px 10px; font-size: 13px; }
+  .lager-kz { grid-template-columns: minmax(0, 1fr); }
   .tabs .zahl { margin-left: 3px; }
   .gruppe-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .e-zeile { grid-template-columns: 34px minmax(0, 1fr) 96px 42px; }
@@ -272,6 +295,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     <nav class="tabs" role="tablist" aria-label="Bereiche">
       <button role="tab" id="tab-kasse" data-ansicht="kasse" aria-selected="true">Kasse</button>
       <button role="tab" id="tab-verkaeufe" data-ansicht="verkaeufe" aria-selected="false">Verkäufe</button>
+      <button role="tab" id="tab-lager" data-ansicht="lager" aria-selected="false">Lager<span class="zahl" id="lager-zahl" hidden></span></button>
       <button role="tab" id="tab-notizen" data-ansicht="notizen" aria-selected="false">Notizen<span class="zahl" id="notiz-zahl" hidden></span></button>
       <button role="tab" id="tab-preise" data-ansicht="preise" aria-selected="false">Preise &amp; Rabatte</button>
     </nav>
@@ -367,6 +391,19 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     </div>
   </section>
 
+  <!-- LAGER -->
+  <section id="v-lager" class="ansicht" hidden style="margin-top:14px">
+    <div class="lager-kopf">
+      <div>
+        <h2>Lager</h2>
+        <p class="erkl-n">Tragen Sie ein, wie viele Packungen von jeder Sorte da sind. Jeder Verkauf zieht automatisch ab. Wenn Sie nachzählen oder Ware nachholen, tragen Sie einfach die neue Zahl ein.</p>
+      </div>
+      <label class="knapp-wahl" for="knapp">Warnen ab <input class="feld" id="knapp" inputmode="numeric" autocomplete="off"> Stück</label>
+    </div>
+    <div class="lager-kz" id="lager-kz"></div>
+    <div class="tabelle-box"><table class="lager" id="lager-tabelle"></table></div>
+  </section>
+
   <!-- NOTIZEN -->
   <section id="v-notizen" class="ansicht" hidden style="margin-top:14px">
     <div class="notiz-raster">
@@ -381,7 +418,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
       </div>
       <div>
         <h2>Ausverkauft</h2>
-        <p class="erkl-n">Tippen Sie auf eine Sorte, sobald sie weg ist. An der Kasse erscheint sie dann grau. Nochmal tippen hebt das auf.</p>
+        <p class="erkl-n">Für Sorten, deren Bestand Sie unter „Lager“ eingetragen haben, passiert das automatisch. Alle anderen tippen Sie hier an, sobald sie weg sind. Nochmal tippen hebt das auf.</p>
         <div id="aus-liste"></div>
       </div>
     </div>
@@ -430,7 +467,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     ["#e6ee6e", "Limette"], ["#ff9b6a", "Orange"], ["#f7bb5c", "Karamell"], ["#ff86b0", "Himbeerpink"],
     ["#d1a585", "Nougat"], ["#e7b97c", "Haselnuss"], ["#bfdc80", "Pistazie"], ["#f3ea7a", "Zitrone"],
     ["#93e4c2", "Minze"], ["#cbb8f2", "Lavendel"], ["#a6db88", "Oregano"], ["#cfe9a6", "Estragon"],
-    ["#b5d1ad", "Thymian"], ["#e3f28f", "Limonengrün"], ["#f4d27e", "Goldsalbei"], ["#f2b8c6", "Rosé"], ["#b9d3f0", "Eisblau"], ["#f6a6a0", "Weihnachtsrot hell"], ["#c9cbe8", "Porzellanblau"], ["#e0dcd8", "Hellgrau"]
+    ["#b5d1ad", "Thymian"], ["#e3f28f", "Limonengrün"], ["#f4d27e", "Goldsalbei"], ["#f2b8c6", "Rosé"], ["#b9d3f0", "Eisblau"], ["#f6a6a0", "Weihnachtsrot hell"], ["#c9cbe8", "Porzellanblau"], ["#ffc58f", "Apricot"], ["#f9dfa6", "Vanille"], ["#e0dcd8", "Hellgrau"]
   ];
 
   /* ---------- Zustand ---------- */
@@ -453,7 +490,8 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     entwurf: null, entwurfGeaendert: false,
     letzterVerkauf: null,
     notizen: [],
-    ausverkauft: {}
+    ausverkauft: {},
+    lager: { bestand: {}, knapp: 3 }
   };
   var db = null;
 
@@ -537,6 +575,23 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     S.notizen = S.notizen.filter(function (n) { return n.id !== id; });
     LS.set("kasse-notizen", S.notizen); renderNotizen(); return Promise.resolve();
   }
+  var lagerKette = Promise.resolve();
+  function speichereLager(neu) {
+    S.lager = neu; renderLager(); renderSortiment(); renderNotizen();
+    if (S.modus === "db") { lagerKette = lagerKette.catch(function () {}).then(function () { return db.doc("kasse/lager").set(neu); }); return lagerKette; }
+    return LS.set("kasse-lager", neu) ? Promise.resolve() : Promise.reject({ code: "quota_exceeded" });
+  }
+  function knappAb() { return S.lager && S.lager.knapp != null ? S.lager.knapp : 3; }
+  function lagerInfo(id) {
+    var b = S.lager && S.lager.bestand && S.lager.bestand[id];
+    if (!b || b.menge == null) return null;
+    var verkauft = 0;
+    S.verkaeufe.forEach(function (v) {
+      if (v.storniert || !v.zeit || v.zeit < b.seit) return;
+      (v.positionen || []).forEach(function (p) { if (p.id === id) verkauft += p.menge; });
+    });
+    return { start: b.menge, seit: b.seit, verkauft: verkauft, rest: b.menge - verkauft };
+  }
   function speichereAusverkauft(karte) {
     S.ausverkauft = karte; renderNotizen(); renderSortiment();
     if (S.modus === "db") return db.doc("kasse/status").set({ ausverkauft: karte });
@@ -572,9 +627,11 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
     el.innerHTML = gruppen.map(function (g) {
       return "<div><h3>" + esc(g) + '</h3><div class="gruppe-raster">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
-        var m = S.korb[p.id] || 0, aus = !!S.ausverkauft[p.id];
+        var m = S.korb[p.id] || 0, li = lagerInfo(p.id), rest = li ? li.rest - m : null;
+        var aus = !!S.ausverkauft[p.id] || (li !== null && li.rest <= 0);
+        var lagerTag = li && !aus ? '<span class="k-lager' + (rest <= knappAb() ? " knapp" : "") + '">' + (rest <= 0 ? "letzte im Korb" : "noch " + rest) + "</span>" : "";
         return '<button class="kachel' + (m ? " hat-anz" : "") + (aus ? " aus" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
-          '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") + (aus ? '<span class="k-aus">ausverkauft</span>' : "") +
+          '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") + (aus ? '<span class="k-aus">ausverkauft</span>' : lagerTag) +
           '<span class="k-preis">' + eur(p.preis) + "</span>" + (m ? '<span class="k-anz">' + m + "</span>" : "") + "</button>";
       }).join("") + "</div></div>";
     }).join("");
@@ -698,6 +755,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
       else if (S.darfSchreiben) aktion = '<button class="link" type="button" data-storno="' + esc(v.id) + '">stornieren</button>';
       return '<li class="' + (v.storniert ? "storno" : "") + '"><span class="zeit">' + zeit + '</span><span class="artikel">' + art + "<small>" + extra.join(" · ") + '</small></span><span class="betrag"><span>' + eur(v.summe) + "</span>" + aktion + "</span></li>";
     }).join("") : '<li style="grid-template-columns:1fr;color:var(--tinte-2)">Hier erscheint jeder abgeschlossene Verkauf mit Uhrzeit. Ein falsch gebuchter Verkauf lässt sich stornieren.</li>';
+    renderLager(); renderSortiment();
   }
 
   /* ---------- Render: Einstellungen ---------- */
@@ -714,7 +772,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     var farbOpts = function (aktiv) { return FARBEN.map(function (f) { return '<option value="' + f[0] + '"' + (f[0] === aktiv ? " selected" : "") + ">" + f[1] + "</option>"; }).join(""); };
 
     var h = "";
-    h += '<section><div><h2>Produkte &amp; Preise</h2><p class="erkl">Jede Zeile wird eine Kachel an der Kasse. Gleiche Gruppe = gleiche Überschrift, und Mengenangebote gelten pro Gruppe.</p></div>';
+    h += '<section><div><h2>Produkte &amp; Preise</h2><p class="erkl">Jede Zeile wird eine Kachel an der Kasse. Gleiche Gruppe = gleiche Überschrift an der Kasse.</p></div>';
     h += '<div class="e-zeile e-zeile--kopf"><span></span><span>Name</span><span>Gruppe</span><span>Zusatz</span><span>Preis</span><span></span></div>';
     h += '<div class="e-produkte" style="display:grid;gap:8px">' + e.produkte.map(function (p, i) {
       return '<div class="e-zeile"><label class="farbe-wahl" title="Farbe"><span style="--c:' + esc(p.farbe) + '"></span><select data-feld="produkte.' + i + '.farbe" aria-label="Farbe"' + ro + ">" + farbOpts(p.farbe) + "</select></label>" +
@@ -727,7 +785,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     h += '<datalist id="gruppen-liste">' + gruppen.map(function (g) { return '<option value="' + esc(g) + '">'; }).join("") + "</datalist>";
     h += '<div><button class="knopf" type="button" data-neu="produkte"' + ro + ">+ Produkt hinzufügen</button></div></section>";
 
-    h += '<section><div><h2>Rabatt-Schnellwahl</h2><p class="erkl">Diese Knöpfe stehen im Bon unter „Rabatt“. Ein Rabatt gilt für den ganzen Verkauf, nach den Mengenangeboten. Für Einzelfälle gibt es dort zusätzlich „Eigener“.</p></div>';
+    h += '<section><div><h2>Rabatt-Schnellwahl</h2><p class="erkl">Diese Knöpfe stehen im Bon unter „Rabatt“. Ein Rabatt gilt für den ganzen Verkauf. Für Einzelfälle gibt es dort zusätzlich „Eigener“.</p></div>';
     h += '<div style="display:grid;gap:8px">' + e.rabatte.map(function (r, i) {
       return '<div class="e-zeile e-zeile--rabatt"><input class="feld" data-feld="rabatte.' + i + '.name" value="' + esc(r.name) + '" aria-label="Bezeichnung" placeholder="z. B. Helfer"' + ro + ">" +
         '<select class="feld" data-feld="rabatte.' + i + '.typ" aria-label="Art"' + ro + '><option value="prozent"' + (r.typ === "prozent" ? " selected" : "") + '>Prozent</option><option value="betrag"' + (r.typ === "betrag" ? " selected" : "") + ">Euro</option></select>" +
@@ -735,18 +793,6 @@ tfoot td { font-weight: 700; border-bottom: 0; }
         '<button class="weg" type="button" data-weg="rabatte.' + i + '" aria-label="Rabatt entfernen"' + ro + ">×</button></div>";
     }).join("") + "</div>";
     h += '<div><button class="knopf" type="button" data-neu="rabatte"' + ro + ">+ Rabatt hinzufügen</button></div></section>";
-
-    h += '<section><div><h2>Mengenangebote</h2><p class="erkl">Zum Beispiel „3 Pralinen für 20 €“. Die Kasse erkennt das Angebot automatisch, sobald genug Artikel der Gruppe auf dem Bon stehen, auch bei gemischten Sorten.</p></div>';
-    h += '<div style="display:grid;gap:8px">' + (e.angebote.length ? e.angebote.map(function (a, i) {
-      var normal = null; var bsp = e.produkte.find(function (p) { return p.gruppe === a.gruppe; });
-      if (bsp && a.anzahl) normal = bsp.preis * a.anzahl;
-      return '<div class="e-zeile e-zeile--angebot"><select class="feld" data-feld="angebote.' + i + '.gruppe" aria-label="Gruppe"' + ro + ">" + gruppen.map(function (g) { return '<option value="' + esc(g) + '"' + (g === a.gruppe ? " selected" : "") + ">" + esc(g) + "</option>"; }).join("") + "</select>" +
-        '<input class="feld" data-feld="angebote.' + i + '.anzahl" data-zahl="1" value="' + (a.anzahl || "") + '" inputmode="numeric" aria-label="Anzahl"' + ro + ">" +
-        '<input class="feld feld--kurz e-preis" data-feld="angebote.' + i + '.preis" data-cent="1" value="' + centText(a.preis) + '" inputmode="decimal" aria-label="Preis zusammen"' + ro + ">" +
-        '<span class="e-ergebnis">' + (normal != null && a.preis != null ? (normal > a.preis ? "spart " + eur(normal - a.preis) + " gegenüber " + eur(normal) : "kein Vorteil gegenüber " + eur(normal)) : "") + "</span>" +
-        '<button class="weg" type="button" data-weg="angebote.' + i + '" aria-label="Angebot entfernen"' + ro + ">×</button></div>";
-    }).join("") : '<p class="erkl" style="font-style:italic">Noch kein Mengenangebot.</p>') + "</div>";
-    h += '<div><button class="knopf" type="button" data-neu="angebote"' + (gruppen.length ? ro : " disabled") + ">+ Mengenangebot hinzufügen</button></div></section>";
 
     h += '<section><div><h2>Wechselgeld</h2><p class="erkl">Womit die Geldkassette morgens startet. Daraus berechnet die Kasse unter „Verkäufe“, wie viel Bargeld abends drin sein sollte.</p></div>' +
       '<div class="zeile" style="max-width:280px"><input class="feld feld--kurz" style="flex:1" data-feld="wechselgeld" data-cent="1" value="' + centText(e.wechselgeld || 0) + '" inputmode="decimal" aria-label="Wechselgeld in Euro"' + ro + "></div></section>";
@@ -756,6 +802,38 @@ tfoot td { font-weight: 700; border-bottom: 0; }
   }
   function markiereGeaendert() { S.entwurfGeaendert = true; var l = $("speicher-leiste"); if (l) l.hidden = false; }
 
+  function renderLager() {
+    var ps = produkte(), gruppen = [], knapp = knappAb();
+    var kf = $("knapp"); if (document.activeElement !== kf) kf.value = knapp;
+    var summe = 0, gezaehlt = 0, knappe = [], leere = [];
+    ps.forEach(function (p) {
+      var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g);
+      var li = lagerInfo(p.id); if (!li) return;
+      gezaehlt++; summe += Math.max(0, li.rest);
+      if (li.rest <= 0) leere.push(p.name); else if (li.rest <= knapp) knappe.push(p.name + " (" + li.rest + ")");
+    });
+    var z = $("lager-zahl"); z.hidden = !(knappe.length + leere.length); z.textContent = knappe.length + leere.length;
+    $("lager-kz").innerHTML =
+      '<div class="kz"><div class="kz-label">Noch da, alle Sorten</div><div class="kz-wert">' + summe + ' Stück</div><small>' + (gezaehlt ? gezaehlt + " von " + ps.length + " Sorten gezählt" : "Noch keine Bestände eingetragen") + "</small></div>" +
+      '<div class="kz' + (knappe.length ? " kz--warn" : "") + '"><div class="kz-label">Wird knapp (bis ' + knapp + ' Stück)</div><div class="kz-wert">' + knappe.length + "</div><small>" + (knappe.length ? esc(knappe.join(", ")) : "nichts") + "</small></div>" +
+      '<div class="kz' + (leere.length ? " kz--warn" : "") + '"><div class="kz-label">Leer</div><div class="kz-wert">' + leere.length + "</div><small>" + (leere.length ? esc(leere.join(", ")) : "nichts") + "</small></div>";
+    var fokus = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.lager : null;
+    if (fokus) return;
+    var ro = S.darfSchreiben ? "" : " disabled";
+    $("lager-tabelle").innerHTML = ps.length ? '<thead><tr><th>Sorte</th><th>Bestand</th><th class="r">verkauft</th><th class="r">noch da</th><th>Zustand</th></tr></thead><tbody>' +
+      gruppen.map(function (g) {
+        return '<tr class="gruppe-zeile"><td colspan="5">' + esc(g) + "</td></tr>" + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
+          var li = lagerInfo(p.id), zst;
+          if (!li) zst = '<span class="zustand zustand--offen">nicht gezählt</span>';
+          else if (li.rest <= 0) zst = '<span class="zustand zustand--leer">leer</span>';
+          else if (li.rest <= knapp) zst = '<span class="zustand zustand--knapp">knapp</span>';
+          else zst = '<span class="zustand zustand--gut">genug</span>';
+          return '<tr><td><span class="punkt" style="--c:' + esc(p.farbe || "#e0dcd8") + '"></span>' + esc(p.name) + "</td>" +
+            '<td><input class="feld lager-feld" data-lager="' + esc(p.id) + '" value="' + (li ? li.start : "") + '" inputmode="numeric" placeholder="–" aria-label="Bestand ' + esc(p.name) + '"' + ro + ">" + (li ? "<small>gezählt " + (li.seit.slice(0, 10) === heute() ? "" : tagLang(li.seit.slice(0, 10)) + ", ") + uhrzeit(li.seit) + "</small>" : "") + "</td>" +
+            '<td class="r">' + (li ? li.verkauft : "") + '</td><td class="r noch">' + (li ? Math.max(0, li.rest) : "–") + "</td><td>" + zst + "</td></tr>";
+        }).join("");
+      }).join("") + "</tbody>" : '<tbody><tr><td style="color:var(--tinte-2)">Noch keine Produkte angelegt.</td></tr></tbody>';
+  }
   function uhrzeit(iso) { var d = new Date(iso); return isNaN(d) ? "" : pad(d.getHours()) + ":" + pad(d.getMinutes()); }
   function renderNotizen() {
     var offen = S.notizen.filter(function (n) { return !n.erledigt; }).sort(function (a, b) { return (b.zeit || "").localeCompare(a.zeit || ""); });
@@ -780,7 +858,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     }).join("") : '<p class="erkl-n">Noch keine Produkte angelegt.</p>';
   }
 
-  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); renderNotizen(); if (S.ansicht === "preise") renderEinst(); }
+  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); renderNotizen(); renderLager(); if (S.ansicht === "preise") renderEinst(); }
 
   /* ---------- Toast ---------- */
   var toastTimer = null;
@@ -794,7 +872,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
   /* ---------- Aktionen ---------- */
   function zeige(a) {
     S.ansicht = a;
-    ["kasse", "verkaeufe", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
+    ["kasse", "verkaeufe", "lager", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
     if (a === "preise") renderEinst();
     renderBon();
     window.scrollTo(0, 0);
@@ -917,8 +995,24 @@ tfoot td { font-weight: 700; border-bottom: 0; }
       if (/\.farbe$/.test(t.dataset.feld)) t.previousElementSibling.style.setProperty("--c", v);
     }
   });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" && ev.target && (ev.target.id === "knapp" || (ev.target.dataset && ev.target.dataset.lager))) ev.target.blur();
+  });
   document.addEventListener("change", function (ev) {
     var t = ev.target;
+    if (t.id === "knapp") {
+      var kn = parseInt(t.value, 10);
+      speichereLager(Object.assign({}, S.lager, { knapp: isNaN(kn) ? 3 : Math.max(0, kn) })).catch(function () { toast("Nicht gespeichert"); });
+      return;
+    }
+    if (t.dataset && t.dataset.lager) {
+      var id = t.dataset.lager, roh = t.value.trim(), bestand = Object.assign({}, S.lager.bestand);
+      if (roh === "") delete bestand[id];
+      else { var n = parseInt(roh, 10); if (isNaN(n) || n < 0) { renderLager(); return; } bestand[id] = { menge: n, seit: new Date().toISOString() }; }
+      t.blur();
+      speichereLager(Object.assign({}, S.lager, { bestand: bestand })).catch(function () { toast("Bestand nicht gespeichert"); });
+      return;
+    }
     if (t.id === "tag-wahl") { S.tag = t.value; S.stornoFrage = null; renderVerkaeufe(); return; }
     if (t.dataset && t.dataset.feld && (/\.typ$/.test(t.dataset.feld) || /^angebote\./.test(t.dataset.feld) || /\.gruppe$/.test(t.dataset.feld))) {
       if (/\.typ$/.test(t.dataset.feld)) { var i = +t.dataset.feld.split(".")[1]; var r = S.entwurf.rabatte[i]; r.wert = r.typ === "prozent" ? 10 : 100; }
@@ -951,12 +1045,12 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     var liste = verkaufeAmTag().slice().reverse();
     var zahl = function (c) { return ((c || 0) / 100).toFixed(2).replace(".", ","); };
     var q = function (s) { return '"' + String(s == null ? "" : s).replace(/"/g, '""') + '"'; };
-    var zeilen = [["Datum", "Uhrzeit", "Artikel", "Stück", "Zwischensumme", "Mengenangebot", "Rabatt", "Rabatt-Art", "Summe", "Zahlart", "Storniert"].join(";")];
+    var zeilen = [["Datum", "Uhrzeit", "Artikel", "Stück", "Zwischensumme", "Rabatt", "Rabatt-Art", "Summe", "Zahlart", "Storniert"].join(";")];
     liste.forEach(function (v) {
       var d = new Date(v.zeit);
       var art = (v.positionen || []).map(function (p) { return p.menge + "x " + p.name; }).concat((v.frei || []).map(function (f) { return f.name + " " + zahl(f.cent); })).join(", ");
       var st = (v.positionen || []).reduce(function (a, p) { return a + p.menge; }, 0) + (v.frei || []).length;
-      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl(v.angebotRabatt), zahl(v.rabattCent), q(v.rabattName || ""), zahl(v.summe), v.zahlart === "karte" ? "Karte" : "Bar", v.storniert ? "ja" : "nein"].join(";"));
+      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl((v.angebotRabatt || 0) + (v.rabattCent || 0)), q(v.rabattName || ""), zahl(v.summe), v.zahlart === "karte" ? "Karte" : "Bar", v.storniert ? "ja" : "nein"].join(";"));
     });
     var csv = "﻿" + zeilen.join("\r\n");
     var name = "basar-verkaeufe-" + (S.tag === "alle" ? "alle-tage" : S.tag) + ".csv";
@@ -987,6 +1081,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     S.verkaeufe = LS.get("kasse-verkaeufe", []);
     S.notizen = LS.get("kasse-notizen", []);
     S.ausverkauft = LS.get("kasse-ausverkauft", {});
+    S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
     renderAlles();
   }
   function start() {
@@ -1017,6 +1112,11 @@ tfoot td { font-weight: 700; border-bottom: 0; }
       db.collection("notizen").onSnapshot(function (snap) {
         S.notizen = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
         renderNotizen();
+      }, function () {});
+      db.doc("kasse/lager").onSnapshot(function (snap) {
+        var d = snap.exists ? snap.data() : null;
+        S.lager = { bestand: (d && d.bestand) || {}, knapp: d && d.knapp != null ? d.knapp : 3 };
+        renderLager(); renderSortiment(); renderNotizen();
       }, function () {});
       db.doc("kasse/status").onSnapshot(function (snap) {
         S.ausverkauft = (snap.exists && snap.data().ausverkauft) || {};

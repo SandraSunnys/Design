@@ -83,10 +83,26 @@
    "farbe": "#e7b97c"
   },
   {
+   "id": "mix-alk",
+   "name": "Pralinen gemischt mit Alkohol",
+   "gruppe": "Pralinen",
+   "info": "Tüte · gemischt · mit Alkohol",
+   "preis": 800,
+   "farbe": "#ffc58f"
+  },
+  {
+   "id": "mix-ohne",
+   "name": "Pralinen gemischt ohne Alkohol",
+   "gruppe": "Pralinen",
+   "info": "Tüte · gemischt · ohne Alkohol",
+   "preis": 800,
+   "farbe": "#f9dfa6"
+  },
+  {
    "id": "schachtel",
    "name": "Pralinenschachtel",
    "gruppe": "Pralinen",
-   "info": "Schachtel",
+   "info": "gemischt · vorgepackt",
    "preis": 1100,
    "farbe": "#f2b8c6"
   },
