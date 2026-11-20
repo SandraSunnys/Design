@@ -39,6 +39,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { background: var(--grund); color: var(--tinte); font: 400 15px/1.45 var(--font-sans); }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -97,7 +98,7 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .posten { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .posten li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; align-items: center; gap: 10px; }
 .posten .punkt { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
-.posten .p-name { font-weight: 600; min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
+.posten .p-name { font-weight: 600; min-width: 0; overflow-wrap: break-word; hyphens: auto; line-height: 1.25; }
 .posten .p-name small { display: block; font-weight: 400; color: var(--tinte-2); font-size: 12.5px; }
 .posten .p-summe { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 64px; text-align: right; }
 .menge { display: inline-flex; align-items: center; border-radius: var(--rund); background: var(--grund); border: 1px solid var(--linie); }
@@ -123,8 +124,9 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .summen dt { color: var(--tinte-2); }
 .summen dd { margin: 0; padding-left: 12px; text-align: right; white-space: nowrap; }
 .summen .minus { color: var(--rot); }
-.summen .gesamt { padding-top: 10px; margin-top: 6px; border-top: 1px solid var(--linie); color: var(--tinte); font: 800 30px/1 var(--font-display); letter-spacing: -.03em; }
-.summen dt.gesamt { font-size: 18px; align-self: end; padding-bottom: 3px; }
+.summen .gesamt { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-top: 12px; margin-top: 6px; border-top: 1px solid var(--linie); }
+.summen .gesamt dt { color: var(--tinte); font: 800 18px/1 var(--font-display); }
+.summen .gesamt dd { color: var(--tinte); font: 800 30px/1 var(--font-display); letter-spacing: -.03em; }
 
 .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: var(--rund); background: var(--grund); border: 1px solid var(--linie); }
 .seg button { height: 36px; border: 0; border-radius: var(--rund); background: none; font-weight: 600; }
@@ -530,7 +532,7 @@ tfoot td { font-weight: 700; border-bottom: 0; }
     var s = "<dt>Zwischensumme</dt><dd>" + eur(r.zwischen) + "</dd>";
     r.angebotZeilen.forEach(function (a) { s += "<dt>" + esc(a.text) + '</dt><dd class="minus">− ' + eur(a.cent) + "</dd>"; });
     if (r.rabattCent) s += "<dt>Rabatt " + esc(r.rabattName) + '</dt><dd class="minus">− ' + eur(r.rabattCent) + "</dd>";
-    s += '<dt class="gesamt">Zu zahlen</dt><dd class="gesamt">' + eur(r.summe) + "</dd>";
+    s += '<div class="gesamt"><dt>Zu zahlen</dt><dd>' + eur(r.summe) + "</dd></div>";
     $("summen").innerHTML = s;
 
     document.querySelectorAll("#zahlart button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.zahlart === S.zahlart)); });
