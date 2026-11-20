@@ -97,6 +97,10 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .gruppe-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
 .kachel { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 104px; padding: 14px 14px 12px; border: 0; border-radius: var(--radius-lg); background: var(--c); color: var(--auf-farbe); text-align: left; hyphens: auto; transition: transform .08s ease; }
 .kachel:active { transform: scale(.97); }
+.kachel-wrap { position: relative; display: flex; min-width: 0; }
+.kachel-wrap .kachel { flex: 1; min-width: 0; }
+.k-minus { position: absolute; right: 10px; bottom: 10px; width: 46px; height: 46px; border: 0; border-radius: 50%; background: #1d1b1a; color: #fff; font: 700 26px/1 var(--font-sans); display: grid; place-items: center; }
+.k-minus:active { transform: scale(.94); }
 .kachel .k-name { font: 800 16.5px/1.08 var(--font-display); letter-spacing: -.02em; overflow-wrap: break-word; }
 .kachel.hat-anz .k-name { padding-right: 30px; }
 .kachel .k-info { font-size: 12.5px; opacity: .78; }
@@ -123,7 +127,7 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .posten .p-name small { display: block; font-weight: 400; color: var(--tinte-2); font-size: 12.5px; }
 .posten .p-summe { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 64px; text-align: right; }
 .menge { display: inline-flex; align-items: center; border-radius: var(--rund); background: var(--grund); border: 1px solid var(--linie); }
-.menge button { width: 32px; height: 32px; border: 0; background: none; font-size: 18px; line-height: 1; border-radius: var(--rund); }
+.menge button { width: 44px; height: 44px; border: 0; background: none; font-size: 18px; line-height: 1; border-radius: var(--rund); }
 .menge span { min-width: 22px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
 .posten li.posten-leer { display: block; color: var(--tinte-2); font-size: 14px; }
 
@@ -139,6 +143,7 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { height: 36px; padding: 0 14px; border-radius: var(--rund); border: 1px solid var(--linie); background: var(--grund); font-weight: 600; font-size: 14px; white-space: nowrap; }
 .chip[aria-pressed="true"] { background: var(--rot); border-color: var(--rot); color: var(--auf-rot); }
+#geld-chips .chip[aria-pressed="true"] { background: var(--tinte); border-color: var(--tinte); color: var(--grund); }
 .eigen { margin-top: 8px; }
 
 .summen { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 0; font-variant-numeric: tabular-nums; }
@@ -713,9 +718,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
         var m = S.korb[p.id] || 0, li = lagerInfo(p.id), rest = li ? li.rest - m : null;
         var aus = !!S.ausverkauft[p.id] || (li !== null && li.rest <= 0);
         var lagerTag = li && !aus ? '<span class="k-lager' + (rest <= knappAb() ? " knapp" : "") + '">' + (rest <= 0 ? "letzte im Korb" : "noch " + rest) + "</span>" : "";
-        return '<button class="kachel' + (m ? " hat-anz" : "") + (aus ? " aus" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
+        return '<div class="kachel-wrap"><button class="kachel' + (m ? " hat-anz" : "") + (aus ? " aus" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
           '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") + (aus ? '<span class="k-aus">ausverkauft</span>' : lagerTag) +
-          '<span class="k-preis">' + eur(p.preis) + "</span>" + (m ? '<span class="k-anz">' + m + "</span>" : "") + "</button>";
+          '<span class="k-preis">' + eur(p.preis) + "</span>" + (m ? '<span class="k-anz">' + m + "</span>" : "") + "</button>" +
+          (m ? '<button class="k-minus" type="button" data-minus="' + esc(p.id) + '" aria-label="' + esc(p.name) + ' eins weniger">−</button>' : "") + "</div>";
       }).join("") + "</div></div>";
     }).join("");
   }
@@ -768,6 +774,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   }
   function renderRueckgeld(r) {
     r = r || berechne();
+    document.querySelectorAll("#geld-chips .chip").forEach(function (c) {
+      var w = c.dataset.geld === "passend" ? r.summe : +c.dataset.geld;
+      c.setAttribute("aria-pressed", String(S.gegeben != null && S.gegeben === w && r.anzahl > 0));
+    });
     var el = $("rueckgeld");
     if (S.zahlart !== "bar" || S.gegeben == null || isNaN(S.gegeben) || r.anzahl === 0) { el.hidden = true; return; }
     el.hidden = false;
@@ -1029,8 +1039,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (d.zahlart) { S.zahlart = d.zahlart; renderBon(); return; }
     if (d.geld) {
       var r = berechne();
-      S.gegeben = d.geld === "passend" ? r.summe : +d.geld;
-      $("gegeben").value = centText(S.gegeben); renderRueckgeld(); return;
+      var wert = d.geld === "passend" ? r.summe : +d.geld;
+      if (t.getAttribute("aria-pressed") === "true") { S.gegeben = null; $("gegeben").value = ""; }
+      else { S.gegeben = wert; $("gegeben").value = centText(wert); }
+      renderRueckgeld(); return;
     }
     if (d.notizFertig) { var nf = S.notizen.find(function (n) { return n.id === d.notizFertig; }); if (nf) aendereNotiz(nf.id, { erledigt: !nf.erledigt }).catch(function () { toast("Nicht gespeichert"); }); return; }
     if (d.notizWeg) { loescheNotiz(d.notizWeg).catch(function () { toast("Nicht gelöscht"); }); return; }
