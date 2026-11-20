@@ -178,7 +178,7 @@ h3 { margin: 0 0 10px; font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .1
 /* ---------- Verkäufe ---------- */
 .v-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; justify-content: space-between; margin-bottom: 16px; }
 .v-kopf .zeile { flex-wrap: wrap; }
-.kennzahlen { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
+.kennzahlen { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 22px; }
 .kz { padding: 16px; border-radius: var(--radius-lg); background: var(--flaeche); min-width: 0; }
 .kz .kz-label { font-size: 13px; color: var(--tinte-2); }
 .kz .kz-wert { font: 800 26px/1.1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin-top: 4px; }
@@ -254,6 +254,35 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .pp-einst .pp-leer { width: 140px; height: 140px; display: grid; place-items: center; border: 2px dashed var(--linie); border-radius: var(--radius-sm); color: var(--tinte-2); font-size: 13px; text-align: center; padding: 10px; }
 .pp-einst-text { display: grid; gap: 10px; flex: 1 1 260px; min-width: 0; }
 
+/* ---------- Vorbestellungen ---------- */
+.vb-raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.vb-raster > div { display: grid; gap: 14px; min-width: 0; }
+.vb-form { display: grid; gap: 14px; padding: 18px; border-radius: var(--radius-lg); background: var(--flaeche); }
+.vb-form label.f { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--tinte-2); }
+.vb-zwei { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.vb-gruppe { display: grid; gap: 6px; }
+.vb-gruppe h3 { margin: 0; }
+.vb-chip { display: inline-flex; align-items: center; gap: 6px; }
+.vb-chip b { min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--rund); background: var(--grund); color: var(--tinte); font-size: 12.5px; line-height: 22px; text-align: center; }
+.vb-auswahl { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.vb-auswahl li { display: grid; grid-template-columns: minmax(0, 1fr) auto 70px; gap: 10px; align-items: center; }
+.vb-auswahl .p-summe { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.vb-summe { display: flex; justify-content: space-between; align-items: baseline; padding-top: 10px; border-top: 1px solid var(--linie); font: 800 22px/1 var(--font-display); }
+.vb-check { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.vb-check input { width: 22px; height: 22px; accent-color: var(--tanne); }
+.vb-karte { display: grid; gap: 8px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--flaeche); }
+.vb-karte.fertig { opacity: .6; }
+.vb-karte .vb-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.vb-karte .vb-name { font: 800 19px/1.15 var(--font-display); letter-spacing: -.01em; }
+.vb-karte .vb-betrag { font-weight: 700; font-variant-numeric: tabular-nums; }
+.vb-karte .vb-text { font-size: 14px; color: var(--tinte-2); overflow-wrap: break-word; }
+.vb-karte .vb-text b { color: var(--tinte); font-weight: 600; }
+.vb-aktionen { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.vb-aktionen .knopf { height: 40px; }
+.pille--bezahlt { background: var(--tanne); border-color: var(--tanne); color: var(--grund); }
+.vb-banner { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--tinte); color: var(--grund); font-size: 14px; }
+.vb-banner button { border: 0; background: none; color: inherit; text-decoration: underline; font-weight: 600; padding: 0; }
+
 /* ---------- Lager ---------- */
 .kachel .k-lager { margin-top: 6px; padding: 2px 8px; border-radius: var(--rund); background: rgba(255,255,255,.65); color: #1d1b1a; font: 700 12px/16px var(--font-sans); font-variant-numeric: tabular-nums; }
 .kachel .k-lager.knapp { background: #9a3412; color: #fff; }
@@ -296,6 +325,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
 /* ---------- schmal ---------- */
 @media (max-width: 1060px) { .kasse { grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; } .bon { padding: 16px; } }
 @media (max-width: 760px) {
+  .vb-raster { grid-template-columns: minmax(0, 1fr); }
   .notiz-raster { grid-template-columns: minmax(0, 1fr); }
   .kasse { grid-template-columns: minmax(0, 1fr); }
   .bon { position: static; max-height: none; }
@@ -340,6 +370,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     <nav class="tabs" role="tablist" aria-label="Bereiche">
       <button role="tab" id="tab-kasse" data-ansicht="kasse" aria-selected="true">Kasse</button>
       <button role="tab" id="tab-verkaeufe" data-ansicht="verkaeufe" aria-selected="false">Verkäufe</button>
+      <button role="tab" id="tab-vorbestellungen" data-ansicht="vorbestellungen" aria-selected="false">Vorbestellungen<span class="zahl" id="vb-zahl" hidden></span></button>
       <button role="tab" id="tab-lager" data-ansicht="lager" aria-selected="false">Lager<span class="zahl" id="lager-zahl" hidden></span></button>
       <button role="tab" id="tab-notizen" data-ansicht="notizen" aria-selected="false">Notizen<span class="zahl" id="notiz-zahl" hidden></span></button>
       <button role="tab" id="tab-preise" data-ansicht="preise" aria-selected="false">Preise &amp; Rabatte</button>
@@ -357,6 +388,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
 
       <aside class="bon" id="bon" aria-label="Aktueller Verkauf">
         <div class="bon-kopf"><h2>Aktueller Verkauf</h2><button class="link" id="leeren" type="button">Leeren</button></div>
+        <div id="vb-hinweis" hidden></div>
         <ul class="posten" id="posten"></ul>
 
         <div>
@@ -433,6 +465,34 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       <div>
         <h3>Einzelne Verkäufe</h3>
         <ol class="liste" id="liste"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- VORBESTELLUNGEN -->
+  <section id="v-vorbestellungen" class="ansicht" hidden style="margin-top:14px">
+    <div class="vb-raster">
+      <div>
+        <h2 id="vb-titel">Neue Vorbestellung</h2>
+        <form class="vb-form" id="vb-form">
+          <div class="vb-zwei">
+            <label class="f" for="vb-name">Name<input class="feld" id="vb-name" placeholder="z. B. Familie Huber" autocomplete="off"></label>
+            <label class="f" for="vb-abholung">Abholung (optional)<input class="feld" id="vb-abholung" placeholder="z. B. Samstag 14 Uhr" autocomplete="off"></label>
+          </div>
+          <label class="f" for="vb-notiz">Telefon oder Notiz (optional)<input class="feld" id="vb-notiz" placeholder="z. B. 0171 …, bitte als Geschenk" autocomplete="off"></label>
+          <div><div class="block-label">Was wird bestellt? Tippen zum Hinzufügen</div><div id="vb-produkte" style="display:grid;gap:12px"></div></div>
+          <div id="vb-auswahl-box"></div>
+          <label class="vb-check" for="vb-bezahlt"><input type="checkbox" id="vb-bezahlt"> Schon bezahlt</label>
+          <div class="zeile" style="flex-wrap:wrap">
+            <button class="knopf knopf--rot" type="submit" id="vb-speichern">Vorbestellung speichern</button>
+            <button class="knopf" type="button" id="vb-abbrechen" hidden>Abbrechen</button>
+          </div>
+        </form>
+      </div>
+      <div>
+        <h2>Offene Vorbestellungen</h2>
+        <div id="vb-liste" style="display:grid;gap:10px"></div>
+        <div id="vb-fertig-box"></div>
       </div>
     </div>
   </section>
@@ -552,7 +612,11 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     notizen: [],
     ausverkauft: {},
     lager: { bestand: {}, knapp: 3 },
-    paypal: { qr: "", name: "" }
+    paypal: { qr: "", name: "" },
+    vorbestellungen: [],
+    vorbestellungAktiv: null,
+    vb: { id: null, pos: {} },
+    vbFrage: null
   };
   var db = null;
 
@@ -664,6 +728,33 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       leser.readAsDataURL(datei);
     });
   }
+  function neueVorbestellung(d) {
+    if (S.modus === "db") return db.collection("vorbestellungen").doc().set(d);
+    d = Object.assign({ id: "v" + Date.now() + uid() }, d);
+    var neu = S.vorbestellungen.concat([d]);
+    if (!LS.set("kasse-vorbestellungen", neu)) return Promise.reject({ code: "quota_exceeded" });
+    S.vorbestellungen = neu; renderVorbestellungen(); renderSortiment(); renderLager(); return Promise.resolve();
+  }
+  function aendereVorbestellung(id, daten) {
+    if (S.modus === "db") return db.doc("vorbestellungen/" + id).update(daten);
+    S.vorbestellungen = S.vorbestellungen.map(function (x) { return x.id === id ? Object.assign({}, x, daten) : x; });
+    LS.set("kasse-vorbestellungen", S.vorbestellungen); renderVorbestellungen(); renderSortiment(); renderLager(); return Promise.resolve();
+  }
+  function loescheVorbestellung(id) {
+    if (S.modus === "db") return db.doc("vorbestellungen/" + id).delete();
+    S.vorbestellungen = S.vorbestellungen.filter(function (x) { return x.id !== id; });
+    LS.set("kasse-vorbestellungen", S.vorbestellungen); renderVorbestellungen(); renderSortiment(); renderLager(); return Promise.resolve();
+  }
+  function reserviertVon(id) {
+    var n = 0;
+    S.vorbestellungen.forEach(function (x) {
+      if (x.status === "abgeholt" || x.id === S.vorbestellungAktiv) return;
+      (x.positionen || []).forEach(function (p) { if (p.id === id) n += p.menge; });
+    });
+    return n;
+  }
+  function vbSumme(x) { return (x.positionen || []).reduce(function (a, p) { var pr = produkt(p.id); return a + (pr ? pr.preis * p.menge : 0); }, 0); }
+  function vbText(x) { return (x.positionen || []).map(function (p) { var pr = produkt(p.id); return p.menge + "× " + esc(pr ? pr.name : p.name || "?"); }).join(", "); }
   var lagerKette = Promise.resolve();
   function speichereLager(neu) {
     S.lager = neu; renderLager(); renderSortiment(); renderNotizen();
@@ -679,7 +770,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       if (v.storniert || !v.zeit || v.zeit < b.seit) return;
       (v.positionen || []).forEach(function (p) { if (p.id === id) verkauft += p.menge; });
     });
-    return { start: b.menge, seit: b.seit, verkauft: verkauft, rest: b.menge - verkauft };
+    var res = reserviertVon(id);
+    return { start: b.menge, seit: b.seit, verkauft: verkauft, rest: b.menge - verkauft, reserviert: res, frei: b.menge - verkauft - res };
   }
   function speichereAusverkauft(karte) {
     S.ausverkauft = karte; renderNotizen(); renderSortiment();
@@ -716,9 +808,9 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
     el.innerHTML = gruppen.map(function (g) {
       return "<div><h3>" + esc(g) + '</h3><div class="gruppe-raster">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
-        var m = S.korb[p.id] || 0, li = lagerInfo(p.id), rest = li ? li.rest - m : null;
+        var m = S.korb[p.id] || 0, li = lagerInfo(p.id), rest = li ? li.frei - m : null;
         var aus = !!S.ausverkauft[p.id] || (li !== null && li.rest <= 0);
-        var lagerTag = li && !aus ? '<span class="k-lager' + (rest <= knappAb() ? " knapp" : "") + '">' + (rest <= 0 ? "letzte im Korb" : "noch " + rest) + "</span>" : "";
+        var lagerTag = li && !aus ? '<span class="k-lager' + (rest <= knappAb() ? " knapp" : "") + '">' + (rest <= 0 ? (li.reserviert && li.rest - m > 0 ? "Rest reserviert" : "letzte im Korb") : "noch " + rest + (li.reserviert ? " frei" : "")) + "</span>" : "";
         return '<div class="kachel-wrap"><button class="kachel' + (m ? " hat-anz" : "") + (aus ? " aus" : "") + '" type="button" data-plus="' + esc(p.id) + '" style="--c:' + esc(p.farbe || "#e0dcd8") + '" aria-label="' + esc(p.name) + " hinzufügen, " + eur(p.preis) + '">' +
           '<span class="k-name">' + esc(p.name) + "</span>" + (p.info ? '<span class="k-info">' + esc(p.info) + "</span>" : "") + (aus ? '<span class="k-aus">ausverkauft</span>' : lagerTag) +
           '<span class="k-preis">' + eur(p.preis) + "</span>" + (m ? '<span class="k-anz">' + m + "</span>" : "") + "</button>" +
@@ -728,6 +820,9 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   }
   function renderBon() {
     var r = berechne();
+    var vbA = S.vorbestellungAktiv && S.vorbestellungen.find(function (x) { return x.id === S.vorbestellungAktiv; });
+    $("vb-hinweis").hidden = !vbA;
+    if (vbA) $("vb-hinweis").innerHTML = '<div class="vb-banner"><span>Vorbestellung von <b>' + esc(vbA.name) + '</b></span><button type="button" id="vb-loesen">lösen</button></div>';
     var posten = r.zeilen.map(function (z) {
       return '<li><span class="punkt" style="--c:' + esc(z.p.farbe || "#e0dcd8") + '"></span><span class="p-name">' + esc(z.p.name) + "<small>" + eur(z.p.preis) + " je Stück</small></span>" +
         '<span class="menge"><button type="button" data-minus="' + esc(z.p.id) + '" aria-label="Eins weniger">−</button><span>' + z.menge + '</span><button type="button" data-plus="' + esc(z.p.id) + '" aria-label="Eins mehr">+</button></span>' +
@@ -797,6 +892,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     return S.verkaeufe.filter(function (v) { return S.tag === "alle" || v.tag === S.tag; })
       .sort(function (a, b) { return (b.zeit || "").localeCompare(a.zeit || ""); });
   }
+  function zahlartName(v, gross) {
+    var n = v.zahlart === "vorab" ? "vorab bezahlt" : v.zahlart && v.zahlart !== "bar" ? "PayPal" : "bar";
+    return gross ? n.charAt(0).toUpperCase() + n.slice(1) : n;
+  }
   function renderVerkaeufe() {
     var tage = [];
     S.verkaeufe.forEach(function (v) { if (v.tag && tage.indexOf(v.tag) < 0) tage.push(v.tag); });
@@ -808,10 +907,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     }).join("") + '<option value="alle"' + (S.tag === "alle" ? " selected" : "") + ">Alle Tage</option>";
 
     var liste = verkaufeAmTag(), gueltig = liste.filter(function (v) { return !v.storniert; });
-    var summe = 0, bar = 0, karte = 0, rabatt = 0, stueck = 0, proProdukt = {};
+    var summe = 0, bar = 0, karte = 0, vorab = 0, rabatt = 0, stueck = 0, proProdukt = {};
     gueltig.forEach(function (v) {
       summe += v.summe || 0;
-      if (v.zahlart && v.zahlart !== "bar") karte += v.summe || 0; else bar += v.summe || 0;
+      if (v.zahlart === "vorab") vorab += v.summe || 0; else if (v.zahlart && v.zahlart !== "bar") karte += v.summe || 0; else bar += v.summe || 0;
       rabatt += (v.angebotRabatt || 0) + (v.rabattCent || 0);
       (v.positionen || []).forEach(function (p) {
         var k = p.name;
@@ -828,6 +927,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       '<div class="kz kz--haupt"><div class="kz-label">Umsatz' + (S.tag === "alle" ? " gesamt" : "") + '</div><div class="kz-wert">' + eur(summe) + "</div></div>" +
       '<div class="kz"><div class="kz-label">davon bar</div><div class="kz-wert">' + eur(bar) + "</div></div>" +
       '<div class="kz"><div class="kz-label">davon PayPal</div><div class="kz-wert">' + eur(karte) + "</div></div>" +
+      (vorab ? '<div class="kz"><div class="kz-label">davon vorab bezahlt</div><div class="kz-wert">' + eur(vorab) + "</div></div>" : "") +
       '<div class="kz"><div class="kz-label">Verkäufe · Stück</div><div class="kz-wert">' + gueltig.length + " · " + stueck + "</div></div>" +
       '<div class="kz"><div class="kz-label">Rabatte gewährt</div><div class="kz-wert">' + eur(rabatt) + "</div></div>";
 
@@ -848,7 +948,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       var extra = [];
       if (v.angebotRabatt) extra.push("Mengenangebot −" + eur(v.angebotRabatt));
       if (v.rabattCent) extra.push("Rabatt " + esc(v.rabattName || "") + " −" + eur(v.rabattCent));
-      extra.push(v.zahlart && v.zahlart !== "bar" ? "PayPal" : "bar");
+      extra.push(zahlartName(v)); if (v.vorbestellung) extra.push("Vorbestellung " + esc(v.vorbestellung));
       if (S.tag === "alle") extra.unshift(tagLang(v.tag || ""));
       var aktion = "";
       if (v.storniert) aktion = '<span class="pille" style="margin-top:4px">storniert</span>' + (S.darfSchreiben ? '<button class="link" type="button" data-zurueck="' + esc(v.id) + '">wiederherstellen</button>' : "");
@@ -906,7 +1006,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     h += '<section><div><h2>Wechselgeld</h2><p class="erkl">Womit die Geldkassette morgens startet. Daraus berechnet die Kasse unter „Verkäufe“, wie viel Bargeld abends drin sein sollte.</p></div>' +
       '<div class="zeile" style="max-width:280px"><input class="feld feld--kurz" style="flex:1" data-feld="wechselgeld" data-cent="1" value="' + centText(e.wechselgeld || 0) + '" inputmode="decimal" aria-label="Wechselgeld in Euro"' + ro + "></div></section>";
 
-    h += '<section><div><h2>Daten sichern</h2><p class="erkl">Preise, Verkäufe, Lager und Notizen liegen nur auf diesem Gerät. Speichern Sie abends eine Sicherung, zum Beispiel per Mail an sich selbst. Mit „Sicherung einlesen“ holen Sie alles zurück oder auf ein anderes Gerät.</p></div>' +
+    h += '<section><div><h2>Daten sichern</h2><p class="erkl">Preise, Verkäufe, Vorbestellungen, Lager und Notizen liegen nur auf diesem Gerät. Speichern Sie abends eine Sicherung, zum Beispiel per Mail an sich selbst. Mit „Sicherung einlesen“ holen Sie alles zurück oder auf ein anderes Gerät.</p></div>' +
       '<div class="zeile" style="flex-wrap:wrap"><button class="knopf" type="button" id="sicherung">Sicherung speichern</button>' +
       '<label class="knopf" style="position:relative;display:inline-flex;align-items:center;cursor:pointer">Sicherung einlesen<input type="file" id="einlesen" accept=".json,application/json" style="position:absolute;inset:0;opacity:0;width:100%;cursor:pointer"></label>' +
       '<button class="knopf" type="button" id="alles-loeschen">Alle Verkäufe löschen</button></div><div id="loesch-frage"></div></section>';
@@ -915,6 +1015,50 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   }
   function markiereGeaendert() { S.entwurfGeaendert = true; var l = $("speicher-leiste"); if (l) l.hidden = false; }
 
+  function renderVorbestellungen() {
+    var ps = produkte(), gruppen = [];
+    ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
+    $("vb-produkte").innerHTML = ps.length ? gruppen.map(function (g) {
+      return '<div class="vb-gruppe"><h3>' + esc(g) + '</h3><div class="chips">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
+        var n = S.vb.pos[p.id] || 0;
+        return '<button class="chip vb-chip" type="button" data-vb-plus="' + esc(p.id) + '" aria-pressed="' + (n > 0) + '">' + esc(p.name) + (n ? "<b>" + n + "</b>" : "") + "</button>";
+      }).join("") + "</div></div>";
+    }).join("") : '<p class="erkl-n">Noch keine Produkte angelegt.</p>';
+    var ids = Object.keys(S.vb.pos).filter(function (id) { return S.vb.pos[id] > 0 && produkt(id); }), summe = 0;
+    $("vb-auswahl-box").innerHTML = ids.length ? '<ul class="vb-auswahl">' + ids.map(function (id) {
+      var p = produkt(id), n = S.vb.pos[id]; summe += p.preis * n;
+      return '<li><span class="p-name" style="font-weight:600">' + esc(p.name) + '</span><span class="menge"><button type="button" data-vb-minus="' + esc(id) + '" aria-label="Eins weniger">−</button><span>' + n + '</span><button type="button" data-vb-plus="' + esc(id) + '" aria-label="Eins mehr">+</button></span><span class="p-summe">' + eur(p.preis * n) + "</span></li>";
+    }).join("") + '</ul><div class="vb-summe" style="margin-top:10px"><span>Summe</span><span>' + eur(summe) + "</span></div>" : '<p class="erkl-n">Noch nichts ausgewählt.</p>';
+    $("vb-titel").textContent = S.vb.id ? "Vorbestellung bearbeiten" : "Neue Vorbestellung";
+    $("vb-speichern").textContent = S.vb.id ? "Änderungen speichern" : "Vorbestellung speichern";
+    $("vb-abbrechen").hidden = !S.vb.id;
+    $("vb-speichern").disabled = !S.darfSchreiben;
+
+    var offen = S.vorbestellungen.filter(function (x) { return x.status !== "abgeholt"; }).sort(function (a, b) { return (a.erstellt || "").localeCompare(b.erstellt || ""); });
+    var fertig = S.vorbestellungen.filter(function (x) { return x.status === "abgeholt"; }).sort(function (a, b) { return (b.abgeholtAm || "").localeCompare(a.abgeholtAm || ""); });
+    var z = $("vb-zahl"); z.hidden = !offen.length; z.textContent = offen.length;
+    var karte = function (x) {
+      var aktion = "";
+      if (x.status === "abgeholt") aktion = '<span class="vb-text">abgeholt ' + uhrzeit(x.abgeholtAm) + "</span>" + (S.darfSchreiben ? '<button class="link" type="button" data-vb-weg="' + esc(x.id) + '">löschen</button>' : "");
+      else if (S.vbFrage === "weg:" + x.id) aktion = '<span class="vb-text">Wirklich löschen?</span><button class="knopf" type="button" data-vb-nein="1">Nein</button><button class="knopf knopf--rot" type="button" data-vb-weg-ja="' + esc(x.id) + '">Löschen</button>';
+      else if (S.vbFrage === "aus:" + x.id) aktion = '<span class="vb-text">Ware übergeben und als vorab bezahlt buchen?</span><button class="knopf" type="button" data-vb-nein="1">Nein</button><button class="knopf knopf--dunkel" type="button" data-vb-aus-ja="' + esc(x.id) + '">Ja, buchen</button>';
+      else if (S.darfSchreiben) aktion = (x.bezahlt
+          ? '<button class="knopf knopf--dunkel" type="button" data-vb-aus="' + esc(x.id) + '">Abgeholt</button>'
+          : '<button class="knopf knopf--rot" type="button" data-vb-kasse="' + esc(x.id) + '">Abholen &amp; kassieren</button>') +
+        '<button class="knopf" type="button" data-vb-bearbeiten="' + esc(x.id) + '">Bearbeiten</button><button class="link" type="button" data-vb-weg="' + esc(x.id) + '">löschen</button>';
+      return '<div class="vb-karte' + (x.status === "abgeholt" ? " fertig" : "") + '"><div class="vb-kopf"><span class="vb-name">' + esc(x.name) + '</span><span class="vb-betrag">' + eur(vbSumme(x)) +
+        (x.bezahlt ? ' <span class="pille pille--bezahlt">bezahlt</span>' : "") + "</span></div>" +
+        '<div class="vb-text"><b>' + vbText(x) + "</b>" + (x.abholung ? "<br>Abholung: " + esc(x.abholung) : "") + (x.notiz ? "<br>" + esc(x.notiz) : "") + "</div>" +
+        '<div class="vb-aktionen">' + aktion + "</div></div>";
+    };
+    $("vb-liste").innerHTML = offen.length ? offen.map(karte).join("") : '<div class="notiz-leer">Keine offenen Vorbestellungen. Links eine neue anlegen.</div>';
+    $("vb-fertig-box").innerHTML = fertig.length ? '<h3 style="margin:18px 0 10px">Schon abgeholt (' + fertig.length + ")</h3>" + '<div style="display:grid;gap:10px">' + fertig.map(karte).join("") + "</div>" : "";
+  }
+  function vbFormularLeeren() {
+    S.vb = { id: null, pos: {} };
+    $("vb-name").value = ""; $("vb-abholung").value = ""; $("vb-notiz").value = ""; $("vb-bezahlt").checked = false;
+    renderVorbestellungen();
+  }
   function renderLager() {
     var ps = produkte(), gruppen = [], knapp = knappAb();
     var kf = $("knapp"); if (document.activeElement !== kf) kf.value = knapp;
@@ -923,7 +1067,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g);
       var li = lagerInfo(p.id); if (!li) return;
       gezaehlt++; summe += Math.max(0, li.rest);
-      if (li.rest <= 0) leere.push(p.name); else if (li.rest <= knapp) knappe.push(p.name + " (" + li.rest + ")");
+      if (li.rest <= 0) leere.push(p.name); else if (li.frei <= knapp) knappe.push(p.name + " (" + Math.max(0, li.frei) + (li.reserviert ? " frei" : "") + ")");
     });
     var z = $("lager-zahl"); z.hidden = !(knappe.length + leere.length); z.textContent = knappe.length + leere.length;
     $("lager-kz").innerHTML =
@@ -933,17 +1077,17 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var fokus = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.lager : null;
     if (fokus) return;
     var ro = S.darfSchreiben ? "" : " disabled";
-    $("lager-tabelle").innerHTML = ps.length ? '<thead><tr><th>Sorte</th><th>Bestand</th><th class="r">verkauft</th><th class="r">noch da</th><th>Zustand</th></tr></thead><tbody>' +
+    $("lager-tabelle").innerHTML = ps.length ? '<thead><tr><th>Sorte</th><th>Bestand</th><th class="r">verkauft</th><th class="r">reserviert</th><th class="r">noch da</th><th>Zustand</th></tr></thead><tbody>' +
       gruppen.map(function (g) {
-        return '<tr class="gruppe-zeile"><td colspan="5">' + esc(g) + "</td></tr>" + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
+        return '<tr class="gruppe-zeile"><td colspan="6">' + esc(g) + "</td></tr>" + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
           var li = lagerInfo(p.id), zst;
           if (!li) zst = '<span class="zustand zustand--offen">nicht gezählt</span>';
           else if (li.rest <= 0) zst = '<span class="zustand zustand--leer">leer</span>';
-          else if (li.rest <= knapp) zst = '<span class="zustand zustand--knapp">knapp</span>';
+          else if (li.frei <= knapp) zst = '<span class="zustand zustand--knapp">knapp</span>';
           else zst = '<span class="zustand zustand--gut">genug</span>';
           return '<tr><td><span class="punkt" style="--c:' + esc(p.farbe || "#e0dcd8") + '"></span>' + esc(p.name) + "</td>" +
             '<td><input class="feld lager-feld" data-lager="' + esc(p.id) + '" value="' + (li ? li.start : "") + '" inputmode="numeric" placeholder="–" aria-label="Bestand ' + esc(p.name) + '"' + ro + ">" + (li ? "<small>gezählt " + (li.seit.slice(0, 10) === heute() ? "" : tagLang(li.seit.slice(0, 10)) + ", ") + uhrzeit(li.seit) + "</small>" : "") + "</td>" +
-            '<td class="r">' + (li ? li.verkauft : "") + '</td><td class="r noch">' + (li ? Math.max(0, li.rest) : "–") + "</td><td>" + zst + "</td></tr>";
+            '<td class="r">' + (li ? li.verkauft : "") + '</td><td class="r">' + (li && li.reserviert ? li.reserviert : "") + '</td><td class="r noch">' + (li ? Math.max(0, li.rest) : "–") + "</td><td>" + zst + "</td></tr>";
         }).join("");
       }).join("") + "</tbody>" : '<tbody><tr><td style="color:var(--tinte-2)">Noch keine Produkte angelegt.</td></tr></tbody>';
   }
@@ -971,7 +1115,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     }).join("") : '<p class="erkl-n">Noch keine Produkte angelegt.</p>';
   }
 
-  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); renderNotizen(); renderLager(); if (S.ansicht === "preise") renderEinst(); }
+  function renderAlles() { renderStatus(); renderHinweise(); renderKasse(); renderVerkaeufe(); renderNotizen(); renderLager(); renderVorbestellungen(); if (S.ansicht === "preise") renderEinst(); }
 
   /* ---------- Toast ---------- */
   var toastTimer = null;
@@ -985,16 +1129,17 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   /* ---------- Aktionen ---------- */
   function zeige(a) {
     S.ansicht = a;
-    ["kasse", "verkaeufe", "lager", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
+    ["kasse", "verkaeufe", "vorbestellungen", "lager", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
     if (a === "preise") renderEinst();
     renderBon();
     window.scrollTo(0, 0);
   }
-  function korbLeeren() { S.korb = {}; S.frei = []; S.rabatt = null; S.gegeben = null; $("gegeben").value = ""; $("eigen-wert").value = ""; renderKasse(); }
+  function korbLeeren() { S.korb = {}; S.frei = []; S.rabatt = null; S.gegeben = null; S.vorbestellungAktiv = null; $("gegeben").value = ""; $("eigen-wert").value = ""; renderKasse(); }
 
   function abschliessen() {
     var r = berechne();
     if (!r.anzahl || !S.darfSchreiben) return;
+    var vbId = S.vorbestellungAktiv, vb = vbId ? S.vorbestellungen.find(function (x) { return x.id === vbId; }) : null;
     var jetzt = new Date();
     var v = {
       zeit: jetzt.toISOString(), tag: tagVon(jetzt),
@@ -1004,10 +1149,12 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       rabattName: r.rabattName, rabattCent: r.rabattCent,
       summe: r.summe, zahlart: S.zahlart,
       gegeben: S.zahlart === "bar" && S.gegeben != null && !isNaN(S.gegeben) ? S.gegeben : null,
-      storniert: false
+      storniert: false,
+      vorbestellung: vb ? vb.name : null
     };
     var btn = $("abschliessen"); btn.disabled = true; btn.textContent = "Speichert …";
     neuerVerkauf(v).then(function (id) {
+      if (vb) aendereVorbestellung(vb.id, { status: "abgeholt", abgeholtAm: v.zeit, verkaufId: id }).catch(function () { toast("Vorbestellung nicht als abgeholt markiert"); });
       korbLeeren();
       toast("Verkauf gespeichert · " + eur(v.summe), { text: "Rückgängig", fn: function () { aendereVerkauf(id, { storniert: true }).then(function () { toast("Verkauf storniert"); }); } });
     }).catch(function (e) {
@@ -1057,6 +1204,40 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (t.id === "pp-zurueck") { $("pp-overlay").hidden = true; return; }
     if (t.id === "pp-erhalten") { $("pp-overlay").hidden = true; return abschliessen(); }
     if (t.id === "pp-entfernen") { speicherePaypal({ qr: "", name: (S.paypal && S.paypal.name) || "" }).then(function () { toast("QR-Code entfernt"); }).catch(function () { toast("Nicht gespeichert"); }); return; }
+    if (d.vbPlus) { S.vb.pos[d.vbPlus] = (S.vb.pos[d.vbPlus] || 0) + 1; renderVorbestellungen(); return; }
+    if (d.vbMinus) { S.vb.pos[d.vbMinus] = Math.max(0, (S.vb.pos[d.vbMinus] || 0) - 1); if (!S.vb.pos[d.vbMinus]) delete S.vb.pos[d.vbMinus]; renderVorbestellungen(); return; }
+    if (t.id === "vb-abbrechen") { vbFormularLeeren(); return; }
+    if (d.vbBearbeiten) {
+      var xb = S.vorbestellungen.find(function (x) { return x.id === d.vbBearbeiten; }); if (!xb) return;
+      S.vb = { id: xb.id, pos: {} }; (xb.positionen || []).forEach(function (p) { S.vb.pos[p.id] = p.menge; });
+      $("vb-name").value = xb.name || ""; $("vb-abholung").value = xb.abholung || ""; $("vb-notiz").value = xb.notiz || ""; $("vb-bezahlt").checked = !!xb.bezahlt;
+      renderVorbestellungen(); $("vb-form").scrollIntoView({ behavior: "smooth", block: "start" }); return;
+    }
+    if (d.vbWeg) { S.vbFrage = "weg:" + d.vbWeg; var xw = S.vorbestellungen.find(function (x) { return x.id === d.vbWeg; }); if (xw && xw.status === "abgeholt") { S.vbFrage = null; loescheVorbestellung(d.vbWeg); return; } renderVorbestellungen(); return; }
+    if (d.vbNein) { S.vbFrage = null; renderVorbestellungen(); return; }
+    if (d.vbWegJa) { S.vbFrage = null; if (S.vb.id === d.vbWegJa) vbFormularLeeren(); loescheVorbestellung(d.vbWegJa).then(function () { toast("Vorbestellung gelöscht"); }).catch(function () { toast("Nicht gelöscht"); }); return; }
+    if (d.vbAus) { S.vbFrage = "aus:" + d.vbAus; renderVorbestellungen(); return; }
+    if (d.vbAusJa) {
+      S.vbFrage = null;
+      var xa = S.vorbestellungen.find(function (x) { return x.id === d.vbAusJa; }); if (!xa) return;
+      var pos = (xa.positionen || []).map(function (p) { var pr = produkt(p.id) || { id: p.id, name: p.name || "?", gruppe: "", farbe: "", preis: 0 }; return { id: pr.id, name: pr.name, gruppe: pr.gruppe, farbe: pr.farbe, preis: pr.preis, menge: p.menge }; });
+      var su = pos.reduce(function (a, p) { return a + p.preis * p.menge; }, 0), jetzt = new Date();
+      neuerVerkauf({ zeit: jetzt.toISOString(), tag: tagVon(jetzt), positionen: pos, frei: [], zwischensumme: su, angebotRabatt: 0, rabattName: null, rabattCent: 0, summe: su, zahlart: "vorab", gegeben: null, storniert: false, vorbestellung: xa.name })
+        .then(function (vid) { return aendereVorbestellung(xa.id, { status: "abgeholt", abgeholtAm: jetzt.toISOString(), verkaufId: vid }); })
+        .then(function () { toast("Abholung von " + esc(xa.name) + " gebucht"); })
+        .catch(function () { toast("Nicht gebucht, bitte nochmal versuchen"); renderVorbestellungen(); });
+      return;
+    }
+    if (d.vbKasse) {
+      var xk = S.vorbestellungen.find(function (x) { return x.id === d.vbKasse; }); if (!xk) return;
+      korbLeeren();
+      (xk.positionen || []).forEach(function (p) { if (produkt(p.id)) S.korb[p.id] = p.menge; });
+      S.vorbestellungAktiv = xk.id;
+      zeige("kasse"); renderKasse(); renderLager();
+      toast("Vorbestellung von " + esc(xk.name) + " ist im Bon");
+      return;
+    }
+    if (t.id === "vb-loesen") { S.vorbestellungAktiv = null; renderKasse(); renderLager(); return; }
     if (t.id === "leeren") return korbLeeren();
     if (t.id === "abschliessen") return abschliessen();
     if (t.id === "ml-bon") { $("bon").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
@@ -1149,6 +1330,19 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       }, 0);
     }
   });
+  $("vb-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (!S.darfSchreiben) return;
+    var name = $("vb-name").value.trim();
+    var pos = Object.keys(S.vb.pos).filter(function (id) { return S.vb.pos[id] > 0 && produkt(id); }).map(function (id) { return { id: id, name: produkt(id).name, menge: S.vb.pos[id] }; });
+    if (!name) { toast("Bitte einen Namen eintragen"); $("vb-name").focus(); return; }
+    if (!pos.length) { toast("Bitte mindestens ein Produkt antippen"); return; }
+    var daten = { name: name, abholung: $("vb-abholung").value.trim(), notiz: $("vb-notiz").value.trim(), bezahlt: $("vb-bezahlt").checked, positionen: pos };
+    var bearb = S.vb.id;
+    var weg = bearb ? aendereVorbestellung(bearb, daten) : neueVorbestellung(Object.assign({ status: "offen", erstellt: new Date().toISOString() }, daten));
+    weg.then(function () { toast(bearb ? "Vorbestellung geändert" : "Vorbestellung von " + esc(name) + " gespeichert"); vbFormularLeeren(); window.scrollTo(0, 0); })
+      .catch(function () { toast("Nicht gespeichert, bitte nochmal versuchen"); });
+  });
   $("notiz-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var feld = $("notiz-text"), text = feld.value.trim();
@@ -1185,7 +1379,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       var d = new Date(v.zeit);
       var art = (v.positionen || []).map(function (p) { return p.menge + "x " + p.name; }).concat((v.frei || []).map(function (f) { return f.name + " " + zahl(f.cent); })).join(", ");
       var st = (v.positionen || []).reduce(function (a, p) { return a + p.menge; }, 0) + (v.frei || []).length;
-      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl((v.angebotRabatt || 0) + (v.rabattCent || 0)), q(v.rabattName || ""), zahl(v.summe), v.zahlart && v.zahlart !== "bar" ? "PayPal" : "Bar", v.storniert ? "ja" : "nein"].join(";"));
+      zeilen.push([v.tag, pad(d.getHours()) + ":" + pad(d.getMinutes()), q(art), st, zahl(v.zwischensumme), zahl((v.angebotRabatt || 0) + (v.rabattCent || 0)), q(v.rabattName || ""), zahl(v.summe), zahlartName(v, true), v.storniert ? "ja" : "nein"].join(";"));
     });
     var csv = "﻿" + zeilen.join("\r\n");
     var name = "basar-verkaeufe-" + (S.tag === "alle" ? "alle-tage" : S.tag) + ".csv";
@@ -1215,6 +1409,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     S.ausverkauft = LS.get("kasse-ausverkauft", {});
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
     S.paypal = LS.get("kasse-paypal", { qr: "", name: "" });
+    S.vorbestellungen = LS.get("kasse-vorbestellungen", []);
     renderAlles();
   }
   var STANDARD = {"beispielpreise": false, "wechselgeld": 0, "produkte": [{"id": "kirsch", "name": "Kirschpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ff8fa0"}, {"id": "eierlikoer", "name": "Eierlikörpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ffd75e"}, {"id": "baileys", "name": "Baileys-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#e8b994"}, {"id": "cointreau", "name": "Cointreau-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#d8c3b4"}, {"id": "limoncello", "name": "Limoncello-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#e6ee6e"}, {"id": "aperol", "name": "Aperolpralinen", "gruppe": "Pralinen", "info": "8 Stück · mit Alkohol", "preis": 800, "farbe": "#ff9b6a"}, {"id": "karamell", "name": "Karamell-Trüffel", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#f7bb5c"}, {"id": "himbeer", "name": "Himbeerpralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#ff86b0"}, {"id": "nougat", "name": "Nougatpralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#d1a585"}, {"id": "haselnuss", "name": "Haselnusspralinen", "gruppe": "Pralinen", "info": "8 Stück · ohne Alkohol", "preis": 800, "farbe": "#e7b97c"}, {"id": "mix-alk", "name": "Pralinen gemischt mit Alkohol", "gruppe": "Pralinen", "info": "Tüte · gemischt · mit Alkohol", "preis": 800, "farbe": "#ffc58f"}, {"id": "mix-ohne", "name": "Pralinen gemischt ohne Alkohol", "gruppe": "Pralinen", "info": "Tüte · gemischt · ohne Alkohol", "preis": 800, "farbe": "#f9dfa6"}, {"id": "schachtel", "name": "Pralinenschachtel", "gruppe": "Pralinen", "info": "gemischt · vorgepackt", "preis": 1100, "farbe": "#f2b8c6"}, {"id": "dubai", "name": "Dubaischokolade", "gruppe": "Schokolade", "info": "Tafel ca. 70 g", "preis": 800, "farbe": "#bfdc80"}, {"id": "zitronenverbene", "name": "Zitronenverbene", "gruppe": "Kräuter", "info": "6 g", "preis": 250, "farbe": "#f3ea7a"}, {"id": "minze", "name": "Marokkanische Minze", "gruppe": "Kräuter", "info": "12 g", "preis": 250, "farbe": "#93e4c2"}, {"id": "bergbohnenkraut", "name": "Bergbohnenkraut", "gruppe": "Kräuter", "info": "20 g", "preis": 250, "farbe": "#cbb8f2"}, {"id": "oregano", "name": "Oregano", "gruppe": "Kräuter", "info": "15 g", "preis": 250, "farbe": "#a6db88"}, {"id": "estragon", "name": "Estragon", "gruppe": "Kräuter", "info": "17 g", "preis": 250, "farbe": "#cfe9a6"}, {"id": "thymian", "name": "Französischer Thymian", "gruppe": "Kräuter", "info": "20 g", "preis": 250, "farbe": "#b5d1ad"}, {"id": "limonenthymian", "name": "Limonenthymian", "gruppe": "Kräuter", "info": "18 g", "preis": 250, "farbe": "#e3f28f"}, {"id": "goldsalbei", "name": "Goldsalbei", "gruppe": "Kräuter", "info": "10 g · ganze Blätter", "preis": 250, "farbe": "#f4d27e"}, {"id": "babyschuhe", "name": "Babyschuhe", "gruppe": "Geschenke", "info": "", "preis": 1000, "farbe": "#b9d3f0"}, {"id": "tasse-weihnacht", "name": "Tasse Weihnacht", "gruppe": "Geschenke", "info": "", "preis": 1300, "farbe": "#f6a6a0"}, {"id": "tasse-hutschenreuther", "name": "Tasse Hutschenreuther", "gruppe": "Geschenke", "info": "", "preis": 1600, "farbe": "#c9cbe8"}], "rabatte": [{"id": "r10", "name": "10 %", "typ": "prozent", "wert": 10}, {"id": "r20", "name": "20 %", "typ": "prozent", "wert": 20}, {"id": "r1", "name": "1 € Nachlass", "typ": "betrag", "wert": 100}], "angebote": []};
@@ -1228,6 +1423,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     S.ausverkauft = LS.get("kasse-ausverkauft", {});
     S.lager = LS.get("kasse-lager", { bestand: {}, knapp: 3 });
     S.paypal = LS.get("kasse-paypal", null) || PAYPAL_STANDARD;
+    S.vorbestellungen = LS.get("kasse-vorbestellungen", []);
     renderAlles();
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
@@ -1237,7 +1433,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   document.addEventListener("click", function (ev) {
     var t = ev.target.closest("button"); if (!t) return;
     if (t.id === "sicherung") {
-      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal }, null, 1);
+      var daten = JSON.stringify({ app: "basar-kasse", erstellt: new Date().toISOString(), einst: S.einst, verkaeufe: S.verkaeufe, notizen: S.notizen, ausverkauft: S.ausverkauft, lager: S.lager, paypal: S.paypal, vorbestellungen: S.vorbestellungen }, null, 1);
       toast(speichereDatei("basar-kasse-sicherung-" + heute() + ".json", daten, "application/json") ? "Sicherung erstellt" : "Sicherung konnte nicht gespeichert werden");
     }
     if (t.id === "alles-loeschen") {
@@ -1261,6 +1457,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
           S.notizen = S.notizen.concat(d.notizen.filter(function (n) { return n && n.id && !nb[n.id]; })); LS.set("kasse-notizen", S.notizen);
         }
         if (d.paypal && typeof d.paypal.qr === "string" && /^data:image[/]/.test(d.paypal.qr)) { S.paypal = d.paypal; LS.set("kasse-paypal", d.paypal); }
+        if (Array.isArray(d.vorbestellungen)) {
+          var vbk = {}; S.vorbestellungen.forEach(function (x) { vbk[x.id] = true; });
+          S.vorbestellungen = S.vorbestellungen.concat(d.vorbestellungen.filter(function (x) { return x && x.id && !vbk[x.id]; })); LS.set("kasse-vorbestellungen", S.vorbestellungen);
+        }
         if (d.lager && typeof d.lager === "object" && d.lager.bestand) { S.lager = d.lager; LS.set("kasse-lager", d.lager); }
         if (d.ausverkauft && typeof d.ausverkauft === "object") { S.ausverkauft = d.ausverkauft; LS.set("kasse-ausverkauft", d.ausverkauft); }
         if (d.einst && Array.isArray(d.einst.produkte)) { S.einst = d.einst; LS.set("kasse-einst", d.einst); S.entwurfGeaendert = false; }

@@ -12,6 +12,9 @@ Kassen-App für den Stand: Produkte antippen, die Kasse rechnet Summe, Rabatte u
   PayPal-QR-Code wird mit dem Betrag groß angezeigt.
 - **Verkäufe**: Umsatz pro Tag (bar/PayPal getrennt), Stück pro Produkt, gewährte Rabatte, Kassensturz
   (Wechselgeld + Bareinnahmen), Storno einzelner Verkäufe, Export als CSV für Excel.
+- **Vorbestellungen**: Name, Abholung, Notiz und Sorten vormerken, optional „schon bezahlt“. Die Ware gilt im Lager als
+  reserviert. Bei der Abholung „Abholen & kassieren“ (Bestellung landet im Bon) oder, wenn schon bezahlt, „Abgeholt“
+  (wird als „vorab bezahlt“ gebucht, zählt nicht zum Kassensturz).
 - **Lager**: Bestand je Sorte eintragen; jeder Verkauf zieht ab, ein Storno bucht zurück. Übersicht „wird knapp“ und
   „leer“; leere Sorten erscheinen an der Kasse grau. Nachzählen = neue Zahl eintragen.
 - **Notizen**: Zettel für alles, was ausgeht oder fehlt, mit Uhrzeit und Abhaken. Sorten ohne Lagerzahl lassen sich
