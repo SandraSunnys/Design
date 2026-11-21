@@ -1304,7 +1304,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     ps.forEach(function (p) { var g = p.gruppe || "Sonstiges"; if (gruppen.indexOf(g) < 0) gruppen.push(g); });
     $("aus-liste").innerHTML = ps.length ? gruppen.map(function (g) {
       return '<div class="aus-gruppe"><h3 style="margin:0">' + esc(g) + '</h3><div class="chips">' + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
-        var seit = S.ausverkauft[p.id];
+        var seit = S.ausverkauft[p.id], liA = lagerInfo(p.id);
+        if (!seit && liA && liA.rest <= 0) return '<button class="chip" type="button" aria-pressed="true" disabled title="Laut Lager ist nichts mehr da">' + esc(p.name) + " <small>laut Lager</small></button>";
         return '<button class="chip" type="button" data-aus="' + esc(p.id) + '" aria-pressed="' + !!seit + '"' + (S.darfSchreiben ? "" : " disabled") + '>' + esc(p.name) + (seit ? " <small>seit " + uhrzeit(seit) + "</small>" : "") + "</button>";
       }).join("") + "</div></div>";
     }).join("") : '<p class="erkl-n">Noch keine Produkte angelegt.</p>';
@@ -1326,6 +1327,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     S.ansicht = a;
     ["kasse", "verkaeufe", "vorbestellungen", "lager", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
     if (a === "preise") renderEinst();
+    if (a === "notizen") renderNotizen();
+    if (a === "lager") renderLager();
     renderBon();
     window.scrollTo(0, 0);
   }
