@@ -288,6 +288,11 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .vb-auswahl li { display: grid; grid-template-columns: minmax(0, 1fr) auto 70px; gap: 10px; align-items: center; }
 .vb-auswahl .p-summe { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 .vb-summe { display: flex; justify-content: space-between; align-items: baseline; padding-top: 10px; border-top: 1px solid var(--linie); font: 800 22px/1 var(--font-display); }
+textarea.feld { height: auto; min-height: 78px; padding: 10px 12px; resize: vertical; line-height: 1.4; font-size: 16px; }
+.vb-frei { display: grid; grid-template-columns: minmax(0, 1fr) 110px auto; gap: 8px; }
+.vb-wunsch { padding: 8px 12px; border-radius: 10px; background: var(--warn-grund); color: var(--tinte); font-size: 14px; overflow-wrap: break-word; white-space: pre-line; }
+.vb-wunsch b { color: var(--warn); }
+.vb-banner .vb-banner-wunsch { display: block; margin-top: 4px; font-weight: 400; opacity: .9; white-space: pre-line; }
 .vb-check { display: flex; align-items: center; gap: 10px; font-weight: 600; }
 .vb-check input { width: 22px; height: 22px; accent-color: var(--tanne); }
 .vb-karte { display: grid; gap: 8px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--flaeche); }
@@ -499,9 +504,18 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
             <label class="f" for="vb-name">Name<input class="feld" id="vb-name" placeholder="z. B. Familie Huber" autocomplete="off"></label>
             <label class="f" for="vb-abholung">Abholung (optional)<input class="feld" id="vb-abholung" placeholder="z. B. Samstag 14 Uhr" autocomplete="off"></label>
           </div>
-          <label class="f" for="vb-notiz">Telefon oder Notiz (optional)<input class="feld" id="vb-notiz" placeholder="z. B. 0171 …, bitte als Geschenk" autocomplete="off"></label>
+          <label class="f" for="vb-notiz">Telefon (optional)<input class="feld" id="vb-notiz" placeholder="z. B. 0171 …" autocomplete="off" inputmode="tel"></label>
           <div><div class="block-label">Was wird bestellt? Tippen zum Hinzufügen</div><div id="vb-produkte" style="display:grid;gap:12px"></div></div>
+          <div>
+            <div class="block-label">Sonderposten mit eigenem Preis (optional)</div>
+            <div class="vb-frei">
+              <input class="feld" id="vb-frei-name" placeholder="z. B. große Schachtel" autocomplete="off">
+              <input class="feld feld--kurz" id="vb-frei-preis" inputmode="decimal" placeholder="0,00 €" autocomplete="off" style="flex:none;width:100%">
+              <button class="knopf" type="button" id="vb-frei-add" aria-label="Sonderposten hinzufügen">+</button>
+            </div>
+          </div>
           <div id="vb-auswahl-box"></div>
+          <label class="f" for="vb-wunsch">Sonderwünsche (optional)<textarea class="feld" id="vb-wunsch" rows="3" placeholder="z. B. nur Sorten ohne Alkohol, als Geschenk verpacken, Schachtel nur mit Nougat"></textarea></label>
           <label class="vb-check" for="vb-bezahlt"><input type="checkbox" id="vb-bezahlt"> Schon bezahlt</label>
           <div class="zeile" style="flex-wrap:wrap">
             <button class="knopf knopf--rot" type="submit" id="vb-speichern">Vorbestellung speichern</button>
@@ -636,7 +650,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     vorbestellungen: [],
     vorbestellungAktiv: null,
     vbBezahltAktiv: false,
-    vb: { id: null, pos: {} },
+    vb: { id: null, pos: {}, frei: [] },
     vbFrage: null,
     zaehlung: {}
   };
@@ -783,11 +797,12 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
   function aktiveVorbestellung() { return S.vorbestellungAktiv ? S.vorbestellungen.find(function (x) { return x.id === S.vorbestellungAktiv; }) || null : null; }
   function vorabVerkauf(x, jetzt) {
     var pos = (x.positionen || []).map(function (p) { var pr = produkt(p.id) || { id: p.id, name: p.name || "?", gruppe: "", farbe: "", preis: 0 }; return { id: pr.id, name: pr.name, gruppe: pr.gruppe, farbe: pr.farbe, preis: pr.preis, menge: p.menge }; });
-    var su = pos.reduce(function (a, p) { return a + p.preis * p.menge; }, 0);
-    return { zeit: jetzt.toISOString(), tag: tagVon(jetzt), positionen: pos, frei: [], zwischensumme: su, angebotRabatt: 0, rabattName: null, rabattCent: 0, summe: su, zahlart: "vorab", gegeben: null, storniert: false, vorbestellung: x.name };
+    var frei = (x.frei || []).map(function (f) { return { name: f.name, cent: f.cent }; });
+    var su = pos.reduce(function (a, p) { return a + p.preis * p.menge; }, 0) + frei.reduce(function (a, f) { return a + f.cent; }, 0);
+    return { zeit: jetzt.toISOString(), tag: tagVon(jetzt), positionen: pos, frei: frei, zwischensumme: su, angebotRabatt: 0, rabattName: null, rabattCent: 0, summe: su, zahlart: "vorab", gegeben: null, storniert: false, vorbestellung: x.name };
   }
-  function vbSumme(x) { return (x.positionen || []).reduce(function (a, p) { var pr = produkt(p.id); return a + (pr ? pr.preis * p.menge : 0); }, 0); }
-  function vbText(x) { return (x.positionen || []).map(function (p) { var pr = produkt(p.id); return p.menge + "× " + esc(pr ? pr.name : p.name || "?"); }).join(", "); }
+  function vbSumme(x) { return (x.positionen || []).reduce(function (a, p) { var pr = produkt(p.id); return a + (pr ? pr.preis * p.menge : 0); }, 0) + (x.frei || []).reduce(function (a, f) { return a + (f.cent || 0); }, 0); }
+  function vbText(x) { return (x.positionen || []).map(function (p) { var pr = produkt(p.id); return p.menge + "× " + esc(pr ? pr.name : p.name || "?"); }).concat((x.frei || []).map(function (f) { return esc(f.name) + " (" + eur(f.cent) + ")"; })).join(", "); }
   var lagerKette = Promise.resolve();
   function speichereLager(neu) {
     S.lager = neu; renderLager(); renderSortiment(); renderNotizen();
@@ -855,8 +870,9 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var r = berechne();
     var vbA = S.vorbestellungAktiv && S.vorbestellungen.find(function (x) { return x.id === S.vorbestellungAktiv; });
     $("vb-hinweis").hidden = !vbA;
-    if (vbA) $("vb-hinweis").innerHTML = '<div class="vb-banner"><span>Vorbestellung von <b>' + esc(vbA.name) + "</b>" + (S.vbBezahltAktiv ? " · schon bezahlt. Weitere Sachen einfach antippen." : "") + '</span><button type="button" id="vb-loesen">lösen</button></div>';
+    if (vbA) $("vb-hinweis").innerHTML = '<div class="vb-banner"><span>Vorbestellung von <b>' + esc(vbA.name) + "</b>" + (S.vbBezahltAktiv ? " · schon bezahlt. Weitere Sachen einfach antippen." : "") + (vbA.wunsch ? '<span class="vb-banner-wunsch">Sonderwunsch: ' + esc(vbA.wunsch) + "</span>" : "") + '</span><button type="button" id="vb-loesen">lösen</button></div>';
     var vorabPos = vbA && S.vbBezahltAktiv ? (vbA.positionen || []) : [];
+    var vorabFrei = vbA && S.vbBezahltAktiv ? (vbA.frei || []) : [];
     var posten = r.zeilen.map(function (z) {
       return '<li><span class="punkt" style="--c:' + esc(z.p.farbe || "#e0dcd8") + '"></span><span class="p-name">' + esc(z.p.name) + "<small>" + eur(z.p.preis) + " je Stück</small></span>" +
         '<span class="menge"><button type="button" data-minus="' + esc(z.p.id) + '" aria-label="Eins weniger">−</button><span>' + z.menge + '</span><button type="button" data-plus="' + esc(z.p.id) + '" aria-label="Eins mehr">+</button></span>' +
@@ -869,7 +885,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       var pr = produkt(vp.id);
       return '<li><span class="punkt" style="--c:' + esc((pr && pr.farbe) || "#e0dcd8") + '"></span><span class="p-name">' + esc(pr ? pr.name : vp.name || "?") + "<small>vorbestellt</small></span>" +
         '<span class="menge" style="padding:0 14px;height:44px;display:inline-flex;align-items:center"><span>' + vp.menge + '×</span></span><span class="p-summe"><span class="pille pille--bezahlt">bezahlt</span></span></li>';
-    }).concat(posten);
+    }).concat(vorabFrei.map(function (f) {
+      return '<li><span class="punkt" style="--c:var(--linie)"></span><span class="p-name">' + esc(f.name) + "<small>Sonderposten, vorbestellt</small></span>" +
+        '<span class="menge" style="padding:0 14px;height:44px;display:inline-flex;align-items:center"><span>1×</span></span><span class="p-summe"><span class="pille pille--bezahlt">bezahlt</span></span></li>';
+    })).concat(posten);
     $("posten").innerHTML = posten.length ? posten.join("") : '<li class="posten-leer">Tippen Sie auf ein Produkt, um es auf den Bon zu setzen.</li>';
 
     var chips = rabatte().map(function (rb) {
@@ -898,10 +917,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     }
     renderRueckgeld(r);
 
-    var leer = r.anzahl === 0 && !vorabPos.length;
+    var leer = r.anzahl === 0 && !vorabPos.length && !vorabFrei.length;
     var btn = $("abschliessen");
     btn.disabled = leer || !S.darfSchreiben || S.modus === "laden";
-    btn.textContent = leer ? "Verkauf abschließen" : r.anzahl === 0 ? "Abholung buchen" : (vorabPos.length ? "Abholung + Extras abschließen · " : "Verkauf abschließen · ") + eur(r.summe);
+    btn.textContent = leer ? "Verkauf abschließen" : r.anzahl === 0 ? "Abholung buchen" : (vorabPos.length || vorabFrei.length ? "Abholung + Extras abschließen · " : "Verkauf abschließen · ") + eur(r.summe);
 
     $("mobil-leiste").hidden = leer || S.ansicht !== "kasse";
     $("ml-anzahl").textContent = r.anzahl + (r.anzahl === 1 ? " Artikel" : " Artikel");
@@ -1012,7 +1031,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       "<h2>Verkauft nach Sorte</h2>" + (a.produkte.length ? "<table><tr><th>Sorte</th><th class=\"r\">Stück</th><th class=\"r\">zum Listenpreis</th></tr>" + a.produkte.map(function (p) { return "<tr><td>" + esc(p.name) + '</td><td class="r">' + p.menge + '</td><td class="r">' + eur(p.cent) + "</td></tr>"; }).join("") + "</table>" : "<p>Keine Verkäufe.</p>") +
       "<h2>Uhrzeiten</h2>" + (a.stunden.length ? "<table><tr><th>Stunde</th><th class=\"r\">Verkäufe</th><th class=\"r\">Umsatz</th></tr>" + a.stunden.map(function (s2) { return "<tr><td>" + s2.stunde + "–" + (s2.stunde + 1) + ' Uhr</td><td class="r">' + s2.bons + '</td><td class="r">' + eur(s2.cent) + "</td></tr>"; }).join("") + "</table>" : "<p>Keine Verkäufe.</p>") +
       "<h2>Ausverkauft</h2>" + (a.ausverkauft.length ? "<ul>" + a.ausverkauft.map(function (x) { return "<li>" + esc(x.name) + ": " + wannAbs(x.zeit) + "</li>"; }).join("") + "</ul>" : "<p>Nichts ausverkauft.</p>") +
-      "<h2>Vorbestellungen</h2><p>" + (S.vorbestellungen.length - offen.length) + " abgeholt, " + offen.length + " offen</p>" + (offen.length ? "<ul>" + offen.map(function (x) { return "<li>" + esc(x.name) + ": " + vbText(x) + (x.notiz ? " (" + esc(x.notiz) + ")" : "") + "</li>"; }).join("") + "</ul>" : "") +
+      "<h2>Vorbestellungen</h2><p>" + (S.vorbestellungen.length - offen.length) + " abgeholt, " + offen.length + " offen</p>" + (offen.length ? "<ul>" + offen.map(function (x) { return "<li>" + esc(x.name) + ": " + vbText(x) + (x.notiz ? " (" + esc(x.notiz) + ")" : "") + (x.wunsch ? "<br><i>Sonderwunsch: " + esc(x.wunsch) + "</i>" : "") + "</li>"; }).join("") + "</ul>" : "") +
       "<h2>Notizen</h2>" + (S.notizen.length ? "<ul>" + S.notizen.slice().sort(function (x, y) { return (x.zeit || "").localeCompare(y.zeit || ""); }).map(function (n) { return "<li>" + esc(n.text) + " <span style=\"color:#5c5652\">(" + wannAbs(n.zeit) + (n.erledigt ? ", erledigt" : "") + ")</span></li>"; }).join("") + "</ul>" : "<p>Keine Notizen.</p>") +
       "</body></html>";
     return h;
@@ -1171,7 +1190,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       }).join("") + "</div></div>";
     }).join("") : '<p class="erkl-n">Noch keine Produkte angelegt.</p>';
     var ids = Object.keys(S.vb.pos).filter(function (id) { return S.vb.pos[id] > 0 && produkt(id); }), summe = 0;
-    $("vb-auswahl-box").innerHTML = ids.length ? '<ul class="vb-auswahl">' + ids.map(function (id) {
+    S.vb.frei.forEach(function (f) { summe += f.cent; });
+    $("vb-auswahl-box").innerHTML = ids.length || S.vb.frei.length ? '<ul class="vb-auswahl">' + S.vb.frei.map(function (f) {
+      return '<li><span class="p-name" style="font-weight:600">' + esc(f.name) + ' <small style="font-weight:400;color:var(--tinte-2)">Sonderposten</small></span><span class="menge"><button type="button" data-vb-frei-weg="' + f.id + '" aria-label="Sonderposten entfernen">×</button></span><span class="p-summe">' + eur(f.cent) + "</span></li>";
+    }).join("") + ids.map(function (id) {
       var p = produkt(id), n = S.vb.pos[id]; summe += p.preis * n;
       return '<li><span class="p-name" style="font-weight:600">' + esc(p.name) + '</span><span class="menge"><button type="button" data-vb-minus="' + esc(id) + '" aria-label="Eins weniger">−</button><span>' + n + '</span><button type="button" data-vb-plus="' + esc(id) + '" aria-label="Eins mehr">+</button></span><span class="p-summe">' + eur(p.preis * n) + "</span></li>";
     }).join("") + '</ul><div class="vb-summe" style="margin-top:10px"><span>Summe</span><span>' + eur(summe) + "</span></div>" : '<p class="erkl-n">Noch nichts ausgewählt.</p>';
@@ -1194,15 +1216,16 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
         '<button class="knopf" type="button" data-vb-bearbeiten="' + esc(x.id) + '">Bearbeiten</button><button class="link" type="button" data-vb-weg="' + esc(x.id) + '">löschen</button>';
       return '<div class="vb-karte' + (x.status === "abgeholt" ? " fertig" : "") + '"><div class="vb-kopf"><span class="vb-name">' + esc(x.name) + '</span><span class="vb-betrag">' + eur(vbSumme(x)) +
         (x.bezahlt ? ' <span class="pille pille--bezahlt">bezahlt</span>' : "") + "</span></div>" +
-        '<div class="vb-text"><b>' + vbText(x) + "</b>" + (x.abholung ? "<br>Abholung: " + esc(x.abholung) : "") + (x.notiz ? "<br>" + esc(x.notiz) : "") + "</div>" +
+        '<div class="vb-text"><b>' + vbText(x) + "</b>" + (x.abholung ? "<br>Abholung: " + esc(x.abholung) : "") + (x.notiz ? "<br>Telefon/Notiz: " + esc(x.notiz) : "") + "</div>" +
+        (x.wunsch ? '<div class="vb-wunsch"><b>Sonderwunsch:</b> ' + esc(x.wunsch) + "</div>" : "") +
         '<div class="vb-aktionen">' + aktion + "</div></div>";
     };
     $("vb-liste").innerHTML = offen.length ? offen.map(karte).join("") : '<div class="notiz-leer">Keine offenen Vorbestellungen. Links eine neue anlegen.</div>';
     $("vb-fertig-box").innerHTML = fertig.length ? '<h3 style="margin:18px 0 10px">Schon abgeholt (' + fertig.length + ")</h3>" + '<div style="display:grid;gap:10px">' + fertig.map(karte).join("") + "</div>" : "";
   }
   function vbFormularLeeren() {
-    S.vb = { id: null, pos: {} };
-    $("vb-name").value = ""; $("vb-abholung").value = ""; $("vb-notiz").value = ""; $("vb-bezahlt").checked = false;
+    S.vb = { id: null, pos: {}, frei: [] };
+    $("vb-name").value = ""; $("vb-abholung").value = ""; $("vb-notiz").value = ""; $("vb-wunsch").value = ""; $("vb-frei-name").value = ""; $("vb-frei-preis").value = ""; $("vb-bezahlt").checked = false;
     renderVorbestellungen();
   }
   function renderLager() {
@@ -1370,10 +1393,17 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (d.vbPlus) { S.vb.pos[d.vbPlus] = (S.vb.pos[d.vbPlus] || 0) + 1; renderVorbestellungen(); return; }
     if (d.vbMinus) { S.vb.pos[d.vbMinus] = Math.max(0, (S.vb.pos[d.vbMinus] || 0) - 1); if (!S.vb.pos[d.vbMinus]) delete S.vb.pos[d.vbMinus]; renderVorbestellungen(); return; }
     if (t.id === "vb-abbrechen") { vbFormularLeeren(); return; }
+    if (t.id === "vb-frei-add") {
+      var fc = centAus($("vb-frei-preis").value), fn = $("vb-frei-name").value.trim();
+      if (!fn) { $("vb-frei-name").focus(); return; }
+      if (isNaN(fc) || fc < 0) { $("vb-frei-preis").focus(); return; }
+      S.vb.frei.push({ id: uid(), name: fn, cent: fc }); $("vb-frei-name").value = ""; $("vb-frei-preis").value = ""; renderVorbestellungen(); return;
+    }
+    if (d.vbFreiWeg) { S.vb.frei = S.vb.frei.filter(function (f) { return f.id !== d.vbFreiWeg; }); renderVorbestellungen(); return; }
     if (d.vbBearbeiten) {
       var xb = S.vorbestellungen.find(function (x) { return x.id === d.vbBearbeiten; }); if (!xb) return;
-      S.vb = { id: xb.id, pos: {} }; (xb.positionen || []).forEach(function (p) { S.vb.pos[p.id] = p.menge; });
-      $("vb-name").value = xb.name || ""; $("vb-abholung").value = xb.abholung || ""; $("vb-notiz").value = xb.notiz || ""; $("vb-bezahlt").checked = !!xb.bezahlt;
+      S.vb = { id: xb.id, pos: {}, frei: (xb.frei || []).map(function (f) { return { id: uid(), name: f.name, cent: f.cent }; }) }; (xb.positionen || []).forEach(function (p) { S.vb.pos[p.id] = p.menge; });
+      $("vb-name").value = xb.name || ""; $("vb-abholung").value = xb.abholung || ""; $("vb-notiz").value = xb.notiz || ""; $("vb-wunsch").value = xb.wunsch || ""; $("vb-bezahlt").checked = !!xb.bezahlt;
       renderVorbestellungen(); $("vb-form").scrollIntoView({ behavior: "smooth", block: "start" }); return;
     }
     if (d.vbWeg) { S.vbFrage = "weg:" + d.vbWeg; var xw = S.vorbestellungen.find(function (x) { return x.id === d.vbWeg; }); if (xw && xw.status === "abgeholt") { S.vbFrage = null; loescheVorbestellung(d.vbWeg); return; } renderVorbestellungen(); return; }
@@ -1383,9 +1413,8 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (d.vbAusJa) {
       S.vbFrage = null;
       var xa = S.vorbestellungen.find(function (x) { return x.id === d.vbAusJa; }); if (!xa) return;
-      var pos = (xa.positionen || []).map(function (p) { var pr = produkt(p.id) || { id: p.id, name: p.name || "?", gruppe: "", farbe: "", preis: 0 }; return { id: pr.id, name: pr.name, gruppe: pr.gruppe, farbe: pr.farbe, preis: pr.preis, menge: p.menge }; });
-      var su = pos.reduce(function (a, p) { return a + p.preis * p.menge; }, 0), jetzt = new Date();
-      neuerVerkauf({ zeit: jetzt.toISOString(), tag: tagVon(jetzt), positionen: pos, frei: [], zwischensumme: su, angebotRabatt: 0, rabattName: null, rabattCent: 0, summe: su, zahlart: "vorab", gegeben: null, storniert: false, vorbestellung: xa.name })
+      var jetzt = new Date();
+      neuerVerkauf(vorabVerkauf(xa, jetzt))
         .then(function (vid) { return aendereVorbestellung(xa.id, { status: "abgeholt", abgeholtAm: jetzt.toISOString(), verkaufId: vid }); })
         .then(function () { toast("Abholung von " + esc(xa.name) + " gebucht"); })
         .catch(function () { toast("Nicht gebucht, bitte nochmal versuchen"); renderVorbestellungen(); });
@@ -1394,7 +1423,10 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     if (d.vbKasse) {
       var xk = S.vorbestellungen.find(function (x) { return x.id === d.vbKasse; }); if (!xk) return;
       korbLeeren();
-      if (!xk.bezahlt) (xk.positionen || []).forEach(function (p) { if (produkt(p.id)) S.korb[p.id] = p.menge; });
+      if (!xk.bezahlt) {
+        (xk.positionen || []).forEach(function (p) { if (produkt(p.id)) S.korb[p.id] = p.menge; });
+        S.frei = (xk.frei || []).map(function (f) { return { id: uid(), name: f.name, cent: f.cent }; });
+      }
       S.vorbestellungAktiv = xk.id; S.vbBezahltAktiv = !!xk.bezahlt;
       zeige("kasse"); renderKasse(); renderLager();
       toast(xk.bezahlt ? "Vorbestellung von " + esc(xk.name) + " ist bezahlt. Extras jetzt antippen." : "Vorbestellung von " + esc(xk.name) + " ist im Bon");
@@ -1510,8 +1542,9 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var name = $("vb-name").value.trim();
     var pos = Object.keys(S.vb.pos).filter(function (id) { return S.vb.pos[id] > 0 && produkt(id); }).map(function (id) { return { id: id, name: produkt(id).name, menge: S.vb.pos[id] }; });
     if (!name) { toast("Bitte einen Namen eintragen"); $("vb-name").focus(); return; }
-    if (!pos.length) { toast("Bitte mindestens ein Produkt antippen"); return; }
-    var daten = { name: name, abholung: $("vb-abholung").value.trim(), notiz: $("vb-notiz").value.trim(), bezahlt: $("vb-bezahlt").checked, positionen: pos };
+    if (!pos.length && !S.vb.frei.length) { toast("Bitte mindestens ein Produkt antippen oder einen Sonderposten eintragen"); return; }
+    var daten = { name: name, abholung: $("vb-abholung").value.trim(), notiz: $("vb-notiz").value.trim(), wunsch: $("vb-wunsch").value.trim(), bezahlt: $("vb-bezahlt").checked, positionen: pos,
+      frei: S.vb.frei.map(function (f) { return { name: f.name, cent: f.cent }; }) };
     var bearb = S.vb.id;
     var weg = bearb ? aendereVorbestellung(bearb, daten) : neueVorbestellung(Object.assign({ status: "offen", erstellt: new Date().toISOString() }, daten));
     weg.then(function () { toast(bearb ? "Vorbestellung geändert" : "Vorbestellung von " + esc(name) + " gespeichert"); vbFormularLeeren(); window.scrollTo(0, 0); })

@@ -14,7 +14,8 @@ Kassen-App für den Stand: Produkte antippen, die Kasse rechnet Summe, Rabatte u
   (Wechselgeld + Bareinnahmen) mit Zählhilfe für Scheine und Münzen, Storno einzelner Verkäufe, Export als CSV.
   Darunter der **Rückblick**: Bestseller, Umsatz je Stunde, wann was ausverkauft war. **Bericht speichern** erzeugt
   eine HTML-Datei mit allem (inkl. Zählung, Vorbestellungen, Notizen) zum Aufheben fürs nächste Jahr.
-- **Vorbestellungen**: Name, Abholung, Notiz und Sorten vormerken, optional „schon bezahlt“. Die Ware gilt im Lager als
+- **Vorbestellungen**: Name, Abholung, Telefon, Sorten, Sonderposten mit eigenem Preis und Sonderwünsche vormerken (der
+  Sonderwunsch erscheint bei der Abholung oben im Bon), optional „schon bezahlt“. Die Ware gilt im Lager als
   reserviert. Bei der Abholung „Abholen & kassieren“ (Bestellung landet im Bon, Extras einfach dazutippen). Wenn schon
   bezahlt: „Abgeholt“ oder „Abholen & dazukaufen“ (Vorbestelltes steht als „bezahlt“ im Bon, kassiert werden nur die
   Extras). Der vorbezahlte Teil wird als „vorab bezahlt“ gebucht und zählt nicht zum Kassensturz.
