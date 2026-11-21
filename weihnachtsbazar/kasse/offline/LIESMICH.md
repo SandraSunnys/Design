@@ -3,23 +3,40 @@
 Dieselbe Kasse wie online, aber ohne Internet: Preise und Verkäufe werden im Browser des Kassengeräts gespeichert.
 Schriften und Symbol stecken in `index.html`, es wird nichts nachgeladen.
 
-## Auf das Gerät bringen
+## Auf das iPad bringen
 
-**Laptop:** `index.html` auf den Laptop kopieren und per Doppelklick im Browser öffnen (Chrome, Edge, Firefox oder Safari).
-Immer dieselbe Datei im selben Browser öffnen, sonst sind die Verkäufe nicht zu sehen.
+**A. Am Computer (einmalig, ca. 10 Minuten)**
 
-**iPad, iPhone, Android:** Auf Tablets und Handys lässt sich eine einzelne HTML-Datei nicht zuverlässig öffnen. Deshalb
-den ganzen Ordner `offline/` einmal ins Internet stellen, als App auf den Startbildschirm legen, dann läuft sie ohne Netz:
+1. `Basar-Kasse-offline.zip` entpacken. Im Ordner liegen fünf Dateien: `index.html`, `manifest.webmanifest`, `sw.js`,
+   `icon-192.png`, `icon-512.png`.
+2. app.netlify.com öffnen, kostenloses Konto anlegen und **anmelden**. Ohne Anmeldung bekommt die Seite ein Passwort und
+   wird nach kurzer Zeit gelöscht.
+3. Angemeldet app.netlify.com/drop öffnen und den entpackten Ordner in das Feld ziehen. Netlify zeigt eine Adresse wie
+   `https://….netlify.app`.
+4. Optional jetzt (und nur jetzt) einen leichteren Namen vergeben: Projekt → Projekteinstellungen → Projektname ändern.
+   Später nicht mehr ändern, sonst findet das iPad seine Daten nicht.
+5. Die Adresse am Computer öffnen: Die Kasse sollte erscheinen.
 
-1. Am Computer https://app.netlify.com/drop öffnen, kostenloses Konto anlegen und den Ordner `offline` (oder den Inhalt
-   von `Basar-Kasse-offline.zip`) in das Feld ziehen. Netlify zeigt eine Adresse wie `https://….netlify.app`.
-2. Diese Adresse auf dem Kassengerät öffnen (iPad/iPhone: in Safari; Android: in Chrome).
-3. Als App ablegen: iPad/iPhone über **Teilen → Zum Home-Bildschirm**, Android über **⋮ → Zum Startbildschirm hinzufügen**
-   bzw. **App installieren**.
-4. Die App einmal vom Startbildschirm aus öffnen, solange noch Internet da ist. Danach läuft sie offline.
-5. Test: Flugmodus an, App öffnen, Probeverkauf machen, unter „Preise & Rabatte → Alle Verkäufe löschen“ wieder entfernen.
+**B. Am iPad (mit Internet, ca. 5 Minuten)**
 
-Wichtig: Immer die App vom Startbildschirm benutzen, nicht den Safari-Tab. Beide speichern getrennt.
+1. Die Adresse in **Safari** öffnen (abtippen oder per Mail/AirDrop schicken).
+2. Teilen-Symbol (Quadrat mit Pfeil; je nach iPadOS oben rechts oder im Menü „⋯“) → **Zum Home-Bildschirm**.
+   Falls „Als Web-App öffnen“ angezeigt wird: eingeschaltet lassen. Name „Kasse“ → **Hinzufügen**.
+3. Die Kasse über das neue Symbol (rot mit weißem Stern) öffnen und ein paar Sekunden warten. Oben steht „offline bereit“.
+4. Ab jetzt immer nur das Symbol benutzen, nicht den Safari-Tab.
+
+**C. Probelauf**
+
+1. Flugmodus an, Kasse ganz schließen (App-Übersicht, nach oben wischen) und über das Symbol neu öffnen: Sie muss laden.
+2. Probeverkauf bar und einen mit PayPal; den QR-Code mit einem Handy scannen.
+3. „Preise & Rabatte“ → „Sicherung speichern“ → „In Dateien sichern“ ausprobieren.
+4. „Preise & Rabatte“ → „Alle Verkäufe löschen“. Erst danach Lagerbestände und Wechselgeld eintragen.
+5. Flugmodus aus.
+
+**Neue Version einspielen:** vorher sichern; in Netlify dieselbe Seite öffnen → „Deploys“ → neuen Ordner in das Feld
+ziehen. Am iPad die Kasse mit Internet öffnen, schließen und noch einmal öffnen.
+
+Auf einem Laptop geht es auch ohne Netlify: `index.html` doppelklicken, immer dieselbe Datei im selben Browser öffnen.
 
 ## Daten sicher behalten
 
