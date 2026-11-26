@@ -19,7 +19,8 @@ Kassen-App für den Stand: Produkte antippen, die Kasse rechnet Summe, Rabatte u
   reserviert. Bei der Abholung „Abholen & kassieren“ (Bestellung landet im Bon, Extras einfach dazutippen). Wenn schon
   bezahlt: „Abgeholt“ oder „Abholen & dazukaufen“ (Vorbestelltes steht als „bezahlt“ im Bon, kassiert werden nur die
   Extras). Der vorbezahlte Teil wird als „vorab bezahlt“ gebucht und zählt nicht zum Kassensturz.
-- **Lager**: Bestand je Sorte eintragen; jeder Verkauf zieht ab, ein Storno bucht zurück. Übersicht „wird knapp“ und
+- **Lager**: Bestand je Sorte eintragen oder mit „+“/„−“ ändern (z. B. beim Nachholen); jeder Verkauf zieht ab, ein Storno
+  bucht zurück. Neue Artikel aus „Preise & Rabatte“ erscheinen automatisch an Kasse und im Lager. Übersicht „wird knapp“ und
   „leer“; leere Sorten erscheinen an der Kasse grau. Nachzählen = neue Zahl eintragen.
 - **Notizen**: Zettel für alles, was ausgeht oder fehlt, mit Uhrzeit und Abhaken. Sorten ohne Lagerzahl lassen sich
   dort von Hand als „ausverkauft“ markieren.

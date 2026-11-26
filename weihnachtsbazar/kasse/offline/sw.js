@@ -1,5 +1,5 @@
 // Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-18";
+const VERSION = "basar-kasse-20";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));

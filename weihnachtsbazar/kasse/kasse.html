@@ -321,7 +321,10 @@ textarea.feld { height: auto; min-height: 78px; padding: 10px 12px; resize: vert
 .kz--warn .kz-wert { color: var(--warn); }
 table.lager td { padding-block: 6px; }
 table.lager .gruppe-zeile td { padding-top: 18px; border-bottom: 0; font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-2); }
-table.lager .lager-feld { width: 84px; flex: none; text-align: center; font-variant-numeric: tabular-nums; }
+table.lager .lager-feld { width: 72px; flex: none; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; }
+.lager-stepper { display: inline-flex; align-items: center; gap: 6px; }
+.lager-stepper button { width: 42px; height: 42px; border: 1px solid var(--linie); border-radius: 50%; background: var(--grund); font-size: 20px; font-weight: 700; line-height: 1; }
+.lager-stepper button:disabled { opacity: .35; }
 table.lager .noch { font: 800 22px/1 var(--font-display); letter-spacing: -.02em; }
 table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
 .zustand { display: inline-block; padding: 3px 10px; border-radius: var(--rund); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
@@ -536,7 +539,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     <div class="lager-kopf">
       <div>
         <h2>Lager</h2>
-        <p class="erkl-n">Tragen Sie ein, wie viele Packungen von jeder Sorte da sind. Jeder Verkauf zieht automatisch ab. Wenn Sie nachzählen oder Ware nachholen, tragen Sie einfach die neue Zahl ein.</p>
+        <p class="erkl-n">Tragen Sie ein, wie viele Packungen von jeder Sorte da sind, oder nehmen Sie „+“ und „−“. Jeder Verkauf zieht automatisch ab. Holen Sie Ware nach, tippen Sie „+“; nach dem Nachzählen tragen Sie einfach die gezählte Zahl ein.</p>
       </div>
       <label class="knapp-wahl" for="knapp">Warnen ab <input class="feld" id="knapp" inputmode="numeric" autocomplete="off"> Stück</label>
     </div>
@@ -1175,7 +1178,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     h += '<section><div><h2>Wechselgeld</h2><p class="erkl">Womit die Geldkassette morgens startet. Daraus berechnet die Kasse unter „Verkäufe“, wie viel Bargeld abends drin sein sollte.</p></div>' +
       '<div class="zeile" style="max-width:280px"><input class="feld feld--kurz" style="flex:1" data-feld="wechselgeld" data-cent="1" value="' + centText(e.wechselgeld || 0) + '" inputmode="decimal" aria-label="Wechselgeld in Euro"' + ro + "></div></section>";
 
-    h += '<div class="speicher-leiste" id="speicher-leiste"' + (S.entwurfGeaendert ? "" : " hidden") + '><span>Ungespeicherte Änderungen</span><span class="zeile"><button class="knopf" type="button" id="verwerfen" style="background:transparent;color:inherit">Verwerfen</button><button class="knopf knopf--rot" type="button" id="speichern">Speichern</button></span></div>';
+    h += '<div class="speicher-leiste" id="speicher-leiste"' + (S.entwurfGeaendert ? "" : " hidden") + '><span>Noch nicht gespeichert. Wird beim Verlassen automatisch gespeichert.</span><span class="zeile"><button class="knopf" type="button" id="verwerfen" style="background:transparent;color:inherit">Verwerfen</button><button class="knopf knopf--rot" type="button" id="speichern">Speichern</button></span></div>';
     $("einst").innerHTML = h;
   }
   function markiereGeaendert() { S.entwurfGeaendert = true; var l = $("speicher-leiste"); if (l) l.hidden = false; }
@@ -1246,17 +1249,20 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     var fokus = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.lager : null;
     if (fokus) return;
     var ro = S.darfSchreiben ? "" : " disabled";
-    $("lager-tabelle").innerHTML = ps.length ? '<thead><tr><th>Sorte</th><th>Bestand</th><th class="r">verkauft</th><th class="r">reserviert</th><th class="r">noch da</th><th>Zustand</th></tr></thead><tbody>' +
+    $("lager-tabelle").innerHTML = ps.length ? '<thead><tr><th>Sorte</th><th>noch da</th><th class="r">verkauft</th><th class="r">reserviert</th><th>Zustand</th></tr></thead><tbody>' +
       gruppen.map(function (g) {
-        return '<tr class="gruppe-zeile"><td colspan="6">' + esc(g) + "</td></tr>" + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
+        return '<tr class="gruppe-zeile"><td colspan="5">' + esc(g) + "</td></tr>" + ps.filter(function (p) { return (p.gruppe || "Sonstiges") === g; }).map(function (p) {
           var li = lagerInfo(p.id), zst;
           if (!li) zst = '<span class="zustand zustand--offen">nicht gezählt</span>';
           else if (li.rest <= 0) zst = '<span class="zustand zustand--leer">leer</span>';
           else if (li.frei <= knapp) zst = '<span class="zustand zustand--knapp">knapp</span>';
           else zst = '<span class="zustand zustand--gut">genug</span>';
           return '<tr><td><span class="punkt" style="--c:' + esc(p.farbe || "#e0dcd8") + '"></span>' + esc(p.name) + "</td>" +
-            '<td><input class="feld lager-feld" data-lager="' + esc(p.id) + '" value="' + (li ? li.start : "") + '" inputmode="numeric" placeholder="–" aria-label="Bestand ' + esc(p.name) + '"' + ro + ">" + (li ? "<small>gezählt " + (li.seit.slice(0, 10) === heute() ? "" : tagLang(li.seit.slice(0, 10)) + ", ") + uhrzeit(li.seit) + "</small>" : "") + "</td>" +
-            '<td class="r">' + (li ? li.verkauft : "") + '</td><td class="r">' + (li && li.reserviert ? li.reserviert : "") + '</td><td class="r noch">' + (li ? Math.max(0, li.rest) : "–") + "</td><td>" + zst + "</td></tr>";
+            '<td><span class="lager-stepper"><button type="button" data-lager-minus="' + esc(p.id) + '" aria-label="Eins weniger ' + esc(p.name) + '"' + (li && li.rest > 0 ? ro : " disabled") + '>−</button>' +
+            '<input class="feld lager-feld" data-lager="' + esc(p.id) + '" value="' + (li ? Math.max(0, li.rest) : "") + '" inputmode="numeric" placeholder="" aria-label="Noch da ' + esc(p.name) + '"' + ro + ">" +
+            '<button type="button" data-lager-plus="' + esc(p.id) + '" aria-label="Eins mehr ' + esc(p.name) + '"' + ro + ">+</button></span>" +
+            (li ? "<small>gezählt " + (li.seit.slice(0, 10) === heute() ? "" : tagLang(li.seit.slice(0, 10)) + ", ") + uhrzeit(li.seit) + "</small>" : "") + "</td>" +
+            '<td class="r">' + (li ? li.verkauft : "") + '</td><td class="r">' + (li && li.reserviert ? li.reserviert : "") + "</td><td>" + zst + "</td></tr>";
         }).join("");
       }).join("") + "</tbody>" : '<tbody><tr><td style="color:var(--tinte-2)">Noch keine Produkte angelegt.</td></tr></tbody>';
   }
@@ -1298,6 +1304,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
 
   /* ---------- Aktionen ---------- */
   function zeige(a) {
+    if (S.ansicht === "preise" && a !== "preise" && S.entwurfGeaendert) einstSpeichern(true);
     S.ansicht = a;
     ["kasse", "verkaeufe", "vorbestellungen", "lager", "notizen", "preise"].forEach(function (n) { $("v-" + n).hidden = n !== a; $("tab-" + n).setAttribute("aria-selected", String(n === a)); });
     if (a === "preise") renderEinst();
@@ -1353,6 +1360,24 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     });
   }
 
+  function einstSpeichern(auto) {
+    if (!S.entwurf || !S.entwurfGeaendert || !S.darfSchreiben) return;
+    var en = JSON.parse(JSON.stringify(S.entwurf));
+    var ohneName = en.produkte.filter(function (x) { return !(x.name && x.name.trim()); }).length;
+    en.produkte = en.produkte.filter(function (x) { return x.name && x.name.trim(); }).map(function (x) { x.name = x.name.trim(); x.gruppe = (x.gruppe || "").trim() || "Sonstiges"; x.preis = Math.max(0, x.preis || 0); return x; });
+    en.rabatte = en.rabatte.filter(function (x) { return x.name && x.name.trim() && x.wert > 0; });
+    en.angebote = en.angebote.filter(function (x) { return x.gruppe && x.anzahl >= 2 && x.preis > 0; });
+    en.beispielpreise = false;
+    var btn = $("speichern"); if (btn) { btn.disabled = true; btn.textContent = "Speichert …"; }
+    S.entwurfGeaendert = false;
+    speichereEinst(en).then(function () {
+      S.einst = en; renderAlles();
+      toast((auto ? "Änderungen an Preisen &amp; Artikeln automatisch gespeichert" : "Preise &amp; Rabatte gespeichert") + (ohneName ? ". Artikel ohne Namen wurde nicht übernommen" : ""));
+    }).catch(function () {
+      S.entwurfGeaendert = true; if (btn) { btn.disabled = false; btn.textContent = "Speichern"; }
+      toast("Nicht gespeichert, bitte unter Preise &amp; Rabatte noch einmal speichern");
+    });
+  }
   function setzeFeld(pfad, wert) {
     var teile = pfad.split("."), o = S.entwurf;
     for (var i = 0; i < teile.length - 1; i++) o = o[teile[i]];
@@ -1436,6 +1461,17 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
       return;
     }
     if (t.id === "vb-loesen") { S.vorbestellungAktiv = null; S.vbBezahltAktiv = false; renderKasse(); renderLager(); return; }
+    if (d.lagerPlus || d.lagerMinus) {
+      var lid = d.lagerPlus || d.lagerMinus, best = Object.assign({}, S.lager.bestand), cur = best[lid], li0 = lagerInfo(lid);
+      if (!cur) { if (d.lagerMinus) return; best[lid] = { menge: 1, seit: new Date().toISOString() }; }
+      else {
+        var nm = cur.menge + (d.lagerPlus ? 1 : -1);
+        if (li0 && nm - li0.verkauft < 0) return;
+        best[lid] = { menge: nm, seit: cur.seit };
+      }
+      speichereLager(Object.assign({}, S.lager, { bestand: best })).catch(function () { toast("Bestand nicht gespeichert"); });
+      return;
+    }
     if (t.id === "leeren") return korbLeeren();
     if (t.id === "abschliessen") return abschliessen();
     if (t.id === "ml-bon") { $("bon").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
@@ -1458,17 +1494,7 @@ table.lager small { display: block; font-size: 12px; color: var(--tinte-2); }
     }
     if (d.weg) { var p = d.weg.split("."); S.entwurf[p[0]].splice(+p[1], 1); S.entwurfGeaendert = true; renderEinst(); return; }
     if (t.id === "verwerfen") { S.entwurfGeaendert = false; renderEinst(); return; }
-    if (t.id === "speichern") {
-      var en = JSON.parse(JSON.stringify(S.entwurf));
-      en.produkte = en.produkte.filter(function (x) { return x.name && x.name.trim(); }).map(function (x) { x.name = x.name.trim(); x.gruppe = (x.gruppe || "").trim() || "Sonstiges"; x.preis = Math.max(0, x.preis || 0); return x; });
-      en.rabatte = en.rabatte.filter(function (x) { return x.name && x.name.trim() && x.wert > 0; });
-      en.angebote = en.angebote.filter(function (x) { return x.gruppe && x.anzahl >= 2 && x.preis > 0; });
-      en.beispielpreise = false;
-      t.disabled = true; t.textContent = "Speichert …";
-      speichereEinst(en).then(function () { S.einst = en; S.entwurfGeaendert = false; renderAlles(); toast("Preise &amp; Rabatte gespeichert"); })
-        .catch(function () { t.disabled = false; t.textContent = "Speichern"; toast("Nicht gespeichert, bitte noch einmal versuchen"); });
-      return;
-    }
+    if (t.id === "speichern") { einstSpeichern(false); return; }
   });
 
   function leseEigen() {
