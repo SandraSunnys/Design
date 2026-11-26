@@ -64,6 +64,10 @@ def ersetze(text, alt, neu):
 
 
 def main():
+    global VERSION_TEXT
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    VERSION_TEXT = datetime.now(ZoneInfo("Europe/Berlin")).strftime("%d.%m.%Y, %H:%M Uhr")
     html = QUELLE.read_text(encoding="utf-8")
 
     for g in (192, 512):
@@ -160,7 +164,9 @@ def main():
         '''    h += '<section><div><h2>Daten sichern</h2><p class="erkl">Preise, Verkäufe, Vorbestellungen, Lager und Notizen liegen nur auf diesem Gerät. Speichern Sie abends eine Sicherung, zum Beispiel per Mail an sich selbst. Mit „Sicherung einlesen“ holen Sie alles zurück oder auf ein anderes Gerät.</p></div>' +
       '<div class="zeile" style="flex-wrap:wrap"><button class="knopf" type="button" id="sicherung">Sicherung speichern</button>' +
       '<label class="knopf" style="position:relative;display:inline-flex;align-items:center;cursor:pointer">Sicherung einlesen<input type="file" id="einlesen" accept=".json,application/json" style="position:absolute;inset:0;opacity:0;width:100%;cursor:pointer"></label>' +
-      '<button class="knopf" type="button" id="alles-loeschen">Alle Verkäufe löschen</button></div><div id="loesch-frage"></div></section>';
+      '<button class="knopf" type="button" id="alles-loeschen">Alle Verkäufe löschen</button></div><div id="loesch-frage"></div>' +
+      '<div class="zeile" style="flex-wrap:wrap;align-items:center;margin-top:6px"><button class="knopf knopf--dunkel" type="button" id="app-aktualisieren">App aktualisieren</button>' +
+      '<span class="erkl" style="font-size:13px">App-Version vom ''' + VERSION_TEXT + '''</span></div></section>';
     h += '<div class="speicher-leiste" id="speicher-leiste"''')
 
     # ---------- Start: ohne claude.ai ----------
@@ -208,6 +214,15 @@ def main():
     }
     if (t.id === "alles-loeschen") {
       $("loesch-frage").innerHTML = '<div class="bestaetigen" style="justify-content:flex-start;align-items:center;flex-wrap:wrap"><span>Wirklich alle ' + S.verkaeufe.length + ' Verkäufe löschen? Das lässt sich nicht rückgängig machen.</span><button type="button" id="loeschen-nein">Nein</button><button class="ja" type="button" id="loeschen-ja">Ja, löschen</button></div>';
+    }
+    if (t.id === "app-aktualisieren") {
+      if (!navigator.onLine) { toast("Zum Aktualisieren braucht das iPad Internet."); return; }
+      t.disabled = true; t.textContent = "Wird aktualisiert …";
+      var neuLaden = function () { location.reload(); };
+      if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+        navigator.serviceWorker.getRegistration().then(function (reg) { return reg ? reg.update() : null; }).catch(function () {}).then(function () { setTimeout(neuLaden, 600); });
+      } else neuLaden();
+      return;
     }
     if (t.id === "loeschen-nein") $("loesch-frage").innerHTML = "";
     if (t.id === "loeschen-ja") { S.verkaeufe = []; LS.set("kasse-verkaeufe", []); $("loesch-frage").innerHTML = ""; renderVerkaeufe(); toast("Alle Verkäufe gelöscht"); }
@@ -258,7 +273,7 @@ def main():
     }, ensure_ascii=False, indent=2), encoding="utf-8")
 
     (HIER / "sw.js").write_text('''// Hält die Basar-Kasse ohne Internet bereit. Bei jeder Änderung an index.html VERSION erhöhen.
-const VERSION = "basar-kasse-20";
+const VERSION = "basar-kasse-22";
 const DATEIEN = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(DATEIEN)).then(() => self.skipWaiting()));
@@ -267,7 +282,17 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
+  const url = new URL(e.request.url);
+  if (e.request.method !== "GET" || url.origin !== location.origin) return;
+  // Die Seite selbst: mit Internet immer die neueste Fassung, ohne Internet (oder nach 3 s) die gespeicherte
+  if (e.request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("/index.html")) {
+    e.respondWith(caches.open(VERSION).then((c) => {
+      const netz = fetch(e.request, { cache: "no-store" }).then((a) => { if (a.ok) c.put("./index.html", a.clone()); return a; });
+      const warten = new Promise((_, nein) => setTimeout(nein, 3000));
+      return Promise.race([netz, warten]).catch(() => c.match("./index.html").then((t) => t || netz));
+    }));
+    return;
+  }
   e.respondWith(caches.open(VERSION).then((c) => c.match(e.request, { ignoreSearch: true }).then((treffer) => {
     const netz = fetch(e.request).then((antwort) => { if (antwort.ok) c.put(e.request, antwort.clone()); return antwort; }).catch(() => treffer);
     return treffer || netz;

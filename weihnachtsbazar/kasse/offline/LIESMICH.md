@@ -34,7 +34,10 @@ Schriften und Symbol stecken in `index.html`, es wird nichts nachgeladen.
 5. Flugmodus aus.
 
 **Neue Version einspielen:** vorher sichern; in Netlify dieselbe Seite öffnen → „Deploys“ → neuen Ordner in das Feld
-ziehen. Am iPad die Kasse mit Internet öffnen, schließen und noch einmal öffnen.
+ziehen. Danach holt sich die Kasse die neue Fassung von selbst, sobald sie mit Internet geöffnet wird. Sofort geht es
+über „Preise & Rabatte“ → **App aktualisieren**. Dort steht auch, von wann die App-Version ist.
+(Einmalige Ausnahme: Läuft auf dem iPad noch eine Fassung ohne diesen Knopf, die Kasse mit Internet öffnen, ganz
+schließen und noch einmal öffnen.)
 
 Auf einem Laptop geht es auch ohne Netlify: `index.html` doppelklicken, immer dieselbe Datei im selben Browser öffnen.
 
